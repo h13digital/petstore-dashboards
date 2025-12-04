@@ -36,13 +36,14 @@
             flex-direction: column;
         }
         
-        /* Navigation Bar */
+        /* Navigation Bar - Updated UI */
         .navbar {
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 3px solid var(--primary);
         }
         
         .nav-container {
@@ -55,26 +56,41 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
         }
         
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: var(--primary);
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             text-decoration: none;
             white-space: nowrap;
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.1) 0%, rgba(22, 96, 136, 0.05) 100%);
+        }
+        
+        .nav-logo:hover {
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.15) 0%, rgba(22, 96, 136, 0.1) 100%);
+            transform: translateY(-2px);
+        }
+        
+        .nav-logo i {
+            font-size: 1.6rem;
+            color: var(--primary);
         }
         
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 5px;
+            gap: 3px;
+            flex-wrap: nowrap;
             overflow-x: auto;
-            padding: 5px 0;
+            padding: 5px;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) #f1f1f1;
         }
@@ -100,49 +116,75 @@
         
         .nav-link {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 10px 15px;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 18px;
             color: var(--dark);
             text-decoration: none;
-            font-weight: 500;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: 12px;
             transition: all 0.3s ease;
             position: relative;
             white-space: nowrap;
             font-size: 0.95rem;
+            min-width: 90px;
+            border: 2px solid transparent;
+            background: #f8f9fa;
         }
         
         .nav-link:hover {
-            background-color: #f0f5ff;
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6f0ff 100%);
             color: var(--primary);
+            border-color: rgba(74, 111, 165, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
         
         .nav-link.active {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+            box-shadow: 0 5px 15px rgba(74, 111, 165, 0.3);
         }
         
         .nav-link i {
-            font-size: 0.9em;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link.active i {
+            transform: scale(1.1);
+        }
+        
+        .nav-link:hover i {
+            transform: translateY(-2px);
+        }
+        
+        .nav-text {
+            font-size: 0.9rem;
+            text-align: center;
+            line-height: 1.2;
         }
         
         .nav-indicator {
             position: absolute;
-            bottom: -12px;
-            left: 0;
-            width: 100%;
-            height: 3px;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
             border-radius: 2px;
             opacity: 0;
-            transition: opacity 0.3s ease, bottom 0.3s ease;
+            transition: all 0.3s ease;
         }
         
         .nav-link:hover .nav-indicator,
         .nav-link.active .nav-indicator {
             opacity: 1;
-            bottom: -6px;
+            bottom: -5px;
+            width: 40px;
         }
         
         .mobile-toggle {
@@ -152,18 +194,37 @@
             font-size: 1.5rem;
             color: var(--primary);
             cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(74, 111, 165, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-toggle:hover {
+            background: rgba(74, 111, 165, 0.2);
+            transform: translateY(-2px);
         }
         
         .nav-dashboard-badge {
-            display: inline-block;
+            position: absolute;
+            top: 5px;
+            right: 5px;
             background: var(--danger);
             color: white;
             font-size: 0.6rem;
             padding: 2px 6px;
             border-radius: 10px;
-            margin-left: 5px;
-            font-weight: 600;
-            vertical-align: middle;
+            font-weight: 700;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .nav-dashboard-badge.new {
+            background: linear-gradient(90deg, var(--danger) 0%, #c82333 100%);
+        }
+        
+        .nav-dashboard-badge.detail {
+            background: linear-gradient(90deg, var(--success) 0%, #1e7e34 100%);
         }
         
         .header {
@@ -385,9 +446,9 @@
                 flex-direction: column;
                 background-color: white;
                 width: 100%;
-                text-align: left;
+                text-align: center;
                 transition: 0.3s;
-                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.1);
                 padding: 20px;
                 border-radius: 0 0 15px 15px;
                 z-index: 999;
@@ -395,6 +456,7 @@
                 height: auto;
                 max-height: 70vh;
                 overflow-y: auto;
+                gap: 10px;
             }
             
             .nav-menu.active {
@@ -402,14 +464,25 @@
             }
             
             .nav-item {
-                margin: 8px 0;
+                margin: 0;
                 width: 100%;
             }
             
             .nav-link {
-                padding: 12px 20px;
-                border-radius: 8px;
+                flex-direction: row;
                 justify-content: flex-start;
+                padding: 15px 20px;
+                border-radius: 10px;
+                min-width: auto;
+                gap: 15px;
+            }
+            
+            .nav-text {
+                font-size: 1rem;
+            }
+            
+            .nav-link i {
+                font-size: 1.3rem;
             }
             
             .mobile-toggle {
@@ -422,6 +495,11 @@
             
             .header h1 {
                 font-size: 2.2rem;
+            }
+            
+            .nav-dashboard-badge {
+                top: 10px;
+                right: 15px;
             }
         }
         
@@ -560,7 +638,7 @@
         
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
         
@@ -576,7 +654,7 @@
     <!-- Scroll Indicator -->
     <div class="scroll-indicator" id="scrollIndicator"></div>
     
-    <!-- Navigation Bar -->
+    <!-- Navigation Bar - Updated with simplified names -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-wrapper">
@@ -593,46 +671,46 @@
                     <li class="nav-item">
                         <a href="dashboard01.html" class="nav-link" data-dashboard="marketing">
                             <i class="fas fa-chart-line"></i>
-                            Marketing Dashboard
+                            <span class="nav-text">Marketing</span>
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="dashboard02.html" class="nav-link" data-dashboard="ecommerce">
+                        <a href="dashboard02.html" class="nav-link" data-dashboard="sales">
                             <i class="fas fa-shopping-cart"></i>
-                            E-commerce Analytics
+                            <span class="nav-text">Sales</span>
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="dashboard03.html" class="nav-link" data-dashboard="customers">
+                        <a href="dashboard03.html" class="nav-link" data-dashboard="customers-overview">
                             <i class="fas fa-users"></i>
-                            Customers Overview
+                            <span class="nav-text">Customers Overview</span>
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard06.html" class="nav-link" data-dashboard="customer-detail">
                             <i class="fas fa-user-circle"></i>
-                            Customer Detail View
+                            <span class="nav-text">Customer Detail View</span>
                             <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge">DETAIL</span>
+                            <span class="nav-dashboard-badge detail">DETAIL</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="dashboard04.html" class="nav-link active-dashboard" data-dashboard="product">
+                        <a href="dashboard04.html" class="nav-link" data-dashboard="product">
                             <i class="fas fa-cube"></i>
-                            Product & Inventory Performance
+                            <span class="nav-text">Product & Inventory</span>
                             <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge">NEW</span>
+                            <span class="nav-dashboard-badge new">NEW</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="dashboard05.html" class="nav-link active-dashboard" data-dashboard="website">
+                        <a href="dashboard05.html" class="nav-link" data-dashboard="platform">
                             <i class="fas fa-desktop"></i>
-                            Website & User Behavior
+                            <span class="nav-text">Platform Analytics</span>
                             <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge">NEW</span>
+                            <span class="nav-dashboard-badge new">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -711,7 +789,7 @@
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <div>
-                            <div class="card-title">E-commerce Analytics</div>
+                            <div class="card-title">Sales Dashboard</div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích doanh thu & bán hàng</div>
                         </div>
                     </div>
@@ -727,7 +805,7 @@
                         </ul>
                         <a href="dashboard02.html" class="card-button">
                             <i class="fas fa-external-link-alt"></i>
-                            Mở E-commerce Analytics
+                            Mở Sales Dashboard
                         </a>
                     </div>
                 </div>
@@ -775,7 +853,7 @@
                             <i class="fas fa-cube"></i>
                         </div>
                         <div>
-                            <div class="card-title">Product & Inventory Performance <span class="new-badge">NEW</span></div>
+                            <div class="card-title">Product & Inventory <span class="new-badge">NEW</span></div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Quản lý sản phẩm & tồn kho</div>
                         </div>
                     </div>
@@ -796,20 +874,20 @@
                     </div>
                 </div>
                 
-                <!-- Dashboard 5: Website & User Behavior -->
+                <!-- Dashboard 5: Platform Analytics -->
                 <div class="dashboard-card">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-desktop"></i>
                         </div>
                         <div>
-                            <div class="card-title">Website & User Behavior <span class="new-badge">NEW</span></div>
-                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hành vi người dùng website</div>
+                            <div class="card-title">Platform Analytics <span class="new-badge">NEW</span></div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hành vi người dùng</div>
                         </div>
                     </div>
                     <div class="card-body">
                         <p class="card-description">
-                            Phân tích lưu lượng truy cập, hành vi người dùng, tỷ lệ chuyển đổi và trải nghiệm trên website. Tối ưu hóa UX và tăng tỷ lệ chuyển đổi.
+                            Phân tích lưu lượng truy cập, hành vi người dùng, tỷ lệ chuyển đổi và trải nghiệm trên nền tảng. Tối ưu hóa UX và tăng tỷ lệ chuyển đổi.
                         </p>
                         <ul class="card-features">
                             <li><i class="fas fa-check-circle"></i> Phân tích lưu lượng & nguồn truy cập</li>
@@ -819,7 +897,7 @@
                         </ul>
                         <a href="dashboard05.html" class="card-button">
                             <i class="fas fa-external-link-alt"></i>
-                            Mở Website Analytics
+                            Mở Platform Analytics
                         </a>
                     </div>
                 </div>
@@ -897,14 +975,14 @@
                     </thead>
                     <tbody>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Marketing Dashboard</td>
+                            <td style="padding: 15px; font-weight: 500;">Marketing</td>
                             <td style="padding: 15px; text-align: center;">Hiệu quả marketing</td>
                             <td style="padding: 15px; text-align: center;">8</td>
                             <td style="padding: 15px; text-align: center;">Hàng ngày</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Trung bình</span></td>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">E-commerce Analytics</td>
+                            <td style="padding: 15px; font-weight: 500;">Sales</td>
                             <td style="padding: 15px; text-align: center;">Doanh thu & bán hàng</td>
                             <td style="padding: 15px; text-align: center;">10</td>
                             <td style="padding: 15px; text-align: center;">Thời gian thực</td>
@@ -925,14 +1003,14 @@
                             <td style="padding: 15px; text-align: center;"><span style="background: #ffa500; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Cao</span></td>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Product & Inventory Performance</td>
+                            <td style="padding: 15px; font-weight: 500;">Product & Inventory</td>
                             <td style="padding: 15px; text-align: center;">Sản phẩm & tồn kho</td>
                             <td style="padding: 15px; text-align: center;">9</td>
                             <td style="padding: 15px; text-align: center;">Hàng giờ</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #6f42c1; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Rất cao</span></td>
                         </tr>
                         <tr>
-                            <td style="padding: 15px; font-weight: 500;">Website & User Behavior</td>
+                            <td style="padding: 15px; font-weight: 500;">Platform Analytics</td>
                             <td style="padding: 15px; text-align: center;">Hành vi người dùng</td>
                             <td style="padding: 15px; text-align: center;">11</td>
                             <td style="padding: 15px; text-align: center;">Thời gian thực</td>
@@ -948,7 +1026,7 @@
     <footer class="footer">
         <p>PetStore Analytics Dashboard Hub • Phiên bản 2.0 • Cập nhật lần cuối: Tháng 1, 2024</p>
         <p>© 2024 PetStore E-commerce. Mọi quyền được bảo lưu. | analytics@petstore.com | Đường dây hỗ trợ: 1800-1234</p>
-        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">Đã thêm 2 dashboard mới: Product & Inventory Performance và Website & User Behavior</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">Đã thêm 2 dashboard mới: Product & Inventory và Platform Analytics</p>
     </footer>
 
     <script>
@@ -1020,6 +1098,9 @@
             
             // Đánh dấu dashboard hiện tại nếu có
             markCurrentDashboard();
+            
+            // Thêm hiệu ứng cho các nav link
+            addNavLinkEffects();
         });
 
         // Hàm hiển thị thông báo
@@ -1071,7 +1152,7 @@
                 if (this.classList.contains('card-button')) {
                     dashboardName = this.closest('.dashboard-card').querySelector('.card-title').textContent;
                 } else {
-                    dashboardName = this.textContent.trim();
+                    dashboardName = this.querySelector('.nav-text').textContent.trim();
                 }
                 console.log(`Dashboard opened: ${dashboardName}`);
                 
@@ -1131,8 +1212,6 @@
                 const href = link.getAttribute('href');
                 if (currentPage.includes(href) && href !== 'index.html') {
                     link.classList.add('active');
-                    link.style.background = 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)';
-                    link.style.color = 'white';
                 }
             });
             
@@ -1141,6 +1220,29 @@
             if (lastDashboard) {
                 console.log(`Dashboard truy cập gần nhất: ${lastDashboard}`);
             }
+        }
+        
+        // Thêm hiệu ứng cho các nav link
+        function addNavLinkEffects() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                // Hiệu ứng khi di chuột vào
+                link.addEventListener('mouseenter', function() {
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.style.transform = 'translateY(-3px)';
+                    }
+                });
+                
+                // Hiệu ứng khi di chuột ra
+                link.addEventListener('mouseleave', function() {
+                    const icon = this.querySelector('i');
+                    if (icon && !this.classList.contains('active')) {
+                        icon.style.transform = 'translateY(0)';
+                    }
+                });
+            });
         }
         
         // Khởi tạo scroll indicator
