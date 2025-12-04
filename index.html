@@ -1,3 +1,5 @@
+[file name]: index.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -15,6 +17,9 @@
             --light: #f8f9fa;
             --dark: #343a40;
             --gray: #6c757d;
+            --orange: #fd7e14;
+            --info: #17a2b8;
+            --purple: #6f42c1;
         }
         
         * {
@@ -58,7 +63,7 @@
         }
         
         .main-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 40px auto;
             padding: 0 20px;
             flex: 1;
@@ -105,6 +110,14 @@
         
         .dashboard-card:nth-child(3) .card-header {
             background: linear-gradient(90deg, #6f42c1 0%, #5a32a3 100%);
+        }
+        
+        .dashboard-card:nth-child(4) .card-header {
+            background: linear-gradient(90deg, #fd7e14 0%, #e8590c 100%);
+        }
+        
+        .dashboard-card:nth-child(5) .card-header {
+            background: linear-gradient(90deg, #0367a6 0%, #024d7a 100%);
         }
         
         .card-icon {
@@ -183,6 +196,14 @@
             background: linear-gradient(90deg, #6f42c1 0%, #5a32a3 100%);
         }
         
+        .dashboard-card:nth-child(4) .card-button {
+            background: linear-gradient(90deg, #fd7e14 0%, #e8590c 100%);
+        }
+        
+        .dashboard-card:nth-child(5) .card-button {
+            background: linear-gradient(90deg, #0367a6 0%, #024d7a 100%);
+        }
+        
         .card-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -213,12 +234,12 @@
         .stat-value {
             font-size: 2.2rem;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
         }
         
         .stat-label {
             font-size: 0.9rem;
-            color: var(--gray);
+            color: rgba(255,255,255,0.8);
         }
         
         @media (max-width: 768px) {
@@ -285,6 +306,48 @@
             font-size: 0.9rem;
             margin: 0;
         }
+        
+        .dashboard-category {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .category-description {
+            color: var(--gray);
+            margin-bottom: 25px;
+            max-width: 800px;
+        }
+        
+        .new-badge {
+            display: inline-block;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+        
+        .updated-badge {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -298,16 +361,20 @@
         
         <div class="stats">
             <div class="stat-item">
-                <div class="stat-value">3</div>
+                <div class="stat-value">5</div>
                 <div class="stat-label">Dashboards</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">25+</div>
+                <div class="stat-value">35+</div>
                 <div class="stat-label">Chỉ số KPI</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value">100%</div>
                 <div class="stat-label">Dữ liệu thời gian thực</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Dashboard mới</div>
             </div>
         </div>
     </header>
@@ -332,101 +399,260 @@
                     <h4><i class="fas fa-chart-pie"></i> Phân tích đa chiều</h4>
                     <p>Biểu đồ tương tác và báo cáo chi tiết</p>
                 </div>
+                <div class="quick-stat">
+                    <h4><i class="fas fa-plus-circle"></i> Mở rộng liên tục</h4>
+                    <p>Bổ sung dashboard mới mỗi tháng</p>
+                </div>
             </div>
         </section>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Dashboard 1: Marketing -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div>
-                        <div class="card-title">Marketing Dashboard</div>
-                        <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hiệu quả tiếp thị</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Theo dõi hiệu suất chiến dịch marketing, ROAS, CAC và tỷ lệ chuyển đổi. Tối ưu hóa ngân sách và đánh giá hiệu quả kênh tiếp thị.
-                    </p>
-                    <ul class="card-features">
-                        <li><i class="fas fa-check-circle"></i> Phân tích kênh tiếp thị</li>
-                        <li><i class="fas fa-check-circle"></i> Theo dõi ROAS & CAC</li>
-                        <li><i class="fas fa-check-circle"></i> Hiệu suất chiến dịch</li>
-                        <li><i class="fas fa-check-circle"></i> Phân tích funnel chuyển đổi</li>
-                    </ul>
-                    <a href="dashboard01.html" class="card-button">
-                        <i class="fas fa-external-link-alt"></i>
-                        Mở Marketing Dashboard
-                    </a>
-                </div>
-            </div>
+        <!-- Category: Core Dashboards -->
+        <div class="dashboard-category">
+            <h3 class="category-title">Dashboard Cốt Lõi</h3>
+            <p class="category-description">Các dashboard chính cung cấp góc nhìn toàn diện về hoạt động kinh doanh của PetStore.</p>
             
-            <!-- Dashboard 2: Sales -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-shopping-cart"></i>
+            <div class="dashboard-grid">
+                <!-- Dashboard 1: Marketing -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Marketing Dashboard</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hiệu quả tiếp thị</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="card-title">Sales Dashboard</div>
-                        <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích doanh thu & bán hàng</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Giám sát doanh thu, đơn hàng, giá trị đơn hàng trung bình và xu hướng bán hàng. Phân tích hiệu suất sản phẩm và dự báo tồn kho.
-                    </p>
-                    <ul class="card-features">
-                        <li><i class="fas fa-check-circle"></i> Xu hướng doanh thu</li>
-                        <li><i class="fas fa-check-circle"></i> Top sản phẩm bán chạy</li>
-                        <li><i class="fas fa-check-circle"></i> Phân tích kênh bán hàng</li>
-                        <li><i class="fas fa-check-circle"></i> Quản lý tồn kho & dự báo</li>
-                    </ul>
-                    <a href="dashboard02.html" class="card-button">
-                        <i class="fas fa-external-link-alt"></i>
-                        Mở Sales Dashboard
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Dashboard 3: Customer -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <div class="card-title">Customer 360 Dashboard</div>
-                        <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích khách hàng toàn diện</div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Theo dõi hiệu suất chiến dịch marketing, ROAS, CAC và tỷ lệ chuyển đổi. Tối ưu hóa ngân sách và đánh giá hiệu quả kênh tiếp thị.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Phân tích kênh tiếp thị</li>
+                            <li><i class="fas fa-check-circle"></i> Theo dõi ROAS & CAC</li>
+                            <li><i class="fas fa-check-circle"></i> Hiệu suất chiến dịch</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích funnel chuyển đổi</li>
+                        </ul>
+                        <a href="dashboard01.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mở Marketing Dashboard
+                        </a>
                     </div>
                 </div>
-                <div class="card-body">
-                    <p class="card-description">
-                        Hiểu rõ hành vi khách hàng, phân đoạn RFM, dự đoán CLV và phân tích rủi ro rời bỏ. Tối ưu hóa trải nghiệm và giữ chân khách hàng.
-                    </p>
-                    <ul class="card-features">
-                        <li><i class="fas fa-check-circle"></i> Phân tích RFM & phân đoạn</li>
-                        <li><i class="fas fa-check-circle"></i> Dự đoán CLV & rủi ro rời bỏ</li>
-                        <li><i class="fas fa-check-circle"></i> Hành vi mua hàng</li>
-                        <li><i class="fas fa-check-circle"></i> Phân tích hành trình khách hàng</li>
-                    </ul>
-                    <a href="dashboard03.html" class="card-button">
-                        <i class="fas fa-external-link-alt"></i>
-                        Mở Customer Dashboard
-                    </a>
+                
+                <!-- Dashboard 2: Sales -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Sales Dashboard</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích doanh thu & bán hàng</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Giám sát doanh thu, đơn hàng, giá trị đơn hàng trung bình và xu hướng bán hàng. Phân tích hiệu suất sản phẩm và dự báo tồn kho.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Xu hướng doanh thu</li>
+                            <li><i class="fas fa-check-circle"></i> Top sản phẩm bán chạy</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích kênh bán hàng</li>
+                            <li><i class="fas fa-check-circle"></i> Quản lý tồn kho & dự báo</li>
+                        </ul>
+                        <a href="dashboard02.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mở Sales Dashboard
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Dashboard 3: Customer -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Customer 360 Dashboard <span class="updated-badge">UPDATED</span></div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích khách hàng toàn diện</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Hiểu rõ hành vi khách hàng, phân đoạn RFM, dự đoán CLV và phân tích rủi ro rời bỏ. Tối ưu hóa trải nghiệm và giữ chân khách hàng.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Phân tích RFM & phân đoạn</li>
+                            <li><i class="fas fa-check-circle"></i> Dự đoán CLV & rủi ro rời bỏ</li>
+                            <li><i class="fas fa-check-circle"></i> Hành vi mua hàng</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích hành trình khách hàng</li>
+                        </ul>
+                        <a href="dashboard03.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mở Customer Dashboard
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Category: New & Specialized Dashboards -->
+        <div class="dashboard-category">
+            <h3 class="category-title">Dashboard Chuyên Sâu <span class="new-badge">MỚI</span></h3>
+            <p class="category-description">Các dashboard chuyên sâu tập trung vào phân tích sâu từng khía cạnh kinh doanh.</p>
+            
+            <div class="dashboard-grid">
+                <!-- Dashboard 4: Product & Inventory -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Product & Inventory Dashboard <span class="new-badge">NEW</span></div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Quản lý sản phẩm & tồn kho</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Theo dõi hiệu suất sản phẩm, quản lý tồn kho, phân tích lợi nhuận và tối ưu hóa danh mục sản phẩm. Dự báo nhu cầu và cảnh báo tồn kho thấp.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Phân tích hiệu suất sản phẩm</li>
+                            <li><i class="fas fa-check-circle"></i> Quản lý tồn kho thông minh</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích lợi nhuận & biên lời</li>
+                            <li><i class="fas fa-check-circle"></i> Cảnh báo tồn kho & tái đặt hàng</li>
+                        </ul>
+                        <a href="dashboard04.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mở Product Dashboard
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Dashboard 5: Website & User Behavior -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Website & User Behavior Dashboard <span class="new-badge">NEW</span></div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hành vi người dùng website</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Phân tích lưu lượng truy cập, hành vi người dùng, tỷ lệ chuyển đổi và trải nghiệm trên website. Tối ưu hóa UX và tăng tỷ lệ chuyển đổi.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Phân tích lưu lượng & nguồn truy cập</li>
+                            <li><i class="fas fa-check-circle"></i> Theo dõi hành vi người dùng</li>
+                            <li><i class="fas fa-check-circle"></i> Heatmap & session recording</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích funnel chuyển đổi</li>
+                        </ul>
+                        <a href="dashboard05.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mở Website Analytics
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Dashboard 6: Customer Detail (Bonus) -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div>
+                            <div class="card-title">Customer Detail View <span class="updated-badge">DETAIL</span></div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Chi tiết khách hàng & hành trình</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-description">
+                            Xem chi tiết hồ sơ khách hàng, lịch sử mua hàng, hành trình tương tác và phân tích CLV. Hiểu sâu từng khách hàng để cá nhân hóa dịch vụ.
+                        </p>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check-circle"></i> Hồ sơ khách hàng chi tiết</li>
+                            <li><i class="fas fa-check-circle"></i> Hành trình mua hàng đầy đủ</li>
+                            <li><i class="fas fa-check-circle"></i> Phân tích CLV & giá trị</li>
+                            <li><i class="fas fa-check-circle"></i> Nguồn acquisition & kênh</li>
+                        </ul>
+                        <a href="dashboard06.html" class="card-button">
+                            <i class="fas fa-external-link-alt"></i>
+                            Xem Customer Detail
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Comparison -->
+        <section class="welcome-section" style="margin-top: 50px;">
+            <h2>So Sánh Các Dashboard</h2>
+            <p>Hiểu rõ sự khác biệt và chức năng của từng dashboard để lựa chọn phù hợp với nhu cầu phân tích của bạn.</p>
+            
+            <div style="overflow-x: auto; margin-top: 25px;">
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <thead>
+                        <tr style="background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+                            <th style="padding: 15px; text-align: left;">Dashboard</th>
+                            <th style="padding: 15px; text-align: center;">Trọng tâm</th>
+                            <th style="padding: 15px; text-align: center;">Số KPI</th>
+                            <th style="padding: 15px; text-align: center;">Cập nhật</th>
+                            <th style="padding: 15px; text-align: center;">Độ phức tạp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px; font-weight: 500;">Marketing</td>
+                            <td style="padding: 15px; text-align: center;">Hiệu quả marketing</td>
+                            <td style="padding: 15px; text-align: center;">8</td>
+                            <td style="padding: 15px; text-align: center;">Hàng ngày</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Trung bình</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px; font-weight: 500;">Sales</td>
+                            <td style="padding: 15px; text-align: center;">Doanh thu & bán hàng</td>
+                            <td style="padding: 15px; text-align: center;">10</td>
+                            <td style="padding: 15px; text-align: center;">Thời gian thực</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Trung bình</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px; font-weight: 500;">Customer 360</td>
+                            <td style="padding: 15px; text-align: center;">Khách hàng & trải nghiệm</td>
+                            <td style="padding: 15px; text-align: center;">12</td>
+                            <td style="padding: 15px; text-align: center;">Hàng ngày</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #ffa500; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Cao</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px; font-weight: 500;">Product & Inventory</td>
+                            <td style="padding: 15px; text-align: center;">Sản phẩm & tồn kho</td>
+                            <td style="padding: 15px; text-align: center;">9</td>
+                            <td style="padding: 15px; text-align: center;">Hàng giờ</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #6f42c1; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Rất cao</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px; font-weight: 500;">Website Analytics</td>
+                            <td style="padding: 15px; text-align: center;">Hành vi người dùng</td>
+                            <td style="padding: 15px; text-align: center;">11</td>
+                            <td style="padding: 15px; text-align: center;">Thời gian thực</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #17a2b8; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Cao</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>PetStore Analytics Dashboard Hub • Phiên bản 1.0 • Cập nhật lần cuối: Tháng 12, 2024</p>
-        <p>© 2024 PetStore E-commerce. Mọi quyền được bảo lưu. | analytics@petstore.com</p>
+        <p>PetStore Analytics Dashboard Hub • Phiên bản 2.0 • Cập nhật lần cuối: Tháng 1, 2024</p>
+        <p>© 2024 PetStore E-commerce. Mọi quyền được bảo lưu. | analytics@petstore.com | Đường dây hỗ trợ: 1800-1234</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">Đã thêm 2 dashboard mới: Product & Inventory và Website & User Behavior</p>
     </footer>
 
     <script>
@@ -457,7 +683,93 @@
                     this.style.transform = 'translateY(0)';
                 });
             });
+
+            // Hiệu ứng cho các badge mới
+            const newBadges = document.querySelectorAll('.new-badge');
+            newBadges.forEach(badge => {
+                badge.style.animation = 'pulse 2s infinite';
+            });
+
+            // Thêm animation cho pulse
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                    100% { transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Thống kê dashboard
+            const totalDashboards = document.querySelectorAll('.dashboard-card').length;
+            const statValue = document.querySelector('.stat-item:nth-child(1) .stat-value');
+            if (statValue) {
+                statValue.textContent = totalDashboards;
+            }
+
+            // Hiển thị thông báo chào mừng cho dashboard mới
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('new') === 'true') {
+                    showNotification('Chào mừng đến với PetStore Analytics Hub! Đã có 2 dashboard mới.');
+                }
+            }, 1000);
+        });
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            // Tạo thông báo tạm thời
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                max-width: 400px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-bell" style="font-size: 20px;"></i>
+                <div>${message}</div>
+                <i class="fas fa-times" style="margin-left: auto; cursor: pointer;" onclick="this.parentElement.remove()"></i>
+            `;
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 5 giây
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100px)';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Theo dõi lượt click vào các dashboard
+        document.querySelectorAll('.card-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const dashboardName = this.closest('.dashboard-card').querySelector('.card-title').textContent;
+                console.log(`Dashboard opened: ${dashboardName}`);
+                
+                // Trong thực tế, bạn có thể gửi sự kiện này đến analytics
+                // analytics.track('Dashboard Opened', { name: dashboardName });
+            });
         });
     </script>
 </body>
 </html>
+[file content end]
