@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer 360 Dashboard - PetStore</title>
+    <title>Customer Insight 360 Dashboard - PetStore</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -53,6 +53,14 @@
             padding: 0 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             margin-bottom: 30px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo:hover {
+            opacity: 0.9;
         }
         
         .logo i {
@@ -75,6 +83,7 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
         
         .nav-item:hover, .nav-item.active {
@@ -87,6 +96,15 @@
             font-size: 18px;
             width: 24px;
             text-align: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         
         /* Main Content */
@@ -729,30 +747,50 @@
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">
+            <a href="index.html" class="logo">
                 <i class="fas fa-paw"></i>
                 <h1>PetStore Analytics</h1>
-            </div>
+            </a>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Marketing Dashboard</span>
+                    <a href="dashboard01.html" class="nav-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Marketing Dashboard</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Sales Dashboard</span>
+                    <a href="dashboard02.html" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>E-commerce Analytics</span>
+                    </a>
                 </li>
                 <li class="nav-item active">
                     <i class="fas fa-users"></i>
-                    <span>Customer 360</span>
+                    <span>Customer Insight 360</span>
+                </li>
+                <li class="nav-item" id="productPerformanceNav">
+                    <a href="dashboard04.html" class="nav-link">
+                        <i class="fas fa-cube"></i>
+                        <span>Product Performance</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="websiteBehaviorNav">
+                    <a href="dashboard05.html" class="nav-link">
+                        <i class="fas fa-globe"></i>
+                        <span>Website & User Behavior</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="customerDetailNav">
+                    <a href="dashboard06.html" class="nav-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Customer Detail View</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <i class="fas fa-cube"></i>
-                    <span>Product Performance</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
                 </li>
             </ul>
         </aside>
@@ -761,7 +799,7 @@
         <main class="main-content">
             <!-- Header -->
             <div class="header">
-                <h2><i class="fas fa-users"></i> Customer 360 Dashboard</h2>
+                <h2><i class="fas fa-users"></i> Customer Insight 360 Dashboard</h2>
                 <div class="customer-search">
                     <input type="text" id="searchCustomer" placeholder="Search customer by name, email, or ID...">
                     <button id="searchBtn">
@@ -1124,7 +1162,7 @@
 
             <!-- Footer -->
             <div class="footer">
-                <p>Customer 360 Dashboard • PetStore E-commerce • Data updated: Today, 2:30 PM</p>
+                <p>Customer Insight 360 Dashboard • PetStore E-commerce • Data updated: Today, 2:30 PM</p>
                 <p>Next customer review meeting: Monday, 11:00 AM | CLV report generation: End of month</p>
             </div>
         </main>
@@ -1762,6 +1800,25 @@
                     showSegmentDetails(segment);
                 });
             });
+            
+            // 14. Xử lý click vào navigation items để đổi tên
+            const productPerformanceNav = document.getElementById('productPerformanceNav');
+            
+            // Lưu tên gốc
+            const originalProductText = productPerformanceNav.querySelector('span').textContent;
+            
+            // Khi click vào Product Performance
+            productPerformanceNav.querySelector('.nav-link').addEventListener('click', function(e) {
+                // Đổi tên trước khi chuyển trang
+                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
+                // Lưu vào localStorage để trang dashboard04.html có thể sử dụng
+                localStorage.setItem('navProductRenamed', 'true');
+            });
+            
+            // Kiểm tra nếu đã đổi tên từ trước (khi quay lại trang này)
+            if (localStorage.getItem('navProductRenamed') === 'true') {
+                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
+            }
         });
 
         // Hàm tìm kiếm khách hàng
