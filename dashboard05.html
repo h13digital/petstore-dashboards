@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website & User Behavior Dashboard - PetStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0367a6;
+            --secondary: #024d7a;
+            --success: #2e8b57;
+            --warning: #ffa500;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-blue: #e3f2fd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 15px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .filter-controls select, .filter-controls input {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 14px;
+        }
+        
+        .realtime-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .realtime-btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        .realtime-btn.active {
+            background-color: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 139, 87, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 139, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 139, 87, 0); }
+        }
+        
+        /* KPI Cards */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .kpi-card.sessions::before {
+            background-color: var(--primary);
+        }
+        
+        .kpi-card.users::before {
+            background-color: var(--success);
+        }
+        
+        .kpi-card.pageviews::before {
+            background-color: var(--info);
+        }
+        
+        .kpi-card.bounce-rate::before {
+            background-color: var(--warning);
+        }
+        
+        .kpi-card.session-duration::before {
+            background-color: #6f42c1;
+        }
+        
+        .kpi-card.conversion-rate::before {
+            background-color: #e83e8c;
+        }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+        
+        .kpi-icon.sessions {
+            background-color: var(--primary);
+        }
+        
+        .kpi-icon.users {
+            background-color: var(--success);
+        }
+        
+        .kpi-icon.pageviews {
+            background-color: var(--info);
+        }
+        
+        .kpi-icon.bounce-rate {
+            background-color: var(--warning);
+        }
+        
+        .kpi-icon.session-duration {
+            background-color: #6f42c1;
+        }
+        
+        .kpi-icon.conversion-rate {
+            background-color: #e83e8c;
+        }
+        
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .kpi-trend.positive {
+            color: var(--success);
+        }
+        
+        .kpi-trend.negative {
+            color: var(--danger);
+        }
+        
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-btn {
+            padding: 5px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chart-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .chart-btn:hover:not(.active) {
+            background-color: #f8f9fa;
+        }
+        
+        /* User Behavior Grid */
+        .behavior-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .behavior-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Device & Browser Table */
+        .device-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .device-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Pages Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--light-blue);
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .page-cell {
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 18px;
+        }
+        
+        .page-info h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .page-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        /* Heatmap Visualization */
+        .heatmap-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .heatmap-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .heatmap-cell {
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .heatmap-cell:hover {
+            transform: scale(1.05);
+        }
+        
+        .heatmap-cell.empty {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        /* Realtime Activity */
+        .realtime-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .activity-icon.visit {
+            background-color: var(--primary);
+        }
+        
+        .activity-icon.add-to-cart {
+            background-color: var(--success);
+        }
+        
+        .activity-icon.purchase {
+            background-color: #6f42c1;
+        }
+        
+        .activity-icon.pageview {
+            background-color: var(--info);
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-content h4 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .activity-content p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .activity-time {
+            font-size: 12px;
+            color: var(--gray);
+            white-space: nowrap;
+        }
+        
+        /* Funnel Visualization */
+        .funnel-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .funnel-steps {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .funnel-step {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .funnel-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .funnel-step::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+            background-color: #dee2e6;
+        }
+        
+        .funnel-step:last-child::after {
+            display: none;
+        }
+        
+        .funnel-step-bar {
+            flex: 1;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .funnel-step-1 {
+            background-color: var(--primary);
+            width: 100%;
+        }
+        
+        .funnel-step-2 {
+            background-color: #1e88e5;
+            width: 80%;
+        }
+        
+        .funnel-step-3 {
+            background-color: #42a5f5;
+            width: 60%;
+        }
+        
+        .funnel-step-4 {
+            background-color: #90caf9;
+            width: 40%;
+        }
+        
+        .funnel-step-5 {
+            background-color: #bbdefb;
+            color: #333;
+            width: 20%;
+        }
+        
+        .funnel-step-label {
+            font-size: 14px;
+        }
+        
+        .funnel-step-value {
+            font-size: 18px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .kpi-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .filter-controls, .realtime-btn {
+                width: 100%;
+            }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #999;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Session Recording Mockup */
+        .session-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .session-mockup {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .session-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .session-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .session-timeline {
+            height: 200px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .session-scroll {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, #f0f0f0 1px, transparent 1px),
+                linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .session-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .session-action-btn {
+            padding: 8px 15px;
+            background: var(--light-blue);
+            border: none;
+            border-radius: 5px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                <h1>PetStore Analytics</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marketing Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Sales Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customer 360</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cube"></i>
+                    <span>Product & Inventory</span>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-desktop"></i>
+                    <span>Website Analytics</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2><i class="fas fa-desktop"></i> Website & User Behavior Dashboard</h2>
+                <div class="header-controls">
+                    <div class="filter-controls">
+                        <select id="timePeriod">
+                            <option value="realtime">Realtime</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last7">Last 7 Days</option>
+                            <option value="last30" selected>Last 30 Days</option>
+                            <option value="last90">Last 90 Days</option>
+                        </select>
+                        <select id="segmentFilter">
+                            <option value="all">All Users</option>
+                            <option value="new">New Visitors</option>
+                            <option value="returning">Returning Visitors</option>
+                            <option value="mobile">Mobile Users</option>
+                            <option value="desktop">Desktop Users</option>
+                        </select>
+                    </div>
+                    <button class="realtime-btn" id="realtimeToggle">
+                        <i class="fas fa-circle"></i>
+                        <span>Live View</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-container">
+                <div class="kpi-card sessions">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">124,850</div>
+                            <div class="kpi-label">Sessions</div>
+                        </div>
+                        <div class="kpi-icon sessions">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12.5% vs last period</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card users">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">98,420</div>
+                            <div class="kpi-label">Users</div>
+                        </div>
+                        <div class="kpi-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8.7% vs last period</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card pageviews">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">542,310</div>
+                            <div class="kpi-label">Pageviews</div>
+                        </div>
+                        <div class="kpi-icon pageviews">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>15.3% vs last period</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card bounce-rate">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">42.8%</div>
+                            <div class="kpi-label">Bounce Rate</div>
+                        </div>
+                        <div class="kpi-icon bounce-rate">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>2.1% vs last period</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card session-duration">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">3:42</div>
+                            <div class="kpi-label">Avg. Session Duration</div>
+                        </div>
+                        <div class="kpi-icon session-duration">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>0:18 vs last period</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card conversion-rate">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">4.2%</div>
+                            <div class="kpi-label">Conversion Rate</div>
+                        </div>
+                        <div class="kpi-icon conversion-rate">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>0.8% vs last period</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <!-- Traffic Over Time Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Traffic Over Time</div>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-metric="sessions">Sessions</button>
+                            <button class="chart-btn" data-metric="users">Users</button>
+                            <button class="chart-btn" data-metric="pageviews">Pageviews</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trafficOverTimeChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Traffic Sources Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Traffic Sources</div>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-view="pie">Pie</button>
+                            <button class="chart-btn" data-view="donut">Donut</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trafficSourcesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Behavior Grid -->
+            <div class="behavior-grid">
+                <!-- Top Pages -->
+                <div class="table-container">
+                    <div class="table-title">
+                        <i class="fas fa-file"></i> Top Pages by Pageviews
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Page</th>
+                                <th>Pageviews</th>
+                                <th>Unique Visitors</th>
+                                <th>Avg. Time</th>
+                                <th>Bounce Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topPagesBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- User Flow Funnel -->
+                <div class="funnel-container">
+                    <div class="chart-title">
+                        <i class="fas fa-filter"></i> User Conversion Funnel
+                    </div>
+                    <div class="funnel-steps">
+                        <div class="funnel-step">
+                            <div class="funnel-step-bar funnel-step-1">
+                                <span class="funnel-step-label">Website Visit</span>
+                                <span class="funnel-step-value">124,850</span>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-step-bar funnel-step-2">
+                                <span class="funnel-step-label">Product View</span>
+                                <span class="funnel-step-value">58,420</span>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-step-bar funnel-step-3">
+                                <span class="funnel-step-label">Add to Cart</span>
+                                <span class="funnel-step-value">12,850</span>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-step-bar funnel-step-4">
+                                <span class="funnel-step-label">Checkout Start</span>
+                                <span class="funnel-step-value">5,240</span>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-step-bar funnel-step-5">
+                                <span class="funnel-step-label">Purchase Complete</span>
+                                <span class="funnel-step-value">2,845</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; font-size: 14px; color: var(--gray);">
+                        Overall conversion rate: <strong>2.28%</strong> | Cart abandonment: <strong>59.2%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device & Browser Analysis -->
+            <div class="device-container">
+                <!-- Device Breakdown -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Device Breakdown</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="deviceBreakdownChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Browser Breakdown -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Browser Usage</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="browserChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap & Session Recordings -->
+            <div class="behavior-grid">
+                <!-- Click Heatmap -->
+                <div class="heatmap-container">
+                    <div class="heatmap-title">
+                        <i class="fas fa-fire"></i> Click Heatmap (Homepage)
+                    </div>
+                    <div class="heatmap-legend">
+                        <span>Low Interaction</span>
+                        <div style="display: flex; gap: 5px;">
+                            <div style="width: 20px; height: 20px; background-color: #e3f2fd; border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background-color: #64b5f6; border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background-color: #1976d2; border-radius: 3px;"></div>
+                            <div style="width: 20px; height: 20px; background-color: #0d47a1; border-radius: 3px;"></div>
+                        </div>
+                        <span>High Interaction</span>
+                    </div>
+                    <div class="heatmap-grid" id="heatmapGrid">
+                        <!-- Heatmap cells will be populated by JavaScript -->
+                    </div>
+                    <div style="text-align: center; font-size: 14px; color: var(--gray);">
+                        Simulated heatmap showing click density on homepage elements
+                    </div>
+                </div>
+                
+                <!-- Session Recording -->
+                <div class="session-container">
+                    <div class="chart-title">
+                        <i class="fas fa-play-circle"></i> Session Recording
+                    </div>
+                    <div class="session-mockup">
+                        <div class="session-header">
+                            <div class="session-info">
+                                <div class="session-avatar">JD</div>
+                                <div>
+                                    <div style="font-weight: 600;">User #2384</div>
+                                    <div style="font-size: 12px; color: var(--gray);">From: Google Search • Device: iPhone</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 14px; color: var(--gray);">
+                                Session duration: <strong>4:22</strong>
+                            </div>
+                        </div>
+                        <div class="session-timeline">
+                            <div class="session-scroll"></div>
+                            <!-- Mock scroll bars -->
+                            <div style="position: absolute; top: 20px; left: 30px; width: 300px; height: 40px; background: rgba(3, 103, 166, 0.1); border: 2px solid var(--primary); border-radius: 5px;"></div>
+                            <div style="position: absolute; top: 80px; left: 100px; width: 250px; height: 60px; background: rgba(46, 139, 87, 0.1); border: 2px solid var(--success); border-radius: 5px;"></div>
+                            <div style="position: absolute; top: 160px; left: 200px; width: 200px; height: 50px; background: rgba(111, 66, 193, 0.1); border: 2px solid #6f42c1; border-radius: 5px;"></div>
+                        </div>
+                        <div class="session-actions">
+                            <button class="session-action-btn">
+                                <i class="fas fa-play"></i> Play Recording
+                            </button>
+                            <button class="session-action-btn">
+                                <i class="fas fa-search"></i> Analyze Behavior
+                            </button>
+                            <button class="session-action-btn">
+                                <i class="fas fa-download"></i> Export Session
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Realtime Activity -->
+            <div class="realtime-container">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-bolt"></i> Realtime User Activity
+                    </div>
+                    <div style="font-size: 14px; color: var(--gray);">
+                        <i class="fas fa-users"></i> <span id="activeUsers">24</span> active users right now
+                    </div>
+                </div>
+                <div class="activity-list" id="realtimeActivity">
+                    <!-- Realtime activities will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Website & User Behavior Dashboard • PetStore E-commerce • Data updated: <span id="currentTime"></span></p>
+                <p>Next A/B test review: Thursday, 11:00 AM | UX optimization meeting: Friday, 2:00 PM</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu cho Website & User Behavior Dashboard
+        const webData = {
+            // Traffic theo thời gian
+            trafficOverTime: {
+                sessions: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [15200, 16800, 14200, 18500, 19800, 24500, 21800]
+                },
+                users: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [12400, 13800, 11500, 15200, 16200, 19800, 17500]
+                },
+                pageviews: {
+                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    data: [68200, 75400, 64200, 81200, 88500, 102500, 92500]
+                }
+            },
+            
+            // Nguồn traffic
+            trafficSources: {
+                labels: ["Organic Search", "Direct", "Social Media", "Paid Search", "Email", "Referral"],
+                data: [42, 28, 15, 8, 4, 3],
+                colors: ["#28a745", "#0367a6", "#ffa500", "#dc3545", "#6f42c1", "#17a2b8"]
+            },
+            
+            // Trang hàng đầu
+            topPages: [
+                { 
+                    name: "Homepage", 
+                    url: "/", 
+                    pageviews: 84520, 
+                    uniqueVisitors: 52480, 
+                    avgTime: "2:45", 
+                    bounceRate: "38.2%",
+                    icon: "fas fa-home"
+                },
+                { 
+                    name: "Dog Food Category", 
+                    url: "/collections/dog-food", 
+                    pageviews: 62540, 
+                    uniqueVisitors: 38520, 
+                    avgTime: "3:22", 
+                    bounceRate: "32.5%",
+                    icon: "fas fa-dog"
+                },
+                { 
+                    name: "Cat Food Category", 
+                    url: "/collections/cat-food", 
+                    pageviews: 48520, 
+                    uniqueVisitors: 31250, 
+                    avgTime: "2:58", 
+                    bounceRate: "35.8%",
+                    icon: "fas fa-cat"
+                },
+                { 
+                    name: "Premium Dog Food (Product)", 
+                    url: "/products/premium-dog-food-20kg", 
+                    pageviews: 42580, 
+                    uniqueVisitors: 28450, 
+                    avgTime: "4:12", 
+                    bounceRate: "28.4%",
+                    icon: "fas fa-shopping-bag"
+                },
+                { 
+                    name: "Pet Care Blog", 
+                    url: "/blog/pet-care-tips", 
+                    pageviews: 38540, 
+                    uniqueVisitors: 32580, 
+                    avgTime: "5:18", 
+                    bounceRate: "45.2%",
+                    icon: "fas fa-newspaper"
+                },
+                { 
+                    name: "Shopping Cart", 
+                    url: "/cart", 
+                    pageviews: 28450, 
+                    uniqueVisitors: 18420, 
+                    avgTime: "1:25", 
+                    bounceRate: "62.8%",
+                    icon: "fas fa-shopping-cart"
+                }
+            ],
+            
+            // Phân tích thiết bị
+            deviceBreakdown: {
+                labels: ["Mobile", "Desktop", "Tablet"],
+                data: [58, 38, 4],
+                colors: ["#0367a6", "#28a745", "#ffa500"]
+            },
+            
+            // Phân tích trình duyệt
+            browserUsage: {
+                labels: ["Chrome", "Safari", "Firefox", "Edge", "Other"],
+                data: [62, 22, 8, 5, 3],
+                colors: ["#0367a6", "#28a745", "#ffa500", "#6f42c1", "#6c757d"]
+            },
+            
+            // Hoạt động thời gian thực
+            realtimeActivities: [
+                { type: "visit", user: "User #1245", action: "Viewed Dog Food category", page: "/collections/dog-food", time: "Just now" },
+                { type: "add-to-cart", user: "User #2384", action: "Added Premium Dog Food to cart", page: "/products/premium-dog-food-20kg", time: "1 minute ago" },
+                { type: "purchase", user: "User #0921", action: "Completed purchase: $124.50", page: "/checkout", time: "2 minutes ago" },
+                { type: "pageview", user: "User #3567", action: "Read Pet Care Tips article", page: "/blog/pet-care-tips", time: "3 minutes ago" },
+                { type: "visit", user: "User #4412", action: "Browsed Cat Toys", page: "/collections/cat-toys", time: "4 minutes ago" },
+                { type: "add-to-cart", user: "User #5123", action: "Added Cat Litter to cart", page: "/products/cat-litter", time: "5 minutes ago" },
+                { type: "pageview", user: "User #6234", action: "Viewed product reviews", page: "/products/premium-dog-food-20kg/reviews", time: "6 minutes ago" }
+            ],
+            
+            // Dữ liệu heatmap
+            heatmapData: [
+                { label: "Logo", clicks: 845, intensity: 4 },
+                { label: "Search", clicks: 420, intensity: 3 },
+                { label: "Dog Food", clicks: 1250, intensity: 5 },
+                { label: "Cat Food", clicks: 980, intensity: 4 },
+                { label: "Toys", clicks: 650, intensity: 3 },
+                { label: "Cart", clicks: 320, intensity: 2 },
+                { label: "Blog", clicks: 540, intensity: 3 },
+                { label: "Deals", clicks: 720, intensity: 4 },
+                { label: "Login", clicks: 280, intensity: 2 },
+                { label: "Footer", clicks: 180, intensity: 1 }
+            ]
+        };
+
+        // Biến lưu trữ các biểu đồ
+        let trafficOverTimeChart, trafficSourcesChart, deviceBreakdownChart, browserChart;
+        let realtimeInterval;
+        let isRealtimeActive = false;
+
+        // Khởi tạo dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cập nhật thời gian hiện tại
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 60000); // Cập nhật mỗi phút
+
+            // 1. Traffic Over Time Chart
+            const trafficCtx = document.getElementById('trafficOverTimeChart').getContext('2d');
+            trafficOverTimeChart = new Chart(trafficCtx, {
+                type: 'line',
+                data: {
+                    labels: webData.trafficOverTime.sessions.labels,
+                    datasets: [{
+                        label: 'Sessions',
+                        data: webData.trafficOverTime.sessions.data,
+                        borderColor: '#0367a6',
+                        backgroundColor: 'rgba(3, 103, 166, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#0367a6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Traffic Sources Chart (Pie)
+            const sourcesCtx = document.getElementById('trafficSourcesChart').getContext('2d');
+            trafficSourcesChart = new Chart(sourcesCtx, {
+                type: 'pie',
+                data: {
+                    labels: webData.trafficSources.labels,
+                    datasets: [{
+                        data: webData.trafficSources.data,
+                        backgroundColor: webData.trafficSources.colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value}% (${percentage}% of traffic)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Populate Top Pages Table
+            const topPagesBody = document.getElementById('topPagesBody');
+            webData.topPages.forEach(page => {
+                const row = document.createElement('tr');
+                
+                // Tính phần trăm pageviews cho progress bar
+                const maxPageviews = Math.max(...webData.topPages.map(p => p.pageviews));
+                const pageviewPercentage = (page.pageviews / maxPageviews * 100).toFixed(1);
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="page-cell">
+                            <div class="page-icon">
+                                <i class="${page.icon}"></i>
+                            </div>
+                            <div class="page-info">
+                                <h4>${page.name}</h4>
+                                <p>${page.url}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>${page.pageviews.toLocaleString()}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${pageviewPercentage}%; background-color: var(--primary);"></div>
+                        </div>
+                        <small>${pageviewPercentage}% of top page</small>
+                    </td>
+                    <td>${page.uniqueVisitors.toLocaleString()}</td>
+                    <td>${page.avgTime}</td>
+                    <td>${page.bounceRate}</td>
+                `;
+                topPagesBody.appendChild(row);
+            });
+
+            // 4. Device Breakdown Chart
+            const deviceCtx = document.getElementById('deviceBreakdownChart').getContext('2d');
+            deviceBreakdownChart = new Chart(deviceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: webData.deviceBreakdown.labels,
+                    datasets: [{
+                        data: webData.deviceBreakdown.data,
+                        backgroundColor: webData.deviceBreakdown.colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+
+            // 5. Browser Usage Chart
+            const browserCtx = document.getElementById('browserChart').getContext('2d');
+            browserChart = new Chart(browserCtx, {
+                type: 'bar',
+                data: {
+                    labels: webData.browserUsage.labels,
+                    datasets: [{
+                        label: 'Usage (%)',
+                        data: webData.browserUsage.data,
+                        backgroundColor: webData.browserUsage.colors,
+                        borderRadius: 5,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Usage: ${context.parsed.y}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 70,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 6. Create Heatmap
+            const heatmapGrid = document.getElementById('heatmapGrid');
+            webData.heatmapData.forEach(item => {
+                const cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                
+                // Xác định màu sắc dựa trên intensity
+                let bgColor;
+                if (item.intensity === 1) {
+                    bgColor = '#e3f2fd';
+                } else if (item.intensity === 2) {
+                    bgColor = '#90caf9';
+                } else if (item.intensity === 3) {
+                    bgColor = '#42a5f5';
+                } else if (item.intensity === 4) {
+                    bgColor = '#1976d2';
+                } else {
+                    bgColor = '#0d47a1';
+                }
+                
+                cell.style.backgroundColor = bgColor;
+                cell.textContent = item.label;
+                cell.title = `${item.clicks} clicks`;
+                
+                heatmapGrid.appendChild(cell);
+            });
+
+            // 7. Populate Realtime Activity
+            updateRealtimeActivity();
+
+            // 8. Chart controls
+            document.querySelectorAll('.chart-btn[data-metric]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const metric = this.getAttribute('data-metric');
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('.chart-btn[data-metric]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Cập nhật biểu đồ
+                    updateTrafficChart(metric);
+                });
+            });
+            
+            document.querySelectorAll('.chart-btn[data-view]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const view = this.getAttribute('data-view');
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('.chart-btn[data-view]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Cập nhật biểu đồ
+                    updateTrafficSourcesChart(view);
+                });
+            });
+
+            // 9. Realtime toggle
+            document.getElementById('realtimeToggle').addEventListener('click', function() {
+                toggleRealtimeMode();
+            });
+
+            // 10. Filter functionality
+            document.getElementById('timePeriod').addEventListener('change', function() {
+                updateDashboardData(this.value);
+            });
+            
+            document.getElementById('segmentFilter').addEventListener('change', function() {
+                filterBySegment(this.value);
+            });
+        });
+
+        // Hàm cập nhật biểu đồ traffic theo metric
+        function updateTrafficChart(metric) {
+            const data = webData.trafficOverTime[metric];
+            
+            trafficOverTimeChart.data.datasets[0].data = data.data;
+            trafficOverTimeChart.data.datasets[0].label = metric.charAt(0).toUpperCase() + metric.slice(1);
+            trafficOverTimeChart.update();
+            
+            showNotification(`Traffic chart updated to show ${metric}`);
+        }
+
+        // Hàm cập nhật biểu đồ nguồn traffic theo view
+        function updateTrafficSourcesChart(view) {
+            trafficSourcesChart.config.type = view === 'pie' ? 'pie' : 'doughnut';
+            trafficSourcesChart.update();
+            
+            showNotification(`Traffic sources chart updated to ${view} view`);
+        }
+
+        // Hàm cập nhật hoạt động thời gian thực
+        function updateRealtimeActivity() {
+            const activityList = document.getElementById('realtimeActivity');
+            activityList.innerHTML = '';
+            
+            webData.realtimeActivities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                // Xác định icon và màu sắc
+                let iconClass, iconType;
+                if (activity.type === 'visit') {
+                    iconClass = 'fas fa-eye';
+                    iconType = 'visit';
+                } else if (activity.type === 'add-to-cart') {
+                    iconClass = 'fas fa-cart-plus';
+                    iconType = 'add-to-cart';
+                } else if (activity.type === 'purchase') {
+                    iconClass = 'fas fa-shopping-bag';
+                    iconType = 'purchase';
+                } else {
+                    iconClass = 'fas fa-file-alt';
+                    iconType = 'pageview';
+                }
+                
+                activityItem.innerHTML = `
+                    <div class="activity-icon ${iconType}">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${activity.user}: ${activity.action}</h4>
+                        <p>${activity.page}</p>
+                    </div>
+                    <div class="activity-time">${activity.time}</div>
+                `;
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        // Hàm bật/tắt chế độ thời gian thực
+        function toggleRealtimeMode() {
+            const realtimeBtn = document.getElementById('realtimeToggle');
+            const activeUsers = document.getElementById('activeUsers');
+            
+            if (!isRealtimeActive) {
+                // Bật chế độ thời gian thực
+                isRealtimeActive = true;
+                realtimeBtn.classList.add('active');
+                realtimeBtn.innerHTML = '<i class="fas fa-circle"></i> <span>Live View Active</span>';
+                
+                // Cập nhật người dùng hoạt động
+                let userCount = 24;
+                activeUsers.textContent = userCount;
+                
+                // Mô phỏng cập nhật thời gian thực
+                realtimeInterval = setInterval(() => {
+                    // Tăng/giảm ngẫu nhiên số người dùng hoạt động
+                    userCount += Math.floor(Math.random() * 3) - 1;
+                    if (userCount < 15) userCount = 15;
+                    if (userCount > 35) userCount = 35;
+                    
+                    activeUsers.textContent = userCount;
+                    
+                    // Thêm hoạt động mới ngẫu nhiên
+                    addRandomActivity();
+                }, 5000); // Cập nhật mỗi 5 giây
+                
+                showNotification('Realtime mode activated. Live user activity is now being tracked.');
+            } else {
+                // Tắt chế độ thời gian thực
+                isRealtimeActive = false;
+                realtimeBtn.classList.remove('active');
+                realtimeBtn.innerHTML = '<i class="fas fa-circle"></i> <span>Live View</span>';
+                
+                // Dừng cập nhật thời gian thực
+                clearInterval(realtimeInterval);
+                
+                showNotification('Realtime mode deactivated.');
+            }
+        }
+
+        // Hàm thêm hoạt động ngẫu nhiên
+        function addRandomActivity() {
+            const activityTypes = ['visit', 'add-to-cart', 'purchase', 'pageview'];
+            const userActions = [
+                { type: 'visit', actions: ['Viewed product page', 'Browsed category', 'Viewed homepage'] },
+                { type: 'add-to-cart', actions: ['Added product to cart', 'Added multiple items to cart'] },
+                { type: 'purchase', actions: ['Completed purchase', 'Placed an order'] },
+                { type: 'pageview', actions: ['Read blog article', 'Viewed product reviews', 'Checked shipping info'] }
+            ];
+            
+            const pages = [
+                '/products/premium-dog-food-20kg',
+                '/collections/dog-food',
+                '/collections/cat-food',
+                '/blog/pet-care-tips',
+                '/cart',
+                '/checkout',
+                '/collections/toys'
+            ];
+            
+            // Chọn ngẫu nhiên một loại hoạt động
+            const typeIndex = Math.floor(Math.random() * activityTypes.length);
+            const type = activityTypes[typeIndex];
+            const actions = userActions.find(a => a.type === type).actions;
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const page = pages[Math.floor(Math.random() * pages.length)];
+            const userId = Math.floor(Math.random() * 5000) + 1000;
+            
+            // Tạo hoạt động mới
+            const newActivity = {
+                type: type,
+                user: `User #${userId}`,
+                action: action,
+                page: page,
+                time: 'Just now'
+            };
+            
+            // Thêm vào đầu danh sách
+            webData.realtimeActivities.unshift(newActivity);
+            
+            // Giữ chỉ 10 hoạt động gần nhất
+            if (webData.realtimeActivities.length > 10) {
+                webData.realtimeActivities.pop();
+            }
+            
+            // Cập nhật hiển thị
+            updateRealtimeActivity();
+        }
+
+        // Hàm cập nhật dữ liệu dashboard theo khoảng thời gian
+        function updateDashboardData(period) {
+            // Trong thực tế, đây sẽ là lời gọi API để lấy dữ liệu mới
+            // Ở đây chúng ta chỉ minh họa bằng cách cập nhật KPI và thông báo
+            const kpiValues = document.querySelectorAll('.kpi-value');
+            
+            // Tạo biến động ngẫu nhiên dựa trên period
+            let multiplier = 1;
+            if (period === 'today') multiplier = 0.03;
+            if (period === 'yesterday') multiplier = 0.03;
+            if (period === 'last7') multiplier = 0.25;
+            if (period === 'last90') multiplier = 3;
+            if (period === 'realtime') multiplier = 0.01;
+            
+            // Cập nhật KPI với giá trị mới
+            const newValues = [
+                Math.round(124850 * multiplier).toLocaleString(),
+                Math.round(98420 * multiplier).toLocaleString(),
+                Math.round(542310 * multiplier).toLocaleString(),
+                `${(42.8 * (period === 'realtime' ? 0.9 : 1.1)).toFixed(1)}%`,
+                `${Math.floor(3.42 * multiplier)}:${Math.floor((3.42 * multiplier % 1) * 60).toString().padStart(2, '0')}`,
+                `${(4.2 * (period === 'realtime' ? 0.8 : 1.2)).toFixed(1)}%`
+            ];
+            
+            kpiValues.forEach((element, index) => {
+                // Hiệu ứng cập nhật
+                element.style.opacity = '0.5';
+                setTimeout(() => {
+                    element.textContent = newValues[index];
+                    element.style.opacity = '1';
+                }, 300);
+            });
+            
+            // Cập nhật tiêu đề với period
+            const periodText = {
+                'realtime': 'Realtime',
+                'today': 'Today',
+                'yesterday': 'Yesterday',
+                'last7': 'Last 7 Days',
+                'last30': 'Last 30 Days',
+                'last90': 'Last 90 Days'
+            }[period];
+            
+            showNotification(`Dashboard updated for ${periodText}`);
+        }
+
+        // Hàm lọc theo phân khúc
+        function filterBySegment(segment) {
+            // Trong thực tế, đây sẽ là lời gọi API để lọc dữ liệu
+            // Ở đây chúng ta chỉ hiển thị thông báo
+            let segmentText;
+            switch(segment) {
+                case 'new':
+                    segmentText = 'New Visitors';
+                    break;
+                case 'returning':
+                    segmentText = 'Returning Visitors';
+                    break;
+                case 'mobile':
+                    segmentText = 'Mobile Users';
+                    break;
+                case 'desktop':
+                    segmentText = 'Desktop Users';
+                    break;
+                default:
+                    segmentText = 'All Users';
+            }
+            
+            showNotification(`Filtering data for: ${segmentText}`);
+        }
+
+        // Hàm cập nhật thời gian hiện tại
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('vi-VN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            const dateString = now.toLocaleDateString('vi-VN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            document.getElementById('currentTime').textContent = `${dateString}, ${timeString}`;
+        }
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            // Tạo thông báo tạm thời
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Thêm hiệu ứng cho heatmap cells
+        document.addEventListener('DOMContentLoaded', function() {
+            const heatmapCells = document.querySelectorAll('.heatmap-cell');
+            
+            heatmapCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const elementName = this.textContent;
+                    const clicks = this.title.replace(' clicks', '');
+                    
+                    showNotification(`Heatmap element "${elementName}" has ${clicks} clicks in the selected period.`);
+                });
+            });
+            
+            // Thêm hiệu ứng cho các bước trong funnel
+            const funnelSteps = document.querySelectorAll('.funnel-step-bar');
+            
+            funnelSteps.forEach(step => {
+                step.addEventListener('click', function() {
+                    const stepName = this.querySelector('.funnel-step-label').textContent;
+                    const stepValue = this.querySelector('.funnel-step-value').textContent;
+                    
+                    showNotification(`${stepName}: ${stepValue} users`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

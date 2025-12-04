@@ -1,0 +1,2530 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product & Inventory Dashboard - PetStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #fd7e14;
+            --secondary: #e8590c;
+            --success: #2e8b57;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-orange: #ffe5d0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 15px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .filter-controls select, .filter-controls input {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 14px;
+        }
+        
+        .add-product-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .add-product-btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        /* KPI Cards */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .kpi-card.total-products::before {
+            background-color: var(--primary);
+        }
+        
+        .kpi-card.inventory-value::before {
+            background-color: var(--success);
+        }
+        
+        .kpi-card.low-stock::before {
+            background-color: var(--warning);
+        }
+        
+        .kpi-card.out-of-stock::before {
+            background-color: var(--danger);
+        }
+        
+        .kpi-card.top-seller::before {
+            background-color: #6f42c1;
+        }
+        
+        .kpi-card.profit-margin::before {
+            background-color: var(--info);
+        }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+        
+        .kpi-icon.total-products {
+            background-color: var(--primary);
+        }
+        
+        .kpi-icon.inventory-value {
+            background-color: var(--success);
+        }
+        
+        .kpi-icon.low-stock {
+            background-color: var(--warning);
+        }
+        
+        .kpi-icon.out-of-stock {
+            background-color: var(--danger);
+        }
+        
+        .kpi-icon.top-seller {
+            background-color: #6f42c1;
+        }
+        
+        .kpi-icon.profit-margin {
+            background-color: var(--info);
+        }
+        
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .kpi-detail {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-btn {
+            padding: 5px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chart-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .chart-btn:hover:not(.active) {
+            background-color: #f8f9fa;
+        }
+        
+        /* Product Performance Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: var(--dark);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Products Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--light-orange);
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .product-cell {
+            display: flex;
+            align-items: center;
+        }
+        
+        .product-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 20px;
+        }
+        
+        .product-info h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .product-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .category-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .category-food {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .category-toys {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .category-accessories {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .category-health {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .category-grooming {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .stock-indicator {
+            display: flex;
+            align-items: center;
+        }
+        
+        .stock-bar {
+            width: 80px;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+        
+        .stock-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .stock-good {
+            background-color: var(--success);
+        }
+        
+        .stock-medium {
+            background-color: var(--warning);
+        }
+        
+        .stock-low {
+            background-color: var(--danger);
+        }
+        
+        .stock-out {
+            background-color: #6c757d;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .edit-btn {
+            background-color: #e7f1ff;
+            color: #0d6efd;
+        }
+        
+        .delete-btn {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+        
+        .restock-btn {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        /* Inventory Overview */
+        .inventory-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .inventory-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .inventory-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .inventory-status {
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .status-good {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .inventory-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .inventory-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-metric {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Restock Alerts */
+        .alert-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .alert-item {
+            padding: 15px;
+            border-left: 4px solid var(--warning);
+            background-color: #fff9db;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .alert-item.critical {
+            border-left-color: var(--danger);
+            background-color: #f8d7da;
+        }
+        
+        .alert-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .alert-info p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .kpi-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .inventory-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .filter-controls, .add-product-btn {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #999;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                <h1>PetStore Analytics</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marketing Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Sales Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Customer 360</span>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-cube"></i>
+                    <span>Product & Inventory</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2><i class="fas fa-cube"></i> Product & Inventory Dashboard</h2>
+                <div class="header-controls">
+                    <div class="filter-controls">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="food">Pet Food</option>
+                            <option value="toys">Toys</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="health">Health & Care</option>
+                            <option value="grooming">Grooming</option>
+                        </select>
+                        <select id="stockFilter">
+                            <option value="all">All Stock Levels</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                            <option value="good">Good Stock</option>
+                        </select>
+                        <input type="text" id="searchProduct" placeholder="Search products...">
+                    </div>
+                    <button class="add-product-btn" id="addProductBtn">
+                        <i class="fas fa-plus"></i>
+                        Add New Product
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-container">
+                <div class="kpi-card total-products">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">142</div>
+                            <div class="kpi-label">Total Products</div>
+                        </div>
+                        <div class="kpi-icon total-products">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Active: 128</span>
+                        <span>Inactive: 14</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card inventory-value">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">$245,800</div>
+                            <div class="kpi-label">Inventory Value</div>
+                        </div>
+                        <div class="kpi-icon inventory-value">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Avg. per product: $1,730</span>
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltiptext">Total value of all inventory at cost price</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card low-stock">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">18</div>
+                            <div class="kpi-label">Low Stock Items</div>
+                        </div>
+                        <div class="kpi-icon low-stock">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Below safety stock</span>
+                        <span>3 need urgent restock</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card out-of-stock">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">7</div>
+                            <div class="kpi-label">Out of Stock</div>
+                        </div>
+                        <div class="kpi-icon out-of-stock">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Lost sales: ~$8,400</span>
+                        <span>Restock in progress: 4</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card top-seller">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">2,450</div>
+                            <div class="kpi-label">Top Seller (units)</div>
+                        </div>
+                        <div class="kpi-icon top-seller">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Premium Dog Food 20kg</span>
+                        <span>$61,250 revenue</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card profit-margin">
+                    <div class="kpi-header">
+                        <div>
+                            <div class="kpi-value">42.5%</div>
+                            <div class="kpi-label">Avg. Profit Margin</div>
+                        </div>
+                        <div class="kpi-icon profit-margin">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                    </div>
+                    <div class="kpi-detail">
+                        <span>Highest: 68% (Toys)</span>
+                        <span>Lowest: 28% (Food)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="products">Product Performance</button>
+                <button class="tab" data-tab="inventory">Inventory Management</button>
+                <button class="tab" data-tab="analytics">Product Analytics</button>
+            </div>
+
+            <!-- Tab 1: Product Performance -->
+            <div class="tab-content active" id="products-tab">
+                <!-- Charts Container -->
+                <div class="charts-container">
+                    <!-- Revenue by Category Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Revenue by Category</div>
+                            <div class="chart-controls">
+                                <button class="chart-btn active" data-metric="revenue">Revenue</button>
+                                <button class="chart-btn" data-metric="units">Units</button>
+                                <button class="chart-btn" data-metric="profit">Profit</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueByCategoryChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Products Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Top 5 Products by Revenue</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="topProductsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="table-container">
+                    <div class="table-title">
+                        <i class="fas fa-list"></i> All Products
+                        <span style="font-size: 14px; color: var(--gray); font-weight: normal; margin-left: auto;">
+                            Showing 1-20 of 142 products
+                        </span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Cost</th>
+                                <th>Margin</th>
+                                <th>Stock</th>
+                                <th>Sales (30 days)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <button id="loadMoreBtn" style="padding: 10px 20px; background: var(--light-orange); color: var(--secondary); border: 1px solid var(--primary); border-radius: 5px; cursor: pointer;">
+                            Load More Products
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Inventory Management -->
+            <div class="tab-content" id="inventory-tab">
+                <!-- Inventory Overview -->
+                <div class="inventory-overview">
+                    <!-- Stock Status Summary -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-boxes-stacked"></i> Stock Status Summary
+                            </div>
+                            <div class="inventory-status status-good">
+                                <i class="fas fa-check-circle"></i> Healthy
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; margin-bottom: 20px;">
+                            <div class="product-metric">
+                                <div class="metric-value" style="color: var(--success);">117</div>
+                                <div class="metric-label">Good Stock</div>
+                            </div>
+                            <div class="product-metric">
+                                <div class="metric-value" style="color: var(--warning);">18</div>
+                                <div class="metric-label">Low Stock</div>
+                            </div>
+                            <div class="product-metric">
+                                <div class="metric-value" style="color: var(--danger);">7</div>
+                                <div class="metric-label">Out of Stock</div>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-item">
+                            <div>
+                                <div style="font-weight: 500;">Inventory Turnover</div>
+                                <div style="font-size: 12px; color: #6c757d;">Last 30 days</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600;">4.2</div>
+                                <div style="font-size: 12px; color: #6c757d;">Industry avg: 3.8</div>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-item">
+                            <div>
+                                <div style="font-weight: 500;">Days of Inventory</div>
+                                <div style="font-size: 12px; color: #6c757d;">Based on current sales</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600;">45 days</div>
+                                <div style="font-size: 12px; color: #6c757d;">Target: 30-60 days</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Stock Movements -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-arrow-right-arrow-left"></i> Recent Stock Movements
+                            </div>
+                            <div class="inventory-status">
+                                Last 7 days
+                            </div>
+                        </div>
+                        
+                        <div id="stockMovements">
+                            <!-- Stock movements will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Restocks -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-truck-loading"></i> Upcoming Restocks
+                            </div>
+                            <div class="inventory-status status-warning">
+                                <i class="fas fa-clock"></i> 5 Pending
+                            </div>
+                        </div>
+                        
+                        <div id="upcomingRestocks">
+                            <!-- Upcoming restocks will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Restock Alerts -->
+                <div class="alert-container">
+                    <div class="table-title">
+                        <i class="fas fa-bell"></i> Restock Alerts
+                    </div>
+                    
+                    <div id="restockAlerts">
+                        <!-- Restock alerts will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Low Stock Products Table -->
+                <div class="table-container">
+                    <div class="table-title">
+                        <i class="fas fa-exclamation-triangle"></i> Low & Out of Stock Products
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Current Stock</th>
+                                <th>Safety Stock</th>
+                                <th>Avg. Daily Sales</th>
+                                <th>Days Until Stockout</th>
+                                <th>Suggested Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lowStockTableBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Product Analytics -->
+            <div class="tab-content" id="analytics-tab">
+                <!-- Charts Container -->
+                <div class="charts-container">
+                    <!-- Profit Margin by Category -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Profit Margin by Category</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="profitMarginChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Sales Trend Analysis -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Sales Trend Analysis</div>
+                            <div class="chart-controls">
+                                <button class="chart-btn active" data-period="monthly">Monthly</button>
+                                <button class="chart-btn" data-period="quarterly">Quarterly</button>
+                                <button class="chart-btn" data-period="yearly">Yearly</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Performance Metrics -->
+                <div class="inventory-overview">
+                    <!-- ABC Analysis -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-chart-pie"></i> ABC Analysis
+                            </div>
+                            <div class="inventory-status">
+                                <span class="tooltip">
+                                    Pareto Principle
+                                    <span class="tooltiptext">80% of revenue comes from 20% of products</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <div style="width: 12px; height: 12px; background-color: #28a745; border-radius: 50%; margin-right: 10px;"></div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>A Items (Top 20%)</span>
+                                        <span style="font-weight: 600;">$392,000</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #6c757d;">28 products • 78% of revenue</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <div style="width: 12px; height: 12px; background-color: #ffc107; border-radius: 50%; margin-right: 10px;"></div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>B Items (Middle 30%)</span>
+                                        <span style="font-weight: 600;">$85,000</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #6c757d;">43 products • 17% of revenue</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 12px; height: 12px; background-color: #dc3545; border-radius: 50%; margin-right: 10px;"></div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>C Items (Bottom 50%)</span>
+                                        <span style="font-weight: 600;">$23,000</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #6c757d;">71 products • 5% of revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seasonality Analysis -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-sun"></i> Seasonality Analysis
+                            </div>
+                            <div class="inventory-status">
+                                Current: High Season
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-weight: 600; margin-bottom: 10px;">Top Seasonal Products</div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <div style="width: 40px; height: 40px; background: #ffe5d0; color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                    <i class="fas fa-dog"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500;">Dog Cooling Mats</div>
+                                    <div style="font-size: 12px; color: #6c757d;">Summer sales: +320% vs avg</div>
+                                </div>
+                                <div style="font-weight: 600; color: var(--success);">+320%</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <div style="width: 40px; height: 40px; background: #ffe5d0; color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500;">Christmas Pet Toys</div>
+                                    <div style="font-size: 12px; color: #6c757d;">Winter sales: +450% vs avg</div>
+                                </div>
+                                <div style="font-weight: 600; color: var(--success);">+450%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Performance Matrix -->
+                    <div class="inventory-card">
+                        <div class="inventory-header">
+                            <div class="inventory-title">
+                                <i class="fas fa-th"></i> Product Performance Matrix
+                            </div>
+                            <div class="inventory-status">
+                                4 Quadrants
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                            <div style="background: #d4edda; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Stars</div>
+                                <div style="font-size: 12px; color: #155724;">High Growth, High Share</div>
+                                <div style="font-size: 11px; color: #6c757d; margin-top: 5px;">12 products</div>
+                            </div>
+                            
+                            <div style="background: #f8d7da; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Question Marks</div>
+                                <div style="font-size: 12px; color: #721c24;">High Growth, Low Share</div>
+                                <div style="font-size: 11px; color: #6c757d; margin-top: 5px;">18 products</div>
+                            </div>
+                            
+                            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Cash Cows</div>
+                                <div style="font-size: 12px; color: #856404;">Low Growth, High Share</div>
+                                <div style="font-size: 11px; color: #6c757d; margin-top: 5px;">16 products</div>
+                            </div>
+                            
+                            <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: center;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Dogs</div>
+                                <div style="font-size: 12px; color: #495057;">Low Growth, Low Share</div>
+                                <div style="font-size: 11px; color: #6c757d; margin-top: 5px;">96 products</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Product & Inventory Dashboard • PetStore E-commerce • Data updated: Today, 4:15 PM</p>
+                <p>Next inventory audit: Monday, 9:00 AM | Supplier meeting: Wednesday, 2:00 PM</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal" id="addProductModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add New Product</div>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="addProductForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Product Name *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Category *</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="food">Pet Food</option>
+                            <option value="toys">Toys</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="health">Health & Care</option>
+                            <option value="grooming">Grooming</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Price ($) *</label>
+                        <input type="number" id="productPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCost">Cost ($) *</label>
+                        <input type="number" id="productCost" step="0.01" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="initialStock">Initial Stock *</label>
+                        <input type="number" id="initialStock" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="safetyStock">Safety Stock Level</label>
+                        <input type="number" id="safetyStock">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productSupplier">Supplier</label>
+                    <input type="text" id="productSupplier">
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu cho Product & Inventory Dashboard
+        const productData = {
+            // Danh sách sản phẩm
+            products: [
+                { 
+                    id: "PROD-001", 
+                    name: "Premium Dog Food (20kg)", 
+                    category: "food", 
+                    price: 49.99, 
+                    cost: 25.00, 
+                    stock: 125, 
+                    safetyStock: 50,
+                    sales30Days: 2450,
+                    revenue30Days: 122475.50,
+                    margin: 49.9,
+                    image: "https://via.placeholder.com/50/28a745/FFFFFF?text=DF"
+                },
+                { 
+                    id: "PROD-002", 
+                    name: "Cat Litter Premium", 
+                    category: "health", 
+                    price: 24.99, 
+                    cost: 12.50, 
+                    stock: 42, 
+                    safetyStock: 30,
+                    sales30Days: 980,
+                    revenue30Days: 24490.20,
+                    margin: 50.0,
+                    image: "https://via.placeholder.com/50/17a2b8/FFFFFF?text=CL"
+                },
+                { 
+                    id: "PROD-003", 
+                    name: "Interactive Cat Toy", 
+                    category: "toys", 
+                    price: 12.50, 
+                    cost: 4.00, 
+                    stock: 320, 
+                    safetyStock: 100,
+                    sales30Days: 845,
+                    revenue30Days: 10562.50,
+                    margin: 68.0,
+                    image: "https://via.placeholder.com/50/ffc107/000000?text=CT"
+                },
+                { 
+                    id: "PROD-004", 
+                    name: "Dog Leash Set", 
+                    category: "accessories", 
+                    price: 18.99, 
+                    cost: 8.00, 
+                    stock: 156, 
+                    safetyStock: 75,
+                    sales30Days: 720,
+                    revenue30Days: 13672.80,
+                    margin: 57.9,
+                    image: "https://via.placeholder.com/50/6f42c1/FFFFFF?text=DL"
+                },
+                { 
+                    id: "PROD-005", 
+                    name: "Pet Grooming Kit", 
+                    category: "grooming", 
+                    price: 29.99, 
+                    cost: 12.00, 
+                    stock: 87, 
+                    safetyStock: 40,
+                    sales30Days: 580,
+                    revenue30Days: 17394.20,
+                    margin: 60.0,
+                    image: "https://via.placeholder.com/50/e83e8c/FFFFFF?text=GK"
+                },
+                { 
+                    id: "PROD-006", 
+                    name: "Dog Chew Toys (Pack of 3)", 
+                    category: "toys", 
+                    price: 15.99, 
+                    cost: 5.50, 
+                    stock: 210, 
+                    safetyStock: 100,
+                    sales30Days: 920,
+                    revenue30Days: 14710.80,
+                    margin: 65.6,
+                    image: "https://via.placeholder.com/50/ffc107/000000?text=DT"
+                },
+                { 
+                    id: "PROD-007", 
+                    name: "Cat Food (10kg)", 
+                    category: "food", 
+                    price: 34.99, 
+                    cost: 18.00, 
+                    stock: 68, 
+                    safetyStock: 50,
+                    sales30Days: 720,
+                    revenue30Days: 25192.80,
+                    margin: 48.6,
+                    image: "https://via.placeholder.com/50/28a745/FFFFFF?text=CF"
+                },
+                { 
+                    id: "PROD-008", 
+                    name: "Pet Carrier Medium", 
+                    category: "accessories", 
+                    price: 59.99, 
+                    cost: 25.00, 
+                    stock: 32, 
+                    safetyStock: 20,
+                    sales30Days: 145,
+                    revenue30Days: 8698.55,
+                    margin: 58.3,
+                    image: "https://via.placeholder.com/50/6f42c1/FFFFFF?text=PC"
+                },
+                { 
+                    id: "PROD-009", 
+                    name: "Flea & Tick Treatment", 
+                    category: "health", 
+                    price: 22.50, 
+                    cost: 9.00, 
+                    stock: 185, 
+                    safetyStock: 80,
+                    sales30Days: 640,
+                    revenue30Days: 14400.00,
+                    margin: 60.0,
+                    image: "https://via.placeholder.com/50/17a2b8/FFFFFF?text=FT"
+                },
+                { 
+                    id: "PROD-010", 
+                    name: "Pet Shampoo (500ml)", 
+                    category: "grooming", 
+                    price: 12.99, 
+                    cost: 4.50, 
+                    stock: 0, 
+                    safetyStock: 30,
+                    sales30Days: 420,
+                    revenue30Days: 5455.80,
+                    margin: 65.4,
+                    image: "https://via.placeholder.com/50/e83e8c/FFFFFF?text=PS"
+                },
+                { 
+                    id: "PROD-011", 
+                    name: "Dog Bed Large", 
+                    category: "accessories", 
+                    price: 79.99, 
+                    cost: 35.00, 
+                    stock: 28, 
+                    safetyStock: 15,
+                    sales30Days: 95,
+                    revenue30Days: 7599.05,
+                    margin: 56.3,
+                    image: "https://via.placeholder.com/50/6f42c1/FFFFFF?text=DB"
+                },
+                { 
+                    id: "PROD-012", 
+                    name: "Bird Food Mix", 
+                    category: "food", 
+                    price: 14.99, 
+                    cost: 7.50, 
+                    stock: 15, 
+                    safetyStock: 25,
+                    sales30Days: 180,
+                    revenue30Days: 2698.20,
+                    margin: 50.0,
+                    image: "https://via.placeholder.com/50/28a745/FFFFFF?text=BF"
+                }
+            ],
+            
+            // Doanh thu theo danh mục
+            revenueByCategory: {
+                revenue: {
+                    labels: ["Pet Food", "Toys", "Accessories", "Health & Care", "Grooming"],
+                    data: [148366.5, 25273.3, 29970.35, 38890.2, 22850.0],
+                    colors: ["#28a745", "#ffc107", "#6f42c1", "#17a2b8", "#e83e8c"]
+                },
+                units: {
+                    labels: ["Pet Food", "Toys", "Accessories", "Health & Care", "Grooming"],
+                    data: [3350, 1765, 960, 1620, 1000],
+                    colors: ["#28a745", "#ffc107", "#6f42c1", "#17a2b8", "#e83e8c"]
+                },
+                profit: {
+                    labels: ["Pet Food", "Toys", "Accessories", "Health & Care", "Grooming"],
+                    data: [61500, 16500, 12500, 15600, 10500],
+                    colors: ["#28a745", "#ffc107", "#6f42c1", "#17a2b8", "#e83e8c"]
+                }
+            },
+            
+            // Top 5 sản phẩm
+            topProducts: {
+                labels: ["Dog Food 20kg", "Cat Litter", "Cat Food 10kg", "Dog Leash Set", "Grooming Kit"],
+                revenue: [122475.5, 24490.2, 25192.8, 13672.8, 17394.2],
+                units: [2450, 980, 720, 720, 580]
+            },
+            
+            // Biên lợi nhuận theo danh mục
+            profitMarginByCategory: {
+                labels: ["Pet Food", "Toys", "Accessories", "Health & Care", "Grooming"],
+                data: [28.5, 65.3, 58.1, 55.2, 62.7]
+            },
+            
+            // Xu hướng bán hàng
+            salesTrend: {
+                monthly: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+                    data: [125000, 132000, 118000, 145000, 152000, 148000, 162000]
+                },
+                quarterly: {
+                    labels: ["Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023", "Q1 2024"],
+                    data: [375000, 415000, 432000, 485000, 462000]
+                },
+                yearly: {
+                    labels: ["2020", "2021", "2022", "2023", "2024"],
+                    data: [1250000, 1420000, 1680000, 1707000, 1850000]
+                }
+            },
+            
+            // Chuyển động tồn kho
+            stockMovements: [
+                { product: "Dog Food 20kg", type: "sale", quantity: -50, date: "2 hours ago", reference: "ORD-7842" },
+                { product: "Cat Litter", type: "restock", quantity: 200, date: "1 day ago", reference: "PO-2341" },
+                { product: "Pet Shampoo", type: "sale", quantity: -12, date: "1 day ago", reference: "ORD-7841" },
+                { product: "Dog Chew Toys", type: "adjustment", quantity: 5, date: "2 days ago", reference: "ADJ-042" },
+                { product: "Cat Food 10kg", type: "sale", quantity: -24, date: "3 days ago", reference: "ORD-7839" }
+            ],
+            
+            // Sắp tái tồn kho
+            upcomingRestocks: [
+                { product: "Dog Food 20kg", supplier: "Premium Pet Foods", quantity: 500, eta: "Tomorrow", status: "confirmed" },
+                { product: "Cat Food 10kg", supplier: "Feline Nutrition Co", quantity: 300, eta: "2 days", status: "shipped" },
+                { product: "Pet Shampoo", supplier: "Grooming Supplies Inc", quantity: 200, eta: "3 days", status: "processing" },
+                { product: "Bird Food Mix", supplier: "Avian Feed Co", quantity: 150, eta: "5 days", status: "ordered" }
+            ],
+            
+            // Cảnh báo tái tồn kho
+            restockAlerts: [
+                { product: "Pet Shampoo", currentStock: 0, safetyStock: 30, daysUntilStockout: 0, urgency: "critical" },
+                { product: "Bird Food Mix", currentStock: 15, safetyStock: 25, daysUntilStockout: 5, urgency: "high" },
+                { product: "Cat Food 10kg", currentStock: 68, safetyStock: 50, daysUntilStockout: 12, urgency: "medium" }
+            ],
+            
+            // Sản phẩm tồn kho thấp
+            lowStockProducts: [
+                { product: "Pet Shampoo", currentStock: 0, safetyStock: 30, avgDailySales: 14, daysUntilStockout: 0, suggestedOrder: 200 },
+                { product: "Bird Food Mix", currentStock: 15, safetyStock: 25, avgDailySales: 6, daysUntilStockout: 5, suggestedOrder: 150 },
+                { product: "Dog Bed Large", currentStock: 28, safetyStock: 15, avgDailySales: 3, daysUntilStockout: 9, suggestedOrder: 100 },
+                { product: "Cat Food 10kg", currentStock: 68, safetyStock: 50, avgDailySales: 24, daysUntilStockout: 12, suggestedOrder: 300 },
+                { product: "Dog Food 20kg", currentStock: 125, safetyStock: 50, avgDailySales: 82, daysUntilStockout: 15, suggestedOrder: 500 }
+            ]
+        };
+
+        // Biến lưu trữ các biểu đồ
+        let revenueChart, topProductsChart, profitMarginChart, salesTrendChart;
+
+        // Khởi tạo dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Revenue by Category Chart
+            const revenueCtx = document.getElementById('revenueByCategoryChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: productData.revenueByCategory.revenue.labels,
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: productData.revenueByCategory.revenue.data,
+                        backgroundColor: productData.revenueByCategory.revenue.colors,
+                        borderRadius: 5,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: $${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '$' + (value/1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Top Products Chart
+            const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+            topProductsChart = new Chart(topProductsCtx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: productData.topProducts.labels,
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: productData.topProducts.revenue,
+                        backgroundColor: 'rgba(253, 126, 20, 0.7)',
+                        borderRadius: 5,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: $${context.parsed.x.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '$' + (value/1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Populate Products Table
+            const productsTableBody = document.getElementById('productsTableBody');
+            productData.products.forEach(product => {
+                const row = createProductRow(product);
+                productsTableBody.appendChild(row);
+            });
+
+            // 4. Profit Margin Chart (Tab 3)
+            const profitMarginCtx = document.getElementById('profitMarginChart').getContext('2d');
+            profitMarginChart = new Chart(profitMarginCtx, {
+                type: 'radar',
+                data: {
+                    labels: productData.profitMarginByCategory.labels,
+                    datasets: [{
+                        label: 'Profit Margin (%)',
+                        data: productData.profitMarginByCategory.data,
+                        backgroundColor: 'rgba(253, 126, 20, 0.2)',
+                        borderColor: 'rgba(253, 126, 20, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(253, 126, 20, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0,0,0,0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            min: 0,
+                            max: 70,
+                            ticks: {
+                                stepSize: 10,
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 5. Sales Trend Chart (Tab 3)
+            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+            salesTrendChart = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: productData.salesTrend.monthly.labels,
+                    datasets: [{
+                        label: 'Revenue',
+                        data: productData.salesTrend.monthly.data,
+                        borderColor: '#fd7e14',
+                        backgroundColor: 'rgba(253, 126, 20, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#fd7e14',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: $${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Revenue ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '$' + (value/1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 6. Populate Stock Movements (Tab 2)
+            const stockMovements = document.getElementById('stockMovements');
+            productData.stockMovements.forEach(movement => {
+                const movementItem = document.createElement('div');
+                movementItem.className = 'inventory-item';
+                
+                // Xác định icon và màu sắc
+                let iconClass, iconColor;
+                if (movement.type === 'sale') {
+                    iconClass = 'fas fa-arrow-down';
+                    iconColor = '#dc3545';
+                } else if (movement.type === 'restock') {
+                    iconClass = 'fas fa-arrow-up';
+                    iconColor = '#28a745';
+                } else {
+                    iconClass = 'fas fa-adjust';
+                    iconColor = '#6c757d';
+                }
+                
+                movementItem.innerHTML = `
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background-color: ${iconColor}20; color: ${iconColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">${movement.product}</div>
+                                <div style="font-size: 12px; color: #6c757d;">${movement.reference}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600; color: ${iconColor};">${movement.quantity > 0 ? '+' : ''}${movement.quantity} units</div>
+                        <div style="font-size: 12px; color: #6c757d;">${movement.date}</div>
+                    </div>
+                `;
+                stockMovements.appendChild(movementItem);
+            });
+
+            // 7. Populate Upcoming Restocks (Tab 2)
+            const upcomingRestocks = document.getElementById('upcomingRestocks');
+            productData.upcomingRestocks.forEach(restock => {
+                const restockItem = document.createElement('div');
+                restockItem.className = 'inventory-item';
+                
+                // Xác định trạng thái
+                let statusColor, statusIcon;
+                if (restock.status === 'confirmed') {
+                    statusColor = '#28a745';
+                    statusIcon = 'fas fa-check-circle';
+                } else if (restock.status === 'shipped') {
+                    statusColor = '#17a2b8';
+                    statusIcon = 'fas fa-shipping-fast';
+                } else {
+                    statusColor = '#ffc107';
+                    statusIcon = 'fas fa-clock';
+                }
+                
+                restockItem.innerHTML = `
+                    <div>
+                        <div style="font-weight: 500;">${restock.product}</div>
+                        <div style="font-size: 12px; color: #6c757d;">${restock.supplier}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600;">${restock.quantity} units</div>
+                        <div style="font-size: 12px; color: ${statusColor}; display: flex; align-items: center; gap: 5px; justify-content: flex-end;">
+                            <i class="${statusIcon}"></i>
+                            <span>ETA: ${restock.eta}</span>
+                        </div>
+                    </div>
+                `;
+                upcomingRestocks.appendChild(restockItem);
+            });
+
+            // 8. Populate Restock Alerts (Tab 2)
+            const restockAlerts = document.getElementById('restockAlerts');
+            productData.restockAlerts.forEach(alert => {
+                const alertItem = document.createElement('div');
+                alertItem.className = `alert-item ${alert.urgency === 'critical' ? 'critical' : ''}`;
+                
+                let urgencyText, actionText;
+                if (alert.urgency === 'critical') {
+                    urgencyText = 'CRITICAL';
+                    actionText = 'Restock immediately';
+                } else if (alert.urgency === 'high') {
+                    urgencyText = 'HIGH PRIORITY';
+                    actionText = 'Restock within 3 days';
+                } else {
+                    urgencyText = 'MEDIUM PRIORITY';
+                    actionText = 'Monitor closely';
+                }
+                
+                alertItem.innerHTML = `
+                    <div class="alert-info">
+                        <h4>${alert.product} - ${urgencyText}</h4>
+                        <p>Current stock: ${alert.currentStock} units | Safety stock: ${alert.safetyStock} units | ${actionText}</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 8px 15px; font-size: 14px;" onclick="restockProduct('${alert.product}')">
+                        Order Now
+                    </button>
+                `;
+                restockAlerts.appendChild(alertItem);
+            });
+
+            // 9. Populate Low Stock Table (Tab 2)
+            const lowStockTableBody = document.getElementById('lowStockTableBody');
+            productData.lowStockProducts.forEach(product => {
+                const row = document.createElement('tr');
+                
+                // Xác định màu cho daysUntilStockout
+                let daysColor;
+                if (product.daysUntilStockout === 0) {
+                    daysColor = 'var(--danger)';
+                } else if (product.daysUntilStockout <= 7) {
+                    daysColor = 'var(--warning)';
+                } else {
+                    daysColor = 'var(--success)';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="product-cell">
+                            <div class="product-image">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="product-info">
+                                <h4>${product.product}</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="stock-indicator">
+                            <div class="stock-bar">
+                                <div class="stock-fill ${product.currentStock === 0 ? 'stock-out' : (product.currentStock <= product.safetyStock ? 'stock-low' : 'stock-good')}" 
+                                     style="width: ${Math.min(100, (product.currentStock / (product.safetyStock * 2)) * 100)}%">
+                                </div>
+                            </div>
+                            <span>${product.currentStock}</span>
+                        </div>
+                    </td>
+                    <td>${product.safetyStock}</td>
+                    <td>${product.avgDailySales}</td>
+                    <td style="color: ${daysColor}; font-weight: 600;">${product.daysUntilStockout} days</td>
+                    <td>${product.suggestedOrder} units</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn restock-btn" onclick="restockProduct('${product.product}')">
+                                <i class="fas fa-truck-loading"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                lowStockTableBody.appendChild(row);
+            });
+
+            // 10. Tab functionality
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Cập nhật trạng thái active của tab
+                    document.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Hiển thị nội dung tab tương ứng
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // 11. Chart controls
+            document.querySelectorAll('.chart-btn[data-metric]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const metric = this.getAttribute('data-metric');
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('.chart-btn[data-metric]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Cập nhật biểu đồ
+                    updateRevenueChart(metric);
+                });
+            });
+            
+            document.querySelectorAll('.chart-btn[data-period]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const period = this.getAttribute('data-period');
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('.chart-btn[data-period]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Cập nhật biểu đồ
+                    updateSalesTrendChart(period);
+                });
+            });
+
+            // 12. Filter functionality
+            document.getElementById('categoryFilter').addEventListener('change', function() {
+                filterProducts();
+            });
+            
+            document.getElementById('stockFilter').addEventListener('change', function() {
+                filterProducts();
+            });
+            
+            document.getElementById('searchProduct').addEventListener('input', function() {
+                filterProducts();
+            });
+
+            // 13. Modal functionality
+            document.getElementById('addProductBtn').addEventListener('click', function() {
+                document.getElementById('addProductModal').style.display = 'flex';
+            });
+            
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                document.getElementById('addProductModal').style.display = 'none';
+            });
+            
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                document.getElementById('addProductModal').style.display = 'none';
+            });
+            
+            // Đóng modal khi click ra ngoài
+            document.getElementById('addProductModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+            
+            // Xử lý form submit
+            document.getElementById('addProductForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewProduct();
+            });
+
+            // 14. Load more products button
+            document.getElementById('loadMoreBtn').addEventListener('click', function() {
+                loadMoreProducts();
+            });
+        });
+
+        // Hàm tạo row cho sản phẩm
+        function createProductRow(product) {
+            const row = document.createElement('tr');
+            
+            // Xác định category badge
+            let categoryClass, categoryText;
+            switch(product.category) {
+                case 'food':
+                    categoryClass = 'category-food';
+                    categoryText = 'Pet Food';
+                    break;
+                case 'toys':
+                    categoryClass = 'category-toys';
+                    categoryText = 'Toys';
+                    break;
+                case 'accessories':
+                    categoryClass = 'category-accessories';
+                    categoryText = 'Accessories';
+                    break;
+                case 'health':
+                    categoryClass = 'category-health';
+                    categoryText = 'Health & Care';
+                    break;
+                case 'grooming':
+                    categoryClass = 'category-grooming';
+                    categoryText = 'Grooming';
+                    break;
+            }
+            
+            // Xác định trạng thái stock
+            let stockClass;
+            if (product.stock === 0) {
+                stockClass = 'stock-out';
+            } else if (product.stock <= product.safetyStock) {
+                stockClass = 'stock-low';
+            } else if (product.stock <= product.safetyStock * 2) {
+                stockClass = 'stock-medium';
+            } else {
+                stockClass = 'stock-good';
+            }
+            
+            // Tính phần trăm stock
+            const stockPercentage = Math.min(100, (product.stock / (product.safetyStock * 3)) * 100);
+            
+            row.innerHTML = `
+                <td>
+                    <div class="product-cell">
+                        <div class="product-image" style="background-image: url('${product.image}'); background-size: cover;">
+                            ${!product.image.includes('http') ? `<i class="fas fa-box"></i>` : ''}
+                        </div>
+                        <div class="product-info">
+                            <h4>${product.name}</h4>
+                            <p>${product.id}</p>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="category-badge ${categoryClass}">${categoryText}</span></td>
+                <td>$${product.price.toFixed(2)}</td>
+                <td>$${product.cost.toFixed(2)}</td>
+                <td>${product.margin.toFixed(1)}%</td>
+                <td>
+                    <div class="stock-indicator">
+                        <div class="stock-bar">
+                            <div class="stock-fill ${stockClass}" style="width: ${stockPercentage}%"></div>
+                        </div>
+                        <span>${product.stock}</span>
+                    </div>
+                </td>
+                <td>${product.sales30Days.toLocaleString()} units</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editProduct('${product.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteProduct('${product.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        ${product.stock <= product.safetyStock ? 
+                            `<button class="action-btn restock-btn" onclick="restockProduct('${product.name}')">
+                                <i class="fas fa-truck-loading"></i>
+                            </button>` : 
+                            ''
+                        }
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+
+        // Hàm cập nhật biểu đồ doanh thu theo metric
+        function updateRevenueChart(metric) {
+            const data = productData.revenueByCategory[metric];
+            
+            revenueChart.data.datasets[0].data = data.data;
+            revenueChart.data.datasets[0].backgroundColor = data.colors;
+            
+            // Cập nhật label và tooltip
+            let label, tooltipLabel;
+            if (metric === 'revenue') {
+                label = 'Revenue ($)';
+                tooltipLabel = 'Revenue: $';
+            } else if (metric === 'units') {
+                label = 'Units Sold';
+                tooltipLabel = 'Units: ';
+            } else {
+                label = 'Profit ($)';
+                tooltipLabel = 'Profit: $';
+            }
+            
+            revenueChart.data.datasets[0].label = label;
+            revenueChart.options.plugins.tooltip.callbacks.label = function(context) {
+                return `${label}: ${metric === 'units' ? context.parsed.y.toLocaleString() : '$' + context.parsed.y.toLocaleString()}`;
+            };
+            
+            revenueChart.update();
+            showNotification(`Revenue chart updated to show ${metric}`);
+        }
+
+        // Hàm cập nhật biểu đồ xu hướng bán hàng
+        function updateSalesTrendChart(period) {
+            const data = productData.salesTrend[period];
+            
+            salesTrendChart.data.labels = data.labels;
+            salesTrendChart.data.datasets[0].data = data.data;
+            salesTrendChart.update();
+            
+            showNotification(`Sales trend updated to ${period} view`);
+        }
+
+        // Hàm lọc sản phẩm
+        function filterProducts() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const stockFilter = document.getElementById('stockFilter').value;
+            const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('#productsTableBody tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const categoryCell = row.cells[1].textContent.trim().toLowerCase();
+                const stockText = row.cells[5].querySelector('span').textContent;
+                const stock = parseInt(stockText);
+                const productName = row.cells[0].querySelector('h4').textContent.toLowerCase();
+                const productId = row.cells[0].querySelector('p').textContent.toLowerCase();
+                
+                let categoryMatch = true;
+                if (categoryFilter !== 'all') {
+                    const categoryMap = {
+                        'food': 'pet food',
+                        'toys': 'toys',
+                        'accessories': 'accessories',
+                        'health': 'health & care',
+                        'grooming': 'grooming'
+                    };
+                    categoryMatch = categoryCell.includes(categoryMap[categoryFilter]);
+                }
+                
+                let stockMatch = true;
+                if (stockFilter !== 'all') {
+                    if (stockFilter === 'low') {
+                        stockMatch = stock <= 50; // Ngưỡng low stock
+                    } else if (stockFilter === 'out') {
+                        stockMatch = stock === 0;
+                    } else if (stockFilter === 'good') {
+                        stockMatch = stock > 50;
+                    }
+                }
+                
+                let searchMatch = true;
+                if (searchTerm) {
+                    searchMatch = productName.includes(searchTerm) || productId.includes(searchTerm);
+                }
+                
+                if (categoryMatch && stockMatch && searchMatch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Cập nhật số lượng sản phẩm hiển thị
+            const tableTitle = document.querySelector('.table-title span');
+            if (tableTitle) {
+                tableTitle.textContent = `Showing ${visibleCount} of ${productData.products.length} products`;
+            }
+            
+            if (searchTerm) {
+                showNotification(`Found ${visibleCount} products matching "${searchTerm}"`);
+            }
+        }
+
+        // Hàm thêm sản phẩm mới
+        function addNewProduct() {
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const cost = parseFloat(document.getElementById('productCost').value);
+            const stock = parseInt(document.getElementById('initialStock').value);
+            const safetyStock = parseInt(document.getElementById('safetyStock').value) || Math.ceil(stock * 0.4);
+            const description = document.getElementById('productDescription').value;
+            const supplier = document.getElementById('productSupplier').value;
+            
+            // Tính toán các giá trị khác
+            const margin = ((price - cost) / price * 100).toFixed(1);
+            const sales30Days = Math.floor(stock * 0.2); // Ước tính doanh số
+            const revenue30Days = sales30Days * price;
+            
+            // Tạo ID mới
+            const newId = `PROD-${(productData.products.length + 1).toString().padStart(3, '0')}`;
+            
+            // Tạo sản phẩm mới
+            const newProduct = {
+                id: newId,
+                name: name,
+                category: category,
+                price: price,
+                cost: cost,
+                stock: stock,
+                safetyStock: safetyStock,
+                sales30Days: sales30Days,
+                revenue30Days: revenue30Days,
+                margin: parseFloat(margin),
+                image: "https://via.placeholder.com/50/6c757d/FFFFFF?text=NP"
+            };
+            
+            // Thêm vào mảng dữ liệu
+            productData.products.unshift(newProduct);
+            
+            // Thêm vào bảng
+            const productsTableBody = document.getElementById('productsTableBody');
+            const newRow = createProductRow(newProduct);
+            productsTableBody.insertBefore(newRow, productsTableBody.firstChild);
+            
+            // Đóng modal và reset form
+            document.getElementById('addProductModal').style.display = 'none';
+            document.getElementById('addProductForm').reset();
+            
+            // Cập nhật KPI
+            updateKPIs();
+            
+            showNotification(`Product "${name}" added successfully!`);
+        }
+
+        // Hàm chỉnh sửa sản phẩm
+        function editProduct(productId) {
+            const product = productData.products.find(p => p.id === productId);
+            if (product) {
+                showNotification(`Editing product: ${product.name}`);
+                // Trong thực tế, đây sẽ mở modal chỉnh sửa với dữ liệu sản phẩm
+                // Ở đây chúng ta chỉ hiển thị thông báo
+            }
+        }
+
+        // Hàm xóa sản phẩm
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                const index = productData.products.findIndex(p => p.id === productId);
+                if (index !== -1) {
+                    const productName = productData.products[index].name;
+                    productData.products.splice(index, 1);
+                    
+                    // Xóa khỏi bảng
+                    const rows = document.querySelectorAll('#productsTableBody tr');
+                    rows.forEach(row => {
+                        const idCell = row.cells[0].querySelector('p');
+                        if (idCell && idCell.textContent === productId) {
+                            row.remove();
+                        }
+                    });
+                    
+                    updateKPIs();
+                    showNotification(`Product "${productName}" deleted successfully.`);
+                }
+            }
+        }
+
+        // Hàm tái tồn kho sản phẩm
+        function restockProduct(productName) {
+            showNotification(`Initiating restock order for: ${productName}`);
+            // Trong thực tế, đây sẽ mở modal đặt hàng
+            // Ở đây chúng ta chỉ hiển thị thông báo
+        }
+
+        // Hàm cập nhật KPI
+        function updateKPIs() {
+            // Tính toán các giá trị mới từ dữ liệu sản phẩm
+            const totalProducts = productData.products.length;
+            const activeProducts = productData.products.filter(p => p.stock > 0).length;
+            const inactiveProducts = totalProducts - activeProducts;
+            
+            const inventoryValue = productData.products.reduce((sum, p) => sum + (p.cost * p.stock), 0);
+            const avgInventoryValue = inventoryValue / totalProducts;
+            
+            const lowStockItems = productData.products.filter(p => p.stock > 0 && p.stock <= p.safetyStock).length;
+            const outOfStockItems = productData.products.filter(p => p.stock === 0).length;
+            
+            const topSeller = productData.products.reduce((max, p) => p.sales30Days > max.sales30Days ? p : max, productData.products[0]);
+            
+            const avgMargin = productData.products.reduce((sum, p) => sum + p.margin, 0) / totalProducts;
+            
+            // Cập nhật KPI cards
+            document.querySelector('.kpi-card.total-products .kpi-value').textContent = totalProducts;
+            document.querySelector('.kpi-card.total-products .kpi-detail').innerHTML = `
+                <span>Active: ${activeProducts}</span>
+                <span>Inactive: ${inactiveProducts}</span>
+            `;
+            
+            document.querySelector('.kpi-card.inventory-value .kpi-value').textContent = `$${Math.round(inventoryValue).toLocaleString()}`;
+            document.querySelector('.kpi-card.inventory-value .kpi-detail').innerHTML = `
+                <span>Avg. per product: $${Math.round(avgInventoryValue).toLocaleString()}</span>
+                <span class="tooltip">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Total value of all inventory at cost price</span>
+                </span>
+            `;
+            
+            document.querySelector('.kpi-card.low-stock .kpi-value').textContent = lowStockItems;
+            document.querySelector('.kpi-card.out-of-stock .kpi-value').textContent = outOfStockItems;
+            
+            document.querySelector('.kpi-card.top-seller .kpi-value').textContent = topSeller.sales30Days.toLocaleString();
+            document.querySelector('.kpi-card.top-seller .kpi-detail').innerHTML = `
+                <span>${topSeller.name}</span>
+                <span>$${topSeller.revenue30Days.toLocaleString()} revenue</span>
+            `;
+            
+            document.querySelector('.kpi-card.profit-margin .kpi-value').textContent = `${avgMargin.toFixed(1)}%`;
+        }
+
+        // Hàm tải thêm sản phẩm
+        function loadMoreProducts() {
+            // Trong thực tế, đây sẽ là lời gọi API để tải thêm sản phẩm
+            // Ở đây chúng ta chỉ hiển thị thông báo
+            showNotification('Loading more products...');
+        }
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            // Tạo thông báo tạm thời
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

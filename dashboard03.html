@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer 360 Dashboard - PetStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --secondary: #5a32a3;
+            --success: #2e8b57;
+            --warning: #ffa500;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-purple: #e9d8fd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+        
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 15px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .customer-search {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .customer-search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        .customer-search button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Customer Profile Card */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+        
+        .profile-info h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .profile-info p {
+            color: var(--gray);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .customer-segments {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .segment-tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .segment-premium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .segment-loyal {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .segment-new {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        /* Customer Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Pet Information */
+        .pets-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .pet-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .pet-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .pet-icon.dog {
+            background-color: #ffa500;
+        }
+        
+        .pet-icon.cat {
+            background-color: #6f42c1;
+        }
+        
+        .pet-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .pet-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Customer Activity */
+        .activity-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            height: 100%;
+        }
+        
+        .activity-timeline {
+            margin-top: 20px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: -25px;
+            width: 2px;
+            background-color: #e9ecef;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--light-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            z-index: 1;
+            color: var(--primary);
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .timeline-content h4 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        /* RFM Matrix */
+        .rfm-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .rfm-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rfm-matrix {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .rfm-cell {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .rfm-cell:hover {
+            transform: scale(1.05);
+        }
+        
+        .rfm-cell.champions {
+            background-color: #28a745;
+        }
+        
+        .rfm-cell.loyal {
+            background-color: #20c997;
+        }
+        
+        .rfm-cell.potential {
+            background-color: #ffc107;
+        }
+        
+        .rfm-cell.need-attention {
+            background-color: #fd7e14;
+        }
+        
+        .rfm-cell.at-risk {
+            background-color: #dc3545;
+        }
+        
+        .rfm-cell.hibernating {
+            background-color: #6c757d;
+        }
+        
+        .rfm-cell.lost {
+            background-color: #343a40;
+        }
+        
+        .rfm-cell-count {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .rfm-cell-label {
+            font-size: 14px;
+        }
+        
+        /* Customer List Table */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--light-purple);
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .customer-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        
+        .customer-cell {
+            display: flex;
+            align-items: center;
+        }
+        
+        .customer-name {
+            font-weight: 500;
+        }
+        
+        .customer-email {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .segment-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .segment-platinum {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .segment-gold {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .segment-silver {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .segment-bronze {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 14px;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .rfm-matrix {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .customer-search {
+                max-width: 100%;
+            }
+            
+            .rfm-matrix {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: var(--dark);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted #999;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* CLV Badge */
+        .clv-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                <h1>PetStore Analytics</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marketing Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Sales Dashboard</span>
+                </li>
+                <li class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Customer 360</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cube"></i>
+                    <span>Product Performance</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2><i class="fas fa-users"></i> Customer 360 Dashboard</h2>
+                <div class="customer-search">
+                    <input type="text" id="searchCustomer" placeholder="Search customer by name, email, or ID...">
+                    <button id="searchBtn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="overview">Customer Overview</button>
+                <button class="tab" data-tab="segments">Customer Segments</button>
+                <button class="tab" data-tab="analytics">Customer Analytics</button>
+            </div>
+
+            <!-- Tab 1: Customer Overview -->
+            <div class="tab-content active" id="overview-tab">
+                <!-- Customer Profile -->
+                <div class="profile-container">
+                    <!-- Left: Customer Profile Card -->
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">JW</div>
+                            <div class="profile-info">
+                                <h3>Jennifer Wilson</h3>
+                                <p><i class="fas fa-envelope"></i> jennifer.wilson@email.com</p>
+                                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                                <p><i class="fas fa-map-marker-alt"></i> San Francisco, CA</p>
+                                <div class="customer-segments">
+                                    <span class="segment-tag segment-premium">Premium Customer</span>
+                                    <span class="segment-tag segment-loyal">Loyal</span>
+                                    <span class="segment-tag segment-new">Dog Owner</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Stats -->
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">$2,845</div>
+                                <div class="stat-label">Total Spent</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">18</div>
+                                <div class="stat-label">Total Orders</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">$158</div>
+                                <div class="stat-label">Avg. Order Value</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">45</div>
+                                <div class="stat-label">Days Since Last Order</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">$1,240</div>
+                                <div class="stat-label">CLV (Predicted)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">4.8</div>
+                                <div class="stat-label">
+                                    <span class="tooltip">
+                                        Satisfaction
+                                        <span class="tooltiptext">Customer satisfaction score based on reviews and feedback</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CLV Badge -->
+                        <div class="clv-badge">
+                            <i class="fas fa-crown" style="margin-right: 8px;"></i>
+                            Customer Lifetime Value: $1,240 (Top 15%)
+                        </div>
+
+                        <!-- Pet Information -->
+                        <div class="pets-section">
+                            <div class="section-title">
+                                <i class="fas fa-paw"></i> Pets Information
+                            </div>
+                            <div class="pets-list">
+                                <div class="pet-item">
+                                    <div class="pet-icon dog">
+                                        <i class="fas fa-dog"></i>
+                                    </div>
+                                    <div class="pet-info">
+                                        <h4>Max (Golden Retriever)</h4>
+                                        <p>Male, 4 years old, 30kg • Last purchase: Dog food, 2 weeks ago</p>
+                                    </div>
+                                </div>
+                                <div class="pet-item">
+                                    <div class="pet-icon cat">
+                                        <i class="fas fa-cat"></i>
+                                    </div>
+                                    <div class="pet-info">
+                                        <h4>Luna (Siamese Cat)</h4>
+                                        <p>Female, 2 years old, 4kg • Last purchase: Cat litter, 1 month ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Customer Activity -->
+                    <div class="activity-card">
+                        <div class="section-title">
+                            <i class="fas fa-history"></i> Recent Activity Timeline
+                        </div>
+                        <div class="activity-timeline" id="activityTimeline">
+                            <!-- Activity items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Container -->
+                <div class="charts-container">
+                    <!-- Purchase History Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Purchase History</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="purchaseHistoryChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Product Preferences Chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Product Preferences</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="productPreferencesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer RFM Matrix -->
+                <div class="rfm-container">
+                    <div class="rfm-title">
+                        <i class="fas fa-chart-network"></i> RFM Analysis Matrix
+                    </div>
+                    <div class="rfm-matrix">
+                        <div class="rfm-cell champions">
+                            <div class="rfm-cell-count">452</div>
+                            <div class="rfm-cell-label">Champions</div>
+                        </div>
+                        <div class="rfm-cell loyal">
+                            <div class="rfm-cell-count">1,245</div>
+                            <div class="rfm-cell-label">Loyal Customers</div>
+                        </div>
+                        <div class="rfm-cell potential">
+                            <div class="rfm-cell-count">892</div>
+                            <div class="rfm-cell-label">Potential Loyalists</div>
+                        </div>
+                        <div class="rfm-cell need-attention">
+                            <div class="rfm-cell-count">756</div>
+                            <div class="rfm-cell-label">Need Attention</div>
+                        </div>
+                        <div class="rfm-cell at-risk">
+                            <div class="rfm-cell-count">623</div>
+                            <div class="rfm-cell-label">At Risk</div>
+                        </div>
+                        <div class="rfm-cell hibernating">
+                            <div class="rfm-cell-count">1,034</div>
+                            <div class="rfm-cell-label">Hibernating</div>
+                        </div>
+                        <div class="rfm-cell lost">
+                            <div class="rfm-cell-count">2,156</div>
+                            <div class="rfm-cell-label">Lost Customers</div>
+                        </div>
+                        <div class="rfm-cell" style="background-color: #e9ecef; color: #333;">
+                            <div class="rfm-cell-count">7,158</div>
+                            <div class="rfm-cell-label">Total Customers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Customer Segments -->
+            <div class="tab-content" id="segments-tab">
+                <!-- Segmentation Overview -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Customer Segmentation</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="segmentationChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Segment Performance</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="segmentPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer List Table -->
+                <div class="table-container">
+                    <div class="table-title">
+                        <i class="fas fa-list"></i> Top Customers by CLV
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Segment</th>
+                                <th>Total Orders</th>
+                                <th>Total Spent</th>
+                                <th>Avg. Order Value</th>
+                                <th>Last Purchase</th>
+                                <th>CLV</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topCustomersBody">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Customer Analytics -->
+            <div class="tab-content" id="analytics-tab">
+                <!-- Cohort Analysis -->
+                <div class="chart-card" style="margin-bottom: 25px;">
+                    <div class="chart-header">
+                        <div class="chart-title">Customer Cohort Analysis (Retention)</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cohortChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- CLV Prediction -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">CLV Prediction by Segment</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="clvPredictionChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Churn Risk Analysis</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="churnRiskChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Journey -->
+                <div class="table-container">
+                    <div class="table-title">
+                        <i class="fas fa-route"></i> Customer Journey Analysis
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+                            <div style="position: relative; width: 100%; max-width: 800px; height: 200px; background: #f8f9fa; border-radius: 10px; padding: 20px;">
+                                <!-- Customer Journey Visualization -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; height: 100%; position: relative;">
+                                    <!-- Journey Steps -->
+                                    <div class="journey-step" style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                            <i class="fas fa-ad"></i>
+                                        </div>
+                                        <div style="font-weight: 600;">Facebook Ad</div>
+                                        <div style="font-size: 12px; color: #6c757d;">45% of customers</div>
+                                    </div>
+                                    
+                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
+                                    
+                                    <div class="journey-step" style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                            <i class="fas fa-mouse-pointer"></i>
+                                        </div>
+                                        <div style="font-weight: 600;">Website Visit</div>
+                                        <div style="font-size: 12px; color: #6c757d;">38% conversion</div>
+                                    </div>
+                                    
+                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
+                                    
+                                    <div class="journey-step" style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </div>
+                                        <div style="font-weight: 600;">First Purchase</div>
+                                        <div style="font-size: 12px; color: #6c757d;">Average: $42.50</div>
+                                    </div>
+                                    
+                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
+                                    
+                                    <div class="journey-step" style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                            <i class="fas fa-redo"></i>
+                                        </div>
+                                        <div style="font-weight: 600;">Repeat Purchase</div>
+                                        <div style="font-size: 12px; color: #6c757d;">22% within 30 days</div>
+                                    </div>
+                                    
+                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
+                                    
+                                    <div class="journey-step" style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: #28a745; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
+                                            <i class="fas fa-crown"></i>
+                                        </div>
+                                        <div style="font-weight: 600;">Loyal Customer</div>
+                                        <div style="font-size: 12px; color: #6c757d;">15% of customers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 10px;">Most Common First Purchase</div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 40px; height: 40px; background: #ffa500; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                        <i class="fas fa-dog"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500;">Dog Food (Premium)</div>
+                                        <div style="font-size: 12px; color: #6c757d;">42% of new customers</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 10px;">Average Time to Second Purchase</div>
+                                <div style="font-size: 28px; font-weight: 700; color: #6f42c1;">24 days</div>
+                                <div style="font-size: 12px; color: #6c757d;">For premium pet food customers</div>
+                            </div>
+                            
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                <div style="font-weight: 600; margin-bottom: 10px;">Top Churn Reason</div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="width: 40px; height: 40px; background: #dc3545; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                                        <i class="fas fa-times"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500;">High Shipping Cost</div>
+                                        <div style="font-size: 12px; color: #6c757d;">38% of lost customers</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Customer 360 Dashboard • PetStore E-commerce • Data updated: Today, 2:30 PM</p>
+                <p>Next customer review meeting: Monday, 11:00 AM | CLV report generation: End of month</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dữ liệu mẫu cho Customer Dashboard
+        const customerData = {
+            // Dữ liệu khách hàng mẫu
+            sampleCustomer: {
+                name: "Jennifer Wilson",
+                email: "jennifer.wilson@email.com",
+                phone: "(123) 456-7890",
+                location: "San Francisco, CA",
+                totalSpent: 2845,
+                totalOrders: 18,
+                avgOrderValue: 158,
+                daysSinceLastOrder: 45,
+                clv: 1240,
+                satisfaction: 4.8,
+                segments: ["Premium Customer", "Loyal", "Dog Owner"],
+                pets: [
+                    { name: "Max", type: "dog", breed: "Golden Retriever", gender: "Male", age: 4, weight: 30, lastPurchase: "Dog food, 2 weeks ago" },
+                    { name: "Luna", type: "cat", breed: "Siamese Cat", gender: "Female", age: 2, weight: 4, lastPurchase: "Cat litter, 1 month ago" }
+                ]
+            },
+            
+            // Hoạt động gần đây
+            activities: [
+                { type: "purchase", title: "Order #ORD-7842 Placed", description: "Premium Dog Food (20kg), Dog Toys, Shampoo", time: "2 hours ago" },
+                { type: "email", title: "Email Campaign Opened", description: "Summer Pet Care Tips newsletter", time: "1 day ago" },
+                { type: "review", title: "Product Review Submitted", description: "5-star review for Premium Dog Food", time: "3 days ago" },
+                { type: "website", title: "Website Visit", description: "Viewed dog accessories category", time: "5 days ago" },
+                { type: "support", title: "Customer Support Ticket", description: "Question about dog food subscription", time: "1 week ago", resolved: true }
+            ],
+            
+            // Lịch sử mua hàng
+            purchaseHistory: {
+                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                data: [320, 280, 410, 380, 520, 485]
+            },
+            
+            // Sở thích sản phẩm
+            productPreferences: {
+                labels: ["Dog Food", "Cat Food", "Toys", "Accessories", "Health", "Grooming"],
+                data: [45, 25, 15, 8, 5, 2]
+            },
+            
+            // Phân đoạn khách hàng
+            segments: {
+                labels: ["Premium", "Loyal", "At Risk", "New", "Inactive"],
+                counts: [452, 1245, 623, 892, 2034],
+                colors: ["#28a745", "#20c997", "#fd7e14", "#17a2b8", "#6c757d"]
+            },
+            
+            // Hiệu suất phân đoạn
+            segmentPerformance: {
+                labels: ["Premium", "Loyal", "At Risk", "New", "Inactive"],
+                clv: [1240, 580, 220, 320, 80],
+                revenue: [125000, 184000, 42000, 68000, 12000]
+            },
+            
+            // Phân tích Cohort
+            cohortData: {
+                labels: ["Jan Cohort", "Feb Cohort", "Mar Cohort", "Apr Cohort", "May Cohort"],
+                datasets: [
+                    { month: "Month 1", data: [100, 100, 100, 100, 100] },
+                    { month: "Month 2", data: [85, 82, 88, 79, 90] },
+                    { month: "Month 3", data: [72, 70, 76, 68, 82] },
+                    { month: "Month 4", data: [65, 62, 68, 60, 75] },
+                    { month: "Month 5", data: [58, 55, 62, 54, 70] }
+                ]
+            },
+            
+            // Dự đoán CLV
+            clvPrediction: {
+                labels: ["Premium", "Loyal", "Regular", "New", "At Risk"],
+                current: [1240, 580, 320, 220, 180],
+                predicted: [1420, 620, 350, 280, 150]
+            },
+            
+            // Phân tích rủi ro rời bỏ
+            churnRisk: {
+                labels: ["Low Risk", "Medium Risk", "High Risk"],
+                counts: [3250, 1850, 1058],
+                percentages: [53, 30, 17]
+            },
+            
+            // Top khách hàng
+            topCustomers: [
+                { id: "CUST-001", name: "Michael Chen", segment: "platinum", orders: 42, spent: 8420, avgOrder: 200, lastPurchase: "2 days ago", clv: 2450 },
+                { id: "CUST-002", name: "Sarah Johnson", segment: "platinum", orders: 38, spent: 7650, avgOrder: 201, lastPurchase: "1 week ago", clv: 2200 },
+                { id: "CUST-003", name: "Robert Williams", segment: "gold", orders: 25, spent: 4250, avgOrder: 170, lastPurchase: "3 days ago", clv: 1850 },
+                { id: "CUST-004", name: "Lisa Anderson", segment: "gold", orders: 22, spent: 3820, avgOrder: 174, lastPurchase: "2 weeks ago", clv: 1620 },
+                { id: "CUST-005", name: "David Brown", segment: "silver", orders: 18, spent: 2845, avgOrder: 158, lastPurchase: "45 days ago", clv: 1240 },
+                { id: "CUST-006", name: "Emma Wilson", segment: "silver", orders: 15, spent: 2250, avgOrder: 150, lastPurchase: "3 weeks ago", clv: 980 },
+                { id: "CUST-007", name: "James Taylor", segment: "bronze", orders: 8, spent: 980, avgOrder: 122, lastPurchase: "2 months ago", clv: 650 }
+            ]
+        };
+
+        // Biến lưu trữ các biểu đồ
+        let purchaseHistoryChart, productPreferencesChart, segmentationChart, segmentPerformanceChart;
+        let cohortChart, clvPredictionChart, churnRiskChart;
+
+        // Khởi tạo dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Populate Activity Timeline
+            const activityTimeline = document.getElementById('activityTimeline');
+            customerData.activities.forEach(activity => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                
+                // Xác định icon dựa trên loại hoạt động
+                let iconClass, iconText;
+                switch(activity.type) {
+                    case 'purchase':
+                        iconClass = 'fas fa-shopping-cart';
+                        break;
+                    case 'email':
+                        iconClass = 'fas fa-envelope';
+                        break;
+                    case 'review':
+                        iconClass = 'fas fa-star';
+                        break;
+                    case 'website':
+                        iconClass = 'fas fa-mouse-pointer';
+                        break;
+                    case 'support':
+                        iconClass = 'fas fa-headset';
+                        break;
+                    default:
+                        iconClass = 'fas fa-circle';
+                }
+                
+                timelineItem.innerHTML = `
+                    <div class="timeline-icon">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                        <div class="timeline-time">${activity.time}</div>
+                    </div>
+                `;
+                activityTimeline.appendChild(timelineItem);
+            });
+
+            // 2. Purchase History Chart
+            const purchaseCtx = document.getElementById('purchaseHistoryChart').getContext('2d');
+            purchaseHistoryChart = new Chart(purchaseCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.purchaseHistory.labels,
+                    datasets: [{
+                        label: 'Spending ($)',
+                        data: customerData.purchaseHistory.data,
+                        backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                        borderColor: 'rgba(111, 66, 193, 1)',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Spending: $${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Spending ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Product Preferences Chart
+            const preferencesCtx = document.getElementById('productPreferencesChart').getContext('2d');
+            productPreferencesChart = new Chart(preferencesCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: customerData.productPreferences.labels,
+                    datasets: [{
+                        data: customerData.productPreferences.data,
+                        backgroundColor: [
+                            'rgba(111, 66, 193, 0.7)',
+                            'rgba(255, 165, 0, 0.7)',
+                            'rgba(32, 201, 151, 0.7)',
+                            'rgba(23, 162, 184, 0.7)',
+                            'rgba(253, 126, 20, 0.7)',
+                            'rgba(108, 117, 125, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(111, 66, 193, 1)',
+                            'rgba(255, 165, 0, 1)',
+                            'rgba(32, 201, 151, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(253, 126, 20, 1)',
+                            'rgba(108, 117, 125, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${percentage}% of purchases`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            ticks: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 4. Segmentation Chart (Tab 2)
+            const segmentationCtx = document.getElementById('segmentationChart').getContext('2d');
+            segmentationChart = new Chart(segmentationCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: customerData.segments.labels,
+                    datasets: [{
+                        data: customerData.segments.counts,
+                        backgroundColor: customerData.segments.colors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toLocaleString()} customers (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+
+            // 5. Segment Performance Chart (Tab 2)
+            const segmentPerfCtx = document.getElementById('segmentPerformanceChart').getContext('2d');
+            segmentPerformanceChart = new Chart(segmentPerfCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.segmentPerformance.labels,
+                    datasets: [
+                        {
+                            label: 'Average CLV ($)',
+                            data: customerData.segmentPerformance.clv,
+                            backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Total Revenue ($)',
+                            data: customerData.segmentPerformance.revenue,
+                            backgroundColor: 'rgba(32, 201, 151, 0.7)',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.datasetIndex === 1) {
+                                        label += '$' + context.parsed.y.toLocaleString();
+                                    } else {
+                                        label += '$' + context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Value ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) {
+                                        return '$' + (value/1000).toFixed(0) + 'K';
+                                    }
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 6. Populate Top Customers Table (Tab 2)
+            const topCustomersBody = document.getElementById('topCustomersBody');
+            customerData.topCustomers.forEach(customer => {
+                const row = document.createElement('tr');
+                
+                // Xác định segment badge
+                let segmentBadgeClass, segmentBadgeText;
+                switch(customer.segment) {
+                    case 'platinum':
+                        segmentBadgeClass = 'segment-platinum';
+                        segmentBadgeText = 'Platinum';
+                        break;
+                    case 'gold':
+                        segmentBadgeClass = 'segment-gold';
+                        segmentBadgeText = 'Gold';
+                        break;
+                    case 'silver':
+                        segmentBadgeClass = 'segment-silver';
+                        segmentBadgeText = 'Silver';
+                        break;
+                    case 'bronze':
+                        segmentBadgeClass = 'segment-bronze';
+                        segmentBadgeText = 'Bronze';
+                        break;
+                }
+                
+                // Tạo avatar từ tên
+                const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="customer-cell">
+                            <div class="customer-avatar">${initials}</div>
+                            <div>
+                                <div class="customer-name">${customer.name}</div>
+                                <div class="customer-email">${customer.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="segment-badge ${segmentBadgeClass}">${segmentBadgeText}</span></td>
+                    <td>${customer.orders}</td>
+                    <td>$${customer.spent.toLocaleString()}</td>
+                    <td>$${customer.avgOrder}</td>
+                    <td>${customer.lastPurchase}</td>
+                    <td>$${customer.clv.toLocaleString()}</td>
+                    <td><button class="view-customer-btn" data-id="${customer.id}" style="padding: 5px 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">View</button></td>
+                `;
+                topCustomersBody.appendChild(row);
+            });
+
+            // 7. Cohort Analysis Chart (Tab 3)
+            const cohortCtx = document.getElementById('cohortChart').getContext('2d');
+            cohortChart = new Chart(cohortCtx, {
+                type: 'line',
+                data: {
+                    labels: customerData.cohortData.labels,
+                    datasets: customerData.cohortData.datasets.map((dataset, index) => {
+                        const colors = [
+                            'rgba(111, 66, 193, 1)',
+                            'rgba(255, 165, 0, 1)',
+                            'rgba(32, 201, 151, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(253, 126, 20, 1)'
+                        ];
+                        
+                        return {
+                            label: dataset.month,
+                            data: dataset.data,
+                            borderColor: colors[index],
+                            backgroundColor: colors[index].replace('1)', '0.1)'),
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: colors[index],
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y}% retention`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Retention Rate (%)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 8. CLV Prediction Chart (Tab 3)
+            const clvPredictionCtx = document.getElementById('clvPredictionChart').getContext('2d');
+            clvPredictionChart = new Chart(clvPredictionCtx, {
+                type: 'bar',
+                data: {
+                    labels: customerData.clvPrediction.labels,
+                    datasets: [
+                        {
+                            label: 'Current CLV ($)',
+                            data: customerData.clvPrediction.current,
+                            backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Predicted CLV ($)',
+                            data: customerData.clvPrediction.predicted,
+                            backgroundColor: 'rgba(32, 201, 151, 0.7)',
+                            borderRadius: 5,
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: $${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Customer Lifetime Value ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 9. Churn Risk Chart (Tab 3)
+            const churnRiskCtx = document.getElementById('churnRiskChart').getContext('2d');
+            churnRiskChart = new Chart(churnRiskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: customerData.churnRisk.labels,
+                    datasets: [{
+                        data: customerData.churnRisk.percentages,
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(220, 53, 69, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(220, 53, 69, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const index = context.dataIndex;
+                                    const count = customerData.churnRisk.counts[index];
+                                    return `${label}: ${value}% (${count.toLocaleString()} customers)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // 10. Tab functionality
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Cập nhật trạng thái active của tab
+                    document.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Hiển thị nội dung tab tương ứng
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // 11. Search functionality
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchCustomer').value.trim();
+                if (searchTerm) {
+                    searchCustomer(searchTerm);
+                }
+            });
+            
+            document.getElementById('searchCustomer').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        searchCustomer(searchTerm);
+                    }
+                }
+            });
+
+            // 12. View customer buttons in table
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('view-customer-btn')) {
+                    const customerId = e.target.getAttribute('data-id');
+                    viewCustomerDetails(customerId);
+                }
+            });
+
+            // 13. RFM cells click event
+            document.querySelectorAll('.rfm-cell').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const segment = this.querySelector('.rfm-cell-label').textContent;
+                    showSegmentDetails(segment);
+                });
+            });
+        });
+
+        // Hàm tìm kiếm khách hàng
+        function searchCustomer(searchTerm) {
+            // Trong thực tế, đây sẽ là lời gọi API để tìm khách hàng
+            // Ở đây chúng ta chỉ hiển thị thông báo
+            showNotification(`Searching for customers matching: "${searchTerm}"`);
+            
+            // Giả lập tìm kiếm
+            setTimeout(() => {
+                if (searchTerm.toLowerCase().includes('jen') || searchTerm.toLowerCase().includes('wilson')) {
+                    showNotification(`Customer found: Jennifer Wilson. Showing profile.`);
+                    // Hiển thị tab overview
+                    document.querySelector('.tab[data-tab="overview"]').click();
+                } else {
+                    showNotification(`No exact match found. Showing similar customers.`);
+                    // Hiển thị tab segments với bộ lọc
+                    document.querySelector('.tab[data-tab="segments"]').click();
+                }
+            }, 500);
+        }
+
+        // Hàm xem chi tiết khách hàng
+        function viewCustomerDetails(customerId) {
+            // Trong thực tế, đây sẽ là lời gọi API để lấy chi tiết khách hàng
+            // Ở đây chúng ta chỉ hiển thị thông báo và chuyển đến tab overview
+            showNotification(`Loading details for customer: ${customerId}`);
+            
+            // Chuyển đến tab overview và cập nhật thông tin
+            document.querySelector('.tab[data-tab="overview"]').click();
+            
+            // Cập nhật thông tin khách hàng trong profile card
+            const customer = customerData.topCustomers.find(c => c.id === customerId);
+            if (customer) {
+                document.querySelector('.profile-avatar').textContent = 
+                    customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.querySelector('.profile-info h3').textContent = customer.name;
+                
+                // Cập nhật các chỉ số
+                document.querySelectorAll('.stat-value')[0].textContent = `$${customer.spent.toLocaleString()}`;
+                document.querySelectorAll('.stat-value')[1].textContent = customer.orders;
+                document.querySelectorAll('.stat-value')[2].textContent = `$${customer.avgOrder}`;
+                document.querySelectorAll('.stat-value')[3].textContent = customer.lastPurchase.replace(/\D/g, '') || '30';
+                document.querySelectorAll('.stat-value')[4].textContent = `$${customer.clv.toLocaleString()}`;
+                
+                showNotification(`Now viewing: ${customer.name}`);
+            }
+        }
+
+        // Hàm hiển thị chi tiết phân đoạn
+        function showSegmentDetails(segment) {
+            showNotification(`Showing details for segment: ${segment}`);
+            
+            // Chuyển đến tab segments
+            document.querySelector('.tab[data-tab="segments"]').click();
+            
+            // Trong thực tế, đây sẽ là lọc bảng khách hàng theo phân đoạn
+            // Ở đây chúng ta chỉ hiển thị thông báo
+        }
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            // Tạo thông báo tạm thời
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Thêm hiệu ứng cho các ô RFM
+        document.addEventListener('DOMContentLoaded', function() {
+            const rfmCells = document.querySelectorAll('.rfm-cell');
+            
+            rfmCells.forEach(cell => {
+                cell.addEventListener('mouseenter', function() {
+                    const count = this.querySelector('.rfm-cell-count').textContent;
+                    const label = this.querySelector('.rfm-cell-label').textContent;
+                    
+                    // Có thể thêm tooltip nâng cao ở đây
+                });
+            });
+        });
+    </script>
+</body>
+</html>

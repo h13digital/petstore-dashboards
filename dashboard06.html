@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Detail - Jennifer Wilson | PetStore Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --secondary: #5a32a3;
+            --success: #2e8b57;
+            --warning: #ffa500;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-purple: #e9d8fd;
+            --border: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .customer-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .customer-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            font-weight: 600;
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+        
+        .customer-info {
+            flex: 1;
+        }
+        
+        .customer-name {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .customer-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .customer-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .customer-tag {
+            padding: 6px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .stat-detail {
+            font-size: 13px;
+            color: var(--gray);
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* Tabs Navigation */
+        .tabs-nav {
+            background: white;
+            border-radius: 10px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 20px 25px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Customer Journey */
+        .journey-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .journey-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--light-purple));
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -40px;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            z-index: 1;
+        }
+        
+        .timeline-content {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .timeline-date {
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .timeline-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .timeline-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            background: var(--light-purple);
+            border: none;
+            border-radius: 5px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: #e0d0fc;
+        }
+        
+        /* Purchase History */
+        .purchase-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .purchase-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--gray);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .purchase-table {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--light-purple);
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:hover {
+            background-color: #fafafa;
+        }
+        
+        .order-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .order-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--light-purple);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .order-info h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .order-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .product-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-dog {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-cat {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-accessory {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* CLV Analysis */
+        .clv-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .clv-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .clv-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .clv-chart-container {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .clv-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .clv-metric {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .clv-metric:hover {
+            border-color: var(--primary);
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .metric-description {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Acquisition Sources */
+        .acquisition-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .source-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .source-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-top: 4px solid;
+        }
+        
+        .source-card.channel {
+            border-top-color: var(--primary);
+        }
+        
+        .source-card.campaign {
+            border-top-color: var(--success);
+        }
+        
+        .source-card.attribution {
+            border-top-color: var(--warning);
+        }
+        
+        .source-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .source-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+        
+        .source-icon.channel {
+            background-color: var(--primary);
+        }
+        
+        .source-icon.campaign {
+            background-color: var(--success);
+        }
+        
+        .source-icon.attribution {
+            background-color: var(--warning);
+        }
+        
+        .source-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .source-info p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .source-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .source-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .source-detail:last-child {
+            border-bottom: none;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+            background: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .customer-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .customer-meta {
+                justify-content: center;
+            }
+            
+            .main-container {
+                padding: 15px;
+            }
+            
+            .tabs-nav {
+                flex-direction: column;
+                padding: 0;
+            }
+            
+            .tab-btn {
+                padding: 15px;
+                border-bottom: 1px solid var(--border);
+                border-radius: 0;
+            }
+            
+            .tab-btn.active {
+                border-bottom: 3px solid var(--primary);
+            }
+            
+            .journey-container,
+            .purchase-container,
+            .clv-container,
+            .acquisition-container {
+                padding: 20px;
+            }
+        }
+        
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            font-size: 18px;
+            color: var(--gray);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--gray);
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .header-top,
+            .tabs-nav,
+            .back-btn,
+            .action-btn,
+            .footer {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .tab-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                <span>PetStore Analytics</span>
+            </div>
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </button>
+        </div>
+        
+        <div class="customer-header">
+            <div class="customer-avatar">JW</div>
+            <div class="customer-info">
+                <h1 class="customer-name">Jennifer Wilson</h1>
+                <div class="customer-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-id-card"></i>
+                        <span>ID: CUST-005</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Customer Since: Mar 15, 2023</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>San Francisco, CA</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-paw"></i>
+                        <span>Pets: Max (Dog), Luna (Cat)</span>
+                    </div>
+                </div>
+                <div class="customer-tags">
+                    <div class="customer-tag">Premium Customer</div>
+                    <div class="customer-tag">High CLV</div>
+                    <div class="customer-tag">Dog Owner</div>
+                    <div class="customer-tag">Auto-ship Subscriber</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-value">$2,845</div>
+                <div class="stat-label">Total Spent</div>
+                <div class="stat-detail">18 orders • $158 avg. order</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$1,240</div>
+                <div class="stat-label">Predicted CLV</div>
+                <div class="stat-detail">Next 12 months • Top 15%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$42.50</div>
+                <div class="stat-label">Acquisition Cost</div>
+                <div class="stat-detail">Facebook Ad • 320% ROI</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">45 days</div>
+                <div class="stat-label">Last Purchase</div>
+                <div class="stat-detail">Cat Litter & Toys • $124.30</div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <nav class="tabs-nav">
+            <button class="tab-btn active" data-tab="journey">
+                <i class="fas fa-route"></i>
+                Customer Journey
+            </button>
+            <button class="tab-btn" data-tab="purchases">
+                <i class="fas fa-shopping-bag"></i>
+                Purchase History
+            </button>
+            <button class="tab-btn" data-tab="clv">
+                <i class="fas fa-chart-line"></i>
+                CLV Analysis
+            </button>
+            <button class="tab-btn" data-tab="acquisition">
+                <i class="fas fa-funnel-dollar"></i>
+                Acquisition Sources
+            </button>
+            <button class="tab-btn" data-tab="products">
+                <i class="fas fa-cube"></i>
+                Product Preferences
+            </button>
+        </nav>
+
+        <!-- Tab 1: Customer Journey -->
+        <div class="tab-content active" id="journey-tab">
+            <div class="journey-container">
+                <h2 class="section-title">
+                    <i class="fas fa-route"></i>
+                    Customer Journey Timeline
+                </h2>
+                <div class="journey-timeline">
+                    <!-- Touchpoint 1: Acquisition -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h3 class="timeline-title">First Touch: Facebook Ad</h3>
+                                <div class="timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    March 15, 2023 • 2:30 PM
+                                </div>
+                            </div>
+                            <div class="timeline-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Campaign</div>
+                                    <div class="detail-value">Summer Pet Bundle 2023</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Ad Set</div>
+                                    <div class="detail-value">Dog Owners in San Francisco</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Creative Type</div>
+                                    <div class="detail-value">Video (15 seconds)</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">CPA</div>
+                                    <div class="detail-value">$24.50</div>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                Video ad featuring Golden Retrievers with 75% completion rate. Customer clicked through to landing page.
+                            </p>
+                            <div class="timeline-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View Ad Creative
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Campaign Analytics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Touchpoint 2: Website Engagement -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h3 class="timeline-title">Website Visit & Engagement</h3>
+                                <div class="timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    March 15, 2023 • 2:32 PM
+                                </div>
+                            </div>
+                            <div class="timeline-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Landing Page</div>
+                                    <div class="detail-value">/campaigns/summer-pet-bundle</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Session Duration</div>
+                                    <div class="detail-value">4 minutes 22 seconds</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Pages Viewed</div>
+                                    <div class="detail-value">5 pages</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Device</div>
+                                    <div class="detail-value">Desktop Chrome</div>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                Viewed: Homepage → Dog Food Category → Premium Dog Food Product → Blog → Cart. Added Premium Dog Food to cart but didn't complete purchase.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Touchpoint 3: First Purchase -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h3 class="timeline-title">First Purchase Completed</h3>
+                                <div class="timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    March 16, 2023 • 10:15 AM
+                                </div>
+                            </div>
+                            <div class="timeline-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Order ID</div>
+                                    <div class="detail-value">ORD-7123</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Total Amount</div>
+                                    <div class="detail-value">$89.50</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Products</div>
+                                    <div class="detail-value">Premium Dog Food + Dog Toy</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Discount Used</div>
+                                    <div class="detail-value">10% Welcome Discount</div>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                Customer returned via direct traffic and completed purchase. Used welcome discount code from abandoned cart email.
+                            </p>
+                            <div class="timeline-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    View Order Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Touchpoint 4: Email Engagement -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h3 class="timeline-title">Email Marketing Engagement</h3>
+                                <div class="timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    March - April 2023
+                                </div>
+                            </div>
+                            <div class="timeline-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Email Series</div>
+                                    <div class="detail-value">New Customer Onboarding</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Open Rate</div>
+                                    <div class="detail-value">85% (Average: 65%)</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Click Rate</div>
+                                    <div class="detail-value">42% (Average: 28%)</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Most Clicked</div>
+                                    <div class="detail-value">"Dog Care Tips" Newsletter</div>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                High engagement with onboarding emails. Clicked on "Cat Products" email which led to first cat product purchase.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Touchpoint 5: Subscription -->
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h3 class="timeline-title">Auto-ship Subscription Started</h3>
+                                <div class="timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    May 10, 2023
+                                </div>
+                            </div>
+                            <div class="timeline-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Subscription ID</div>
+                                    <div class="detail-value">SUB-023</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Product</div>
+                                    <div class="detail-value">Premium Dog Food (20kg)</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Frequency</div>
+                                    <div class="detail-value">Every 45 days</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Monthly Value</div>
+                                    <div class="detail-value">$49.99</div>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                Subscribed after receiving "Subscribe & Save" email offer. Has received 8 shipments to date. High retention likelihood.
+                            </p>
+                            <div class="timeline-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-history"></i>
+                                    View Subscription History
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Purchase History -->
+        <div class="tab-content" id="purchases-tab">
+            <div class="purchase-container">
+                <div class="section-title">
+                    <i class="fas fa-shopping-bag"></i>
+                    Complete Purchase History
+                </div>
+                
+                <!-- Filters -->
+                <div class="purchase-filters">
+                    <button class="filter-btn active" data-filter="all">All Orders (18)</button>
+                    <button class="filter-btn" data-filter="dog">Dog Products (11)</button>
+                    <button class="filter-btn" data-filter="cat">Cat Products (5)</button>
+                    <button class="filter-btn" data-filter="subscription">Subscriptions (1)</button>
+                    <button class="filter-btn" data-filter="last30">Last 30 Days (2)</button>
+                </div>
+                
+                <!-- Orders Table -->
+                <div class="purchase-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order Details</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Channel</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <!-- Orders will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Summary -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <div>
+                        <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Total Spent (18 orders)</div>
+                        <div style="font-size: 24px; font-weight: 600; color: var(--primary);">$2,845.00</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Average Order Value</div>
+                        <div style="font-size: 24px; font-weight: 600; color: var(--success);">$158.06</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Days Between Orders</div>
+                        <div style="font-size: 24px; font-weight: 600; color: var(--info);">24 days</div>
+                    </div>
+                    <button class="action-btn" style="padding: 10px 20px;">
+                        <i class="fas fa-download"></i>
+                        Export All Orders
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: CLV Analysis -->
+        <div class="tab-content" id="clv-tab">
+            <div class="clv-container">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Customer Lifetime Value Analysis
+                </h2>
+                
+                <div class="clv-grid">
+                    <!-- CLV Chart -->
+                    <div class="clv-chart-container">
+                        <canvas id="clvChart"></canvas>
+                    </div>
+                    
+                    <!-- CLV Metrics -->
+                    <div class="clv-metrics">
+                        <div class="clv-metric">
+                            <div class="metric-value" style="color: var(--primary);">$2,845</div>
+                            <div class="metric-label">Historical CLV</div>
+                            <div class="metric-description">Actual revenue to date from 18 orders</div>
+                        </div>
+                        <div class="clv-metric">
+                            <div class="metric-value" style="color: var(--success);">$1,240</div>
+                            <div class="metric-label">Predicted CLV (12m)</div>
+                            <div class="metric-description">Expected next 12 months revenue</div>
+                        </div>
+                        <div class="clv-metric">
+                            <div class="metric-value" style="color: var(--warning);">$42.50</div>
+                            <div class="metric-label">Acquisition Cost</div>
+                            <div class="metric-description">Initial marketing spend to acquire</div>
+                        </div>
+                        <div class="clv-metric">
+                            <div class="metric-value" style="color: var(--info);">67:1</div>
+                            <div class="metric-label">CLV:CAC Ratio</div>
+                            <div class="metric-description">Excellent (Industry target: 3:1)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CLV Insights -->
+                <div style="background: var(--light-purple); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-lightbulb"></i> CLV Insights & Recommendations
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div>
+                            <h4 style="margin-bottom: 10px; color: var(--dark); font-size: 16px;">High-Value Indicators</h4>
+                            <ul style="color: var(--gray); padding-left: 20px; font-size: 14px;">
+                                <li>Auto-ship subscription with high retention rate</li>
+                                <li>Purchases across multiple pet categories</li>
+                                <li>High email engagement (85% open rate)</li>
+                                <li>Leaves product reviews (8 reviews total)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 10px; color: var(--dark); font-size: 16px;">Growth Opportunities</h4>
+                            <ul style="color: var(--gray); padding-left: 20px; font-size: 14px;">
+                                <li>Introduce cat food auto-ship subscription</li>
+                                <li>Upsell premium pet accessories</li>
+                                <li>Referral program participation</li>
+                                <li>Cross-sell pet insurance products</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Acquisition Sources -->
+        <div class="tab-content" id="acquisition-tab">
+            <div class="acquisition-container">
+                <h2 class="section-title">
+                    <i class="fas fa-funnel-dollar"></i>
+                    Acquisition Sources & Marketing Attribution
+                </h2>
+                
+                <div class="source-cards">
+                    <!-- Channel Card -->
+                    <div class="source-card channel">
+                        <div class="source-header">
+                            <div class="source-icon channel">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="source-info">
+                                <h4>Primary Acquisition Channel</h4>
+                                <p>Paid Social - Facebook Ads</p>
+                            </div>
+                        </div>
+                        <div class="source-details">
+                            <div class="source-detail">
+                                <span>Platform</span>
+                                <span>Facebook/Instagram</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Campaign Objective</span>
+                                <span>Conversions (Purchase)</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Target Audience</span>
+                                <span>Dog Owners in San Francisco</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>ROAS (Return on Ad Spend)</span>
+                                <span style="color: var(--success); font-weight: 600;">320%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campaign Card -->
+                    <div class="source-card campaign">
+                        <div class="source-header">
+                            <div class="source-icon campaign">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div class="source-info">
+                                <h4>Acquisition Campaign</h4>
+                                <p>Summer Pet Bundle 2023</p>
+                            </div>
+                        </div>
+                        <div class="source-details">
+                            <div class="source-detail">
+                                <span>Campaign ID</span>
+                                <span>FB_CAMP_23841</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Ad Set</span>
+                                <span>Dog Owners 25-45, SF Bay Area</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Creative Type</span>
+                                <span>15-second Video Ad</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Cost Per Acquisition (CPA)</span>
+                                <span>$24.50</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Attribution Card -->
+                    <div class="source-card attribution">
+                        <div class="source-header">
+                            <div class="source-icon attribution">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <div class="source-info">
+                                <h4>Multi-Touch Attribution</h4>
+                                <p>Linear Attribution Model</p>
+                            </div>
+                        </div>
+                        <div class="source-details">
+                            <div class="source-detail">
+                                <span>First Touch (Facebook Ad)</span>
+                                <span>40%</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Email Nurture</span>
+                                <span>25%</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Direct Return</span>
+                                <span>20%</span>
+                            </div>
+                            <div class="source-detail">
+                                <span>Retargeting Ads</span>
+                                <span>15%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- UTM Parameters -->
+                <div style="background: var(--light); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: var(--dark);">
+                        <i class="fas fa-link"></i> UTM Parameters & Tracking
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Source</div>
+                            <div class="detail-value">facebook</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Medium</div>
+                            <div class="detail-value">cpc</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Campaign</div>
+                            <div class="detail-value">summer_pet_bundle_2023</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">UTM Content</div>
+                            <div class="detail-value">video_ad_golden_retriever</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Landing Page</div>
+                            <div class="detail-value">/campaigns/summer-pet-bundle</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Referrer</div>
+                            <div class="detail-value">facebook.com</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Acquisition Insights -->
+                <div style="background: #e7f3ff; padding: 25px; border-radius: 10px; margin-top: 30px; border-left: 4px solid var(--primary);">
+                    <div style="display: flex; align-items: flex-start; gap: 15px;">
+                        <div style="color: var(--primary); font-size: 24px;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 10px; color: var(--primary);">High-Value Acquisition Profile</h4>
+                            <p style="color: var(--gray); margin-bottom: 10px; font-size: 14px;">
+                                This customer was acquired via <strong>video ad targeting dog owners</strong> with a $24.50 CPA.
+                                They converted on their <strong>second website visit</strong> after receiving a welcome email.
+                                The initial campaign has generated a <strong>320% ROI</strong> from this customer alone.
+                            </p>
+                            <p style="color: var(--gray); font-size: 14px;">
+                                <strong>Recommendation:</strong> Scale similar ad creatives to lookalike audiences and create a retargeting
+                                campaign for customers who add to cart but don't purchase.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Product Preferences -->
+        <div class="tab-content" id="products-tab">
+            <div class="journey-container">
+                <h2 class="section-title">
+                    <i class="fas fa-cube"></i>
+                    Product Preferences & Purchase Patterns
+                </h2>
+                
+                <!-- Product Categories -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 18px;">Purchase Categories Breakdown</h3>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="text-align: center; padding: 20px; min-width: 150px; background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-size: 32px; font-weight: 700; color: var(--primary); margin-bottom: 10px;">62%</div>
+                            <div style="font-size: 16px; color: var(--dark); margin-bottom: 5px;">Dog Products</div>
+                            <div style="font-size: 14px; color: var(--gray);">$1,764 total • 11 orders</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; min-width: 150px; background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-size: 32px; font-weight: 700; color: var(--success); margin-bottom: 10px;">28%</div>
+                            <div style="font-size: 16px; color: var(--dark); margin-bottom: 5px;">Cat Products</div>
+                            <div style="font-size: 14px; color: var(--gray);">$796 total • 5 orders</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; min-width: 150px; background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-size: 32px; font-weight: 700; color: var(--warning); margin-bottom: 10px;">8%</div>
+                            <div style="font-size: 16px; color: var(--dark); margin-bottom: 5px;">Accessories</div>
+                            <div style="font-size: 14px; color: var(--gray);">$228 total • 1 order</div>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 20px; min-width: 150px; background: white; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-size: 32px; font-weight: 700; color: var(--info); margin-bottom: 10px;">2%</div>
+                            <div style="font-size: 16px; color: var(--dark); margin-bottom: 5px;">Grooming</div>
+                            <div style="font-size: 14px; color: var(--gray);">$57 total • 1 order</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Products -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 18px;">Top Purchased Products</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; background: var(--light-purple); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px;">
+                                <i class="fas fa-dog"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Premium Dog Food (20kg)</div>
+                                <div style="font-size: 14px; color: var(--gray);">8 purchases • $49.99 each</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: var(--primary);">$399.92</div>
+                                <div style="font-size: 12px; color: var(--gray);">Auto-ship subscription</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; background: #d1ecf1; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--info); font-size: 20px;">
+                                <i class="fas fa-cat"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Cat Litter Premium</div>
+                                <div style="font-size: 14px; color: var(--gray);">4 purchases • $24.99 each</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: var(--info);">$99.96</div>
+                                <div style="font-size: 12px; color: var(--gray);">Every 3 months</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 50px; height: 50px; background: #fff3cd; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--warning); font-size: 20px;">
+                                <i class="fas fa-bone"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; margin-bottom: 5px;">Dog Toy Bundle</div>
+                                <div style="font-size: 14px; color: var(--gray);">2 purchases • $35.99 each</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 700; color: var(--warning);">$71.98</div>
+                                <div style="font-size: 12px; color: var(--gray);">Seasonal purchases</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Purchase Patterns -->
+                <div>
+                    <h3 style="margin-bottom: 15px; color: var(--dark); font-size: 18px;">Purchase Patterns & Insights</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: var(--primary);">Frequency Pattern</div>
+                            <div style="font-size: 14px; color: var(--gray);">
+                                Purchases every 24 days on average. Dog food auto-ship every 45 days.
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: var(--success);">Seasonal Behavior</div>
+                            <div style="font-size: 14px; color: var(--gray);">
+                                Higher spending in summer (+35%) and winter holidays (+45%).
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: var(--warning);">Cross-Sell Potential</div>
+                            <div style="font-size: 14px; color: var(--gray);">
+                                High potential for cat food subscription and premium accessories.
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+                            <div style="font-weight: 600; margin-bottom: 10px; color: var(--info);">Response to Marketing</div>
+                            <div style="font-size: 14px; color: var(--gray);">
+                                Highly responsive to email (85% open rate) and retargeting ads.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div style="margin-bottom: 15px;">
+            <div style="font-weight: 600; color: var(--dark); margin-bottom: 5px;">Customer Detail Report</div>
+            <div style="font-size: 13px; color: var(--gray);">
+                Jennifer Wilson (CUST-005) • Generated on <span id="currentDate"></span> • PetStore Analytics
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <button class="action-btn" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                Print Report
+            </button>
+            <button class="action-btn" onclick="exportCustomerData()">
+                <i class="fas fa-download"></i>
+                Export PDF
+            </button>
+            <button class="action-btn" onclick="shareCustomerReport()">
+                <i class="fas fa-share-alt"></i>
+                Share
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // Dữ liệu mẫu cho Customer Detail Page
+        const customerDetail = {
+            id: "CUST-005",
+            name: "Jennifer Wilson",
+            acquisition: {
+                date: "March 15, 2023",
+                channel: "Paid Social",
+                source: "Facebook Ads",
+                campaign: "Summer Pet Bundle 2023",
+                adSet: "Dog Owners in San Francisco",
+                creative: "15-second Video Ad",
+                cpa: 24.50,
+                roas: 320,
+                utm: {
+                    source: "facebook",
+                    medium: "cpc",
+                    campaign: "summer_pet_bundle_2023",
+                    content: "video_ad_golden_retriever"
+                }
+            },
+            clv: {
+                historical: 2845,
+                predicted: 1240,
+                cac: 42.50,
+                ratio: 67,
+                growth: [0, 89.5, 214.3, 399.9, 624.5, 890.2, 1204.8, 1560.4, 1890.2, 2245.6, 2540.1, 2845.0]
+            },
+            orders: [
+                {
+                    id: "ORD-7123",
+                    date: "March 16, 2023",
+                    products: ["Premium Dog Food (20kg)", "Dog Toy Bundle"],
+                    category: "dog",
+                    amount: 89.50,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "first"
+                },
+                {
+                    id: "ORD-7234",
+                    date: "April 10, 2023",
+                    products: ["Dog Food (10kg)", "Dog Treats"],
+                    category: "dog",
+                    amount: 68.75,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                },
+                {
+                    id: "SUB-023",
+                    date: "May 10, 2023",
+                    products: ["Premium Dog Food Auto-ship"],
+                    category: "subscription",
+                    amount: 49.99,
+                    status: "active",
+                    channel: "Email",
+                    type: "subscription"
+                },
+                {
+                    id: "ORD-7451",
+                    date: "April 28, 2023",
+                    products: ["Cat Litter", "Cat Toys"],
+                    category: "cat",
+                    amount: 124.80,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-7562",
+                    date: "June 15, 2023",
+                    products: ["Premium Dog Food (20kg)", "Dog Shampoo"],
+                    category: "dog",
+                    amount: 92.45,
+                    status: "delivered",
+                    channel: "Mobile App",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-7673",
+                    date: "July 22, 2023",
+                    products: ["Cat Food (10kg)", "Cat Litter"],
+                    category: "cat",
+                    amount: 78.90,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-7784",
+                    date: "August 30, 2023",
+                    products: ["Dog Food (20kg)", "Dog Toys"],
+                    category: "dog",
+                    amount: 124.30,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-7895",
+                    date: "October 5, 2023",
+                    products: ["Cat Food (5kg)", "Cat Treats"],
+                    category: "cat",
+                    amount: 56.80,
+                    status: "delivered",
+                    channel: "Mobile App",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-7906",
+                    date: "November 18, 2023",
+                    products: ["Premium Dog Food (20kg)", "Dog Bed"],
+                    category: "dog",
+                    amount: 189.50,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                },
+                {
+                    id: "ORD-8017",
+                    date: "December 22, 2023",
+                    products: ["Cat Litter Premium", "Cat Toy Bundle"],
+                    category: "cat",
+                    amount: 156.40,
+                    status: "delivered",
+                    channel: "Website",
+                    type: "repeat"
+                }
+            ],
+            preferences: {
+                dog: { percentage: 62, value: 1764, orders: 11 },
+                cat: { percentage: 28, value: 796, orders: 5 },
+                accessories: { percentage: 8, value: 228, orders: 1 },
+                grooming: { percentage: 2, value: 57, orders: 1 }
+            }
+        };
+
+        // Biến toàn cục
+        let clvChart;
+
+        // Khởi tạo trang
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Lấy ID khách hàng từ URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('id') || 'CUST-005';
+            
+            // Trong thực tế, bạn sẽ gọi API để lấy dữ liệu khách hàng dựa trên ID
+            // fetch(`/api/customers/${customerId}`)
+            //   .then(response => response.json())
+            //   .then(data => loadCustomerData(data));
+            
+            // Ở đây chúng ta sử dụng dữ liệu mẫu
+            loadCustomerData(customerDetail);
+            
+            // 2. Cập nhật ngày hiện tại
+            const now = new Date();
+            const dateString = now.toLocaleDateString('vi-VN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = dateString;
+            
+            // 3. Tab switching
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Cập nhật tab active
+                    document.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Hiển thị nội dung tab
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Nếu là tab CLV, khởi tạo biểu đồ
+                    if (tabId === 'clv') {
+                        setTimeout(() => {
+                            initializeCLVChart();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // 4. Nút back
+            document.getElementById('backBtn').addEventListener('click', function() {
+                // Trong thực tế, có thể quay lại trang trước đó
+                // window.history.back();
+                
+                // Hoặc điều hướng đến dashboard
+                window.location.href = 'dashboard3-customer-360.html';
+            });
+            
+            // 5. Filter orders
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Cập nhật button active
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Lọc orders
+                    filterOrders(filter);
+                });
+            });
+            
+            // 6. Khởi tạo CLV chart
+            initializeCLVChart();
+            
+            // 7. Khởi tạo bảng orders
+            populateOrdersTable();
+        });
+
+        // Hàm tải dữ liệu khách hàng
+        function loadCustomerData(data) {
+            // Cập nhật tiêu đề trang
+            document.title = `${data.name} | PetStore Analytics`;
+            
+            // Cập nhật các phần tử DOM với dữ liệu
+            document.querySelector('.customer-name').textContent = data.name;
+            document.querySelector('.customer-avatar').textContent = 
+                data.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Cập nhật quick stats
+            document.querySelectorAll('.stat-value')[0].textContent = `$${data.clv.historical}`;
+            document.querySelectorAll('.stat-value')[1].textContent = `$${data.clv.predicted}`;
+            document.querySelectorAll('.stat-value')[2].textContent = `$${data.acquisition.cpa}`;
+            
+            // Tổng số orders
+            const totalOrders = data.orders.length;
+            document.querySelector('.filter-btn[data-filter="all"]').textContent = 
+                `All Orders (${totalOrders})`;
+            
+            // Orders theo danh mục
+            const dogOrders = data.orders.filter(o => o.category === 'dog').length;
+            const catOrders = data.orders.filter(o => o.category === 'cat').length;
+            const subOrders = data.orders.filter(o => o.category === 'subscription').length;
+            
+            document.querySelector('.filter-btn[data-filter="dog"]').textContent = 
+                `Dog Products (${dogOrders})`;
+            document.querySelector('.filter-btn[data-filter="cat"]').textContent = 
+                `Cat Products (${catOrders})`;
+            document.querySelector('.filter-btn[data-filter="subscription"]').textContent = 
+                `Subscriptions (${subOrders})`;
+        }
+
+        // Hàm khởi tạo CLV chart
+        function initializeCLVChart() {
+            const ctx = document.getElementById('clvChart').getContext('2d');
+            
+            // Nếu đã có chart, hủy nó trước
+            if (clvChart) {
+                clvChart.destroy();
+            }
+            
+            clvChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
+                    datasets: [{
+                        label: 'Cumulative CLV ($)',
+                        data: customerDetail.clv.growth,
+                        borderColor: '#6f42c1',
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#6f42c1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `CLV: $${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cumulative CLV ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Hàm populate bảng orders
+        function populateOrdersTable(filter = 'all') {
+            const tableBody = document.getElementById('ordersTable');
+            tableBody.innerHTML = '';
+            
+            // Lọc orders nếu cần
+            let filteredOrders = customerDetail.orders;
+            if (filter !== 'all') {
+                if (filter === 'dog') {
+                    filteredOrders = customerDetail.orders.filter(o => o.category === 'dog');
+                } else if (filter === 'cat') {
+                    filteredOrders = customerDetail.orders.filter(o => o.category === 'cat');
+                } else if (filter === 'subscription') {
+                    filteredOrders = customerDetail.orders.filter(o => o.category === 'subscription');
+                } else if (filter === 'last30') {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    filteredOrders = customerDetail.orders.filter(o => {
+                        const orderDate = new Date(o.date);
+                        return orderDate >= thirtyDaysAgo;
+                    });
+                }
+            }
+            
+            // Thêm các order vào bảng
+            filteredOrders.forEach(order => {
+                const row = document.createElement('tr');
+                
+                // Xác định icon và category
+                let iconClass, categoryBadge, categoryClass;
+                if (order.category === 'dog') {
+                    iconClass = 'fas fa-dog';
+                    categoryBadge = 'Dog';
+                    categoryClass = 'badge-dog';
+                } else if (order.category === 'cat') {
+                    iconClass = 'fas fa-cat';
+                    categoryBadge = 'Cat';
+                    categoryClass = 'badge-cat';
+                } else if (order.category === 'subscription') {
+                    iconClass = 'fas fa-sync-alt';
+                    categoryBadge = 'Subscription';
+                    categoryClass = 'badge-accessory';
+                } else {
+                    iconClass = 'fas fa-box';
+                    categoryBadge = 'Other';
+                    categoryClass = 'badge-accessory';
+                }
+                
+                // Xác định trạng thái
+                let statusColor;
+                if (order.status === 'delivered') {
+                    statusColor = '#28a745';
+                } else if (order.status === 'active') {
+                    statusColor = '#6f42c1';
+                } else if (order.status === 'pending') {
+                    statusColor = '#ffa500';
+                } else {
+                    statusColor = '#6c757d';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="order-cell">
+                            <div class="order-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="order-info">
+                                <h4>Order ${order.id}</h4>
+                                <p>${order.products.join(', ')}</p>
+                                <span class="product-badge ${categoryClass}">${categoryBadge}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${order.date}</td>
+                    <td>${order.products.length} product(s)</td>
+                    <td><strong>$${order.amount.toFixed(2)}</strong></td>
+                    <td><span style="color: ${statusColor};">${order.status}</span></td>
+                    <td>${order.channel}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Nếu không có orders
+            if (filteredOrders.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                        No orders found for the selected filter
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Hàm lọc orders
+        function filterOrders(filter) {
+            populateOrdersTable(filter);
+        }
+
+        // Hàm export dữ liệu khách hàng
+        function exportCustomerData() {
+            // Trong thực tế, đây sẽ là lời gọi API để xuất PDF
+            // Ở đây chúng ta chỉ hiển thị thông báo
+            showNotification('Exporting customer data to PDF...');
+            
+            // Mô phỏng xuất file
+            setTimeout(() => {
+                showNotification('Customer report exported successfully!');
+            }, 1500);
+        }
+
+        // Hàm chia sẻ báo cáo
+        function shareCustomerReport() {
+            // Trong thực tế, đây sẽ là chia sẻ qua email hoặc link
+            // Ở đây chúng ta chỉ hiển thị thông báo
+            showNotification('Sharing customer report...');
+        }
+
+        // Hàm hiển thị thông báo
+        function showNotification(message) {
+            // Tạo thông báo tạm thời
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 5px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Thêm event listener cho các nút chi tiết trong timeline
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.action-btn')) {
+                const btn = e.target.closest('.action-btn');
+                const btnText = btn.textContent.trim();
+                
+                // Mô phỏng các hành động
+                if (btnText.includes('View Ad Creative')) {
+                    showNotification('Opening Facebook Ad creative in new tab...');
+                } else if (btnText.includes('Campaign Analytics')) {
+                    showNotification('Loading campaign analytics dashboard...');
+                } else if (btnText.includes('View Order Details')) {
+                    showNotification('Loading order details...');
+                } else if (btnText.includes('View Subscription History')) {
+                    showNotification('Loading subscription history...');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
