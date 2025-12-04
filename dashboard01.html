@@ -421,28 +421,28 @@
                         <span>E-commerce Analytics</span>
                     </a>
                 </li>
-                <li class="nav-item" id="customerInsightsNav">
+                <li class="nav-item" id="customerOverviewNav">
                     <a href="dashboard03.html" class="nav-link">
                         <i class="fas fa-users"></i>
-                        <span>Customer Insights</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="productPerformanceNav">
-                    <a href="dashboard04.html" class="nav-link">
-                        <i class="fas fa-cube"></i>
-                        <span>Product Performance</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="websiteBehaviorNav">
-                    <a href="dashboard05.html" class="nav-link">
-                        <i class="fas fa-globe"></i>
-                        <span>Website & User Behavior</span>
+                        <span>Customer Overview</span>
                     </a>
                 </li>
                 <li class="nav-item" id="customerDetailNav">
                     <a href="dashboard06.html" class="nav-link">
                         <i class="fas fa-user-circle"></i>
                         <span>Customer Detail View</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="productPerformanceNav">
+                    <a href="dashboard04.html" class="nav-link">
+                        <i class="fas fa-cube"></i>
+                        <span>Product & Inventory Performance</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="websiteBehaviorNav">
+                    <a href="dashboard05.html" class="nav-link">
+                        <i class="fas fa-globe"></i>
+                        <span>Website & User Behavior</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -1027,38 +1027,7 @@
                 });
             });
             
-            // Xử lý click vào navigation items để đổi tên
-            const customerInsightsNav = document.getElementById('customerInsightsNav');
-            const productPerformanceNav = document.getElementById('productPerformanceNav');
-            
-            // Lưu tên gốc
-            const originalCustomerText = customerInsightsNav.querySelector('span').textContent;
-            const originalProductText = productPerformanceNav.querySelector('span').textContent;
-            
-            // Khi click vào Customer Insights
-            customerInsightsNav.querySelector('.nav-link').addEventListener('click', function(e) {
-                // Đổi tên trước khi chuyển trang (tùy chọn, có thể không cần vì trang sẽ reload)
-                customerInsightsNav.querySelector('span').textContent = 'Customer Insight 360';
-                // Lưu vào localStorage để trang dashboard03.html có thể sử dụng
-                localStorage.setItem('navCustomerRenamed', 'true');
-            });
-            
-            // Khi click vào Product Performance
-            productPerformanceNav.querySelector('.nav-link').addEventListener('click', function(e) {
-                // Đổi tên trước khi chuyển trang
-                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
-                // Lưu vào localStorage để trang dashboard04.html có thể sử dụng
-                localStorage.setItem('navProductRenamed', 'true');
-            });
-            
-            // Kiểm tra nếu đã đổi tên từ trước (khi quay lại trang này)
-            if (localStorage.getItem('navCustomerRenamed') === 'true') {
-                customerInsightsNav.querySelector('span').textContent = 'Customer Insight 360';
-            }
-            
-            if (localStorage.getItem('navProductRenamed') === 'true') {
-                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
-            }
+            // Đã xóa phần xử lý đổi tên navigation items vì đã thay đổi trực tiếp trong HTML
         });
     </script>
 </body>
