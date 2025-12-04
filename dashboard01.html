@@ -52,6 +52,14 @@
             padding: 0 20px 20px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
             margin-bottom: 30px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo:hover {
+            opacity: 0.9;
         }
         
         .logo i {
@@ -74,6 +82,7 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
         
         .nav-item:hover, .nav-item.active {
@@ -86,6 +95,15 @@
             font-size: 18px;
             width: 24px;
             text-align: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
         
         /* Main Content */
@@ -388,30 +406,50 @@
     <div class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">
+            <a href="index.html" class="logo">
                 <i class="fas fa-paw"></i>
                 <h1>PetStore Analytics</h1>
-            </div>
+            </a>
             <ul class="nav-menu">
                 <li class="nav-item active">
                     <i class="fas fa-chart-line"></i>
                     <span>Marketing Dashboard</span>
                 </li>
-                <li class="nav-item">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>E-commerce Analytics</span>
+                <li class="nav-item" id="ecommerceNav">
+                    <a href="dashboard02.html" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>E-commerce Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="customerInsightsNav">
+                    <a href="dashboard03.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Customer Insights</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="productPerformanceNav">
+                    <a href="dashboard04.html" class="nav-link">
+                        <i class="fas fa-cube"></i>
+                        <span>Product Performance</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="websiteBehaviorNav">
+                    <a href="dashboard05.html" class="nav-link">
+                        <i class="fas fa-globe"></i>
+                        <span>Website & User Behavior</span>
+                    </a>
+                </li>
+                <li class="nav-item" id="customerDetailNav">
+                    <a href="dashboard06.html" class="nav-link">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Customer Detail View</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Customer Insights</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-cube"></i>
-                    <span>Product Performance</span>
-                </li>
-                <li class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
                 </li>
             </ul>
         </aside>
@@ -988,6 +1026,39 @@
                     showNotification(`Detail view for ${kpiName}: ${kpiValue}`);
                 });
             });
+            
+            // Xử lý click vào navigation items để đổi tên
+            const customerInsightsNav = document.getElementById('customerInsightsNav');
+            const productPerformanceNav = document.getElementById('productPerformanceNav');
+            
+            // Lưu tên gốc
+            const originalCustomerText = customerInsightsNav.querySelector('span').textContent;
+            const originalProductText = productPerformanceNav.querySelector('span').textContent;
+            
+            // Khi click vào Customer Insights
+            customerInsightsNav.querySelector('.nav-link').addEventListener('click', function(e) {
+                // Đổi tên trước khi chuyển trang (tùy chọn, có thể không cần vì trang sẽ reload)
+                customerInsightsNav.querySelector('span').textContent = 'Customer Insight 360';
+                // Lưu vào localStorage để trang dashboard03.html có thể sử dụng
+                localStorage.setItem('navCustomerRenamed', 'true');
+            });
+            
+            // Khi click vào Product Performance
+            productPerformanceNav.querySelector('.nav-link').addEventListener('click', function(e) {
+                // Đổi tên trước khi chuyển trang
+                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
+                // Lưu vào localStorage để trang dashboard04.html có thể sử dụng
+                localStorage.setItem('navProductRenamed', 'true');
+            });
+            
+            // Kiểm tra nếu đã đổi tên từ trước (khi quay lại trang này)
+            if (localStorage.getItem('navCustomerRenamed') === 'true') {
+                customerInsightsNav.querySelector('span').textContent = 'Customer Insight 360';
+            }
+            
+            if (localStorage.getItem('navProductRenamed') === 'true') {
+                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
+            }
         });
     </script>
 </body>
