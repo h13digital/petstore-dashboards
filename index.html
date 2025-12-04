@@ -55,7 +55,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
+            padding: 12px 0;
         }
         
         .nav-logo {
@@ -66,27 +66,51 @@
             font-weight: 700;
             font-size: 1.3rem;
             text-decoration: none;
+            white-space: nowrap;
         }
         
         .nav-menu {
             display: flex;
             list-style: none;
             gap: 5px;
+            overflow-x: auto;
+            padding: 5px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #f1f1f1;
+        }
+        
+        .nav-menu::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .nav-menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .nav-menu::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
         }
         
         .nav-item {
             position: relative;
+            flex-shrink: 0;
         }
         
         .nav-link {
-            display: block;
-            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
             color: var(--dark);
             text-decoration: none;
             font-weight: 500;
             border-radius: 8px;
             transition: all 0.3s ease;
             position: relative;
+            white-space: nowrap;
+            font-size: 0.95rem;
         }
         
         .nav-link:hover {
@@ -100,13 +124,12 @@
         }
         
         .nav-link i {
-            margin-right: 8px;
             font-size: 0.9em;
         }
         
         .nav-indicator {
             position: absolute;
-            bottom: -15px;
+            bottom: -12px;
             left: 0;
             width: 100%;
             height: 3px;
@@ -119,7 +142,7 @@
         .nav-link:hover .nav-indicator,
         .nav-link.active .nav-indicator {
             opacity: 1;
-            bottom: -8px;
+            bottom: -6px;
         }
         
         .mobile-toggle {
@@ -129,6 +152,18 @@
             font-size: 1.5rem;
             color: var(--primary);
             cursor: pointer;
+        }
+        
+        .nav-dashboard-badge {
+            display: inline-block;
+            background: var(--danger);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+            font-weight: 600;
+            vertical-align: middle;
         }
         
         .header {
@@ -335,6 +370,13 @@
             color: rgba(255,255,255,0.8);
         }
         
+        @media (max-width: 1200px) {
+            .nav-menu {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+        }
+        
         @media (max-width: 992px) {
             .nav-menu {
                 position: fixed;
@@ -343,12 +385,16 @@
                 flex-direction: column;
                 background-color: white;
                 width: 100%;
-                text-align: center;
+                text-align: left;
                 transition: 0.3s;
                 box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
-                padding: 20px 0;
+                padding: 20px;
                 border-radius: 0 0 15px 15px;
                 z-index: 999;
+                max-width: none;
+                height: auto;
+                max-height: 70vh;
+                overflow-y: auto;
             }
             
             .nav-menu.active {
@@ -356,7 +402,14 @@
             }
             
             .nav-item {
-                margin: 15px 0;
+                margin: 8px 0;
+                width: 100%;
+            }
+            
+            .nav-link {
+                padding: 12px 20px;
+                border-radius: 8px;
+                justify-content: flex-start;
             }
             
             .mobile-toggle {
@@ -365,6 +418,10 @@
             
             .nav-link .nav-indicator {
                 display: none;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
             }
         }
         
@@ -383,6 +440,14 @@
             
             .stat-value {
                 font-size: 1.8rem;
+            }
+            
+            .nav-logo span {
+                display: none;
+            }
+            
+            .nav-logo i {
+                font-size: 1.5rem;
             }
         }
         
@@ -488,12 +553,22 @@
             transition: width 0.3s ease;
         }
         
-        /* Section highlighting for navigation */
-        .section-highlight {
-            background-color: rgba(74, 111, 165, 0.05);
-            border-radius: 10px;
-            padding: 5px 15px;
-            transition: all 0.3s ease;
+        /* Active dashboard badge */
+        .active-dashboard {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .nav-scroll-wrapper {
+            display: flex;
+            overflow-x: auto;
+            flex: 1;
+            margin: 0 20px;
         }
     </style>
 </head>
@@ -505,7 +580,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-wrapper">
-                <a href="#" class="nav-logo">
+                <a href="index.html" class="nav-logo">
                     <i class="fas fa-chart-bar"></i>
                     <span>PetStore Analytics</span>
                 </a>
@@ -516,38 +591,48 @@
                 
                 <ul class="nav-menu" id="navMenu">
                     <li class="nav-item">
-                        <a href="#home" class="nav-link active" data-section="home">
-                            <i class="fas fa-home"></i>
-                            Trang chủ
+                        <a href="dashboard01.html" class="nav-link" data-dashboard="marketing">
+                            <i class="fas fa-chart-line"></i>
+                            Marketing Dashboard
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#core-dashboards" class="nav-link" data-section="core">
-                            <i class="fas fa-star"></i>
-                            Dashboard Cốt Lõi
+                        <a href="dashboard02.html" class="nav-link" data-dashboard="ecommerce">
+                            <i class="fas fa-shopping-cart"></i>
+                            E-commerce Analytics
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#specialized-dashboards" class="nav-link" data-section="specialized">
-                            <i class="fas fa-rocket"></i>
-                            Dashboard Chuyên Sâu
+                        <a href="dashboard03.html" class="nav-link" data-dashboard="customers">
+                            <i class="fas fa-users"></i>
+                            Customers Overview
                             <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#comparison" class="nav-link" data-section="comparison">
-                            <i class="fas fa-balance-scale"></i>
-                            So Sánh Dashboard
+                        <a href="dashboard06.html" class="nav-link" data-dashboard="customer-detail">
+                            <i class="fas fa-user-circle"></i>
+                            Customer Detail View
                             <span class="nav-indicator"></span>
+                            <span class="nav-dashboard-badge">DETAIL</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#overview" class="nav-link" data-section="overview">
-                            <i class="fas fa-info-circle"></i>
-                            Tổng Quan
+                        <a href="dashboard04.html" class="nav-link active-dashboard" data-dashboard="product">
+                            <i class="fas fa-cube"></i>
+                            Product & Inventory Performance
                             <span class="nav-indicator"></span>
+                            <span class="nav-dashboard-badge">NEW</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dashboard05.html" class="nav-link active-dashboard" data-dashboard="website">
+                            <i class="fas fa-desktop"></i>
+                            Website & User Behavior
+                            <span class="nav-indicator"></span>
+                            <span class="nav-dashboard-badge">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -626,7 +711,7 @@
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <div>
-                            <div class="card-title">Sales Dashboard</div>
+                            <div class="card-title">E-commerce Analytics</div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích doanh thu & bán hàng</div>
                         </div>
                     </div>
@@ -642,7 +727,7 @@
                         </ul>
                         <a href="dashboard02.html" class="card-button">
                             <i class="fas fa-external-link-alt"></i>
-                            Mở Sales Dashboard
+                            Mở E-commerce Analytics
                         </a>
                     </div>
                 </div>
@@ -654,7 +739,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <div>
-                            <div class="card-title">Customer 360 Dashboard <span class="updated-badge">UPDATED</span></div>
+                            <div class="card-title">Customers Overview <span class="updated-badge">UPDATED</span></div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích khách hàng toàn diện</div>
                         </div>
                     </div>
@@ -670,7 +755,7 @@
                         </ul>
                         <a href="dashboard03.html" class="card-button">
                             <i class="fas fa-external-link-alt"></i>
-                            Mở Customer Dashboard
+                            Mở Customers Overview
                         </a>
                     </div>
                 </div>
@@ -690,7 +775,7 @@
                             <i class="fas fa-cube"></i>
                         </div>
                         <div>
-                            <div class="card-title">Product & Inventory Dashboard <span class="new-badge">NEW</span></div>
+                            <div class="card-title">Product & Inventory Performance <span class="new-badge">NEW</span></div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Quản lý sản phẩm & tồn kho</div>
                         </div>
                     </div>
@@ -718,7 +803,7 @@
                             <i class="fas fa-desktop"></i>
                         </div>
                         <div>
-                            <div class="card-title">Website & User Behavior Dashboard <span class="new-badge">NEW</span></div>
+                            <div class="card-title">Website & User Behavior <span class="new-badge">NEW</span></div>
                             <div style="opacity: 0.9; font-size: 0.9rem;">Phân tích hành vi người dùng website</div>
                         </div>
                     </div>
@@ -812,35 +897,42 @@
                     </thead>
                     <tbody>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Marketing</td>
+                            <td style="padding: 15px; font-weight: 500;">Marketing Dashboard</td>
                             <td style="padding: 15px; text-align: center;">Hiệu quả marketing</td>
                             <td style="padding: 15px; text-align: center;">8</td>
                             <td style="padding: 15px; text-align: center;">Hàng ngày</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Trung bình</span></td>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Sales</td>
+                            <td style="padding: 15px; font-weight: 500;">E-commerce Analytics</td>
                             <td style="padding: 15px; text-align: center;">Doanh thu & bán hàng</td>
                             <td style="padding: 15px; text-align: center;">10</td>
                             <td style="padding: 15px; text-align: center;">Thời gian thực</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #28a745; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Trung bình</span></td>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Customer 360</td>
+                            <td style="padding: 15px; font-weight: 500;">Customers Overview</td>
                             <td style="padding: 15px; text-align: center;">Khách hàng & trải nghiệm</td>
                             <td style="padding: 15px; text-align: center;">12</td>
                             <td style="padding: 15px; text-align: center;">Hàng ngày</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #ffa500; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Cao</span></td>
                         </tr>
                         <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px; font-weight: 500;">Product & Inventory</td>
+                            <td style="padding: 15px; font-weight: 500;">Customer Detail View</td>
+                            <td style="padding: 15px; text-align: center;">Chi tiết khách hàng</td>
+                            <td style="padding: 15px; text-align: center;">15</td>
+                            <td style="padding: 15px; text-align: center;">Thời gian thực</td>
+                            <td style="padding: 15px; text-align: center;"><span style="background: #ffa500; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Cao</span></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 15px; font-weight: 500;">Product & Inventory Performance</td>
                             <td style="padding: 15px; text-align: center;">Sản phẩm & tồn kho</td>
                             <td style="padding: 15px; text-align: center;">9</td>
                             <td style="padding: 15px; text-align: center;">Hàng giờ</td>
                             <td style="padding: 15px; text-align: center;"><span style="background: #6f42c1; color: white; padding: 3px 10px; border-radius: 12px; font-size: 12px;">Rất cao</span></td>
                         </tr>
                         <tr>
-                            <td style="padding: 15px; font-weight: 500;">Website Analytics</td>
+                            <td style="padding: 15px; font-weight: 500;">Website & User Behavior</td>
                             <td style="padding: 15px; text-align: center;">Hành vi người dùng</td>
                             <td style="padding: 15px; text-align: center;">11</td>
                             <td style="padding: 15px; text-align: center;">Thời gian thực</td>
@@ -856,7 +948,7 @@
     <footer class="footer">
         <p>PetStore Analytics Dashboard Hub • Phiên bản 2.0 • Cập nhật lần cuối: Tháng 1, 2024</p>
         <p>© 2024 PetStore E-commerce. Mọi quyền được bảo lưu. | analytics@petstore.com | Đường dây hỗ trợ: 1800-1234</p>
-        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">Đã thêm 2 dashboard mới: Product & Inventory và Website & User Behavior</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray);">Đã thêm 2 dashboard mới: Product & Inventory Performance và Website & User Behavior</p>
     </footer>
 
     <script>
@@ -889,7 +981,7 @@
             });
 
             // Hiệu ứng cho các badge mới
-            const newBadges = document.querySelectorAll('.new-badge');
+            const newBadges = document.querySelectorAll('.new-badge, .nav-dashboard-badge');
             newBadges.forEach(badge => {
                 badge.style.animation = 'pulse 2s infinite';
             });
@@ -925,6 +1017,9 @@
             
             // Khởi tạo scroll indicator
             initScrollIndicator();
+            
+            // Đánh dấu dashboard hiện tại nếu có
+            markCurrentDashboard();
         });
 
         // Hàm hiển thị thông báo
@@ -970,10 +1065,18 @@
         }
 
         // Theo dõi lượt click vào các dashboard
-        document.querySelectorAll('.card-button').forEach(button => {
+        document.querySelectorAll('.card-button, .nav-link').forEach(button => {
             button.addEventListener('click', function(e) {
-                const dashboardName = this.closest('.dashboard-card').querySelector('.card-title').textContent;
+                let dashboardName = '';
+                if (this.classList.contains('card-button')) {
+                    dashboardName = this.closest('.dashboard-card').querySelector('.card-title').textContent;
+                } else {
+                    dashboardName = this.textContent.trim();
+                }
                 console.log(`Dashboard opened: ${dashboardName}`);
+                
+                // Lưu dashboard đã truy cập gần nhất
+                localStorage.setItem('lastVisitedDashboard', dashboardName);
                 
                 // Trong thực tế, bạn có thể gửi sự kiện này đến analytics
                 // analytics.track('Dashboard Opened', { name: dashboardName });
@@ -1002,39 +1105,42 @@
             // Đóng menu mobile khi click vào link
             navLinks.forEach(link => {
                 link.addEventListener('click', function() {
-                    navMenu.classList.remove('active');
-                    mobileToggle.querySelector('i').classList.remove('fa-times');
-                    mobileToggle.querySelector('i').classList.add('fa-bars');
+                    // Đối với mobile, đóng menu sau khi click
+                    if (window.innerWidth <= 992) {
+                        navMenu.classList.remove('active');
+                        mobileToggle.querySelector('i').classList.remove('fa-times');
+                        mobileToggle.querySelector('i').classList.add('fa-bars');
+                    }
                     
-                    // Cập nhật trạng thái active
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
+                    // Lưu dashboard đã click
+                    const dashboard = this.getAttribute('data-dashboard');
+                    localStorage.setItem('lastVisitedDashboard', dashboard);
                 });
             });
             
-            // Xử lý scroll để cập nhật active nav link
-            window.addEventListener('scroll', function() {
-                const sections = document.querySelectorAll('section, .dashboard-category');
-                const scrollPos = window.scrollY + 100;
-                
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    const sectionId = section.getAttribute('id');
-                    
-                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight && sectionId) {
-                        navLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href') === `#${sectionId}`) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
-                });
-                
-                // Xử lý scroll indicator
-                updateScrollIndicator();
+            // Xử lý scroll indicator
+            window.addEventListener('scroll', updateScrollIndicator);
+        }
+        
+        // Đánh dấu dashboard hiện tại
+        function markCurrentDashboard() {
+            const currentPage = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (currentPage.includes(href) && href !== 'index.html') {
+                    link.classList.add('active');
+                    link.style.background = 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)';
+                    link.style.color = 'white';
+                }
             });
+            
+            // Kiểm tra dashboard đã truy cập gần nhất
+            const lastDashboard = localStorage.getItem('lastVisitedDashboard');
+            if (lastDashboard) {
+                console.log(`Dashboard truy cập gần nhất: ${lastDashboard}`);
+            }
         }
         
         // Khởi tạo scroll indicator
