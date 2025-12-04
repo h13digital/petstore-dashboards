@@ -123,7 +123,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
         
@@ -131,6 +131,35 @@
             font-size: 28px;
             color: var(--secondary);
             font-weight: 600;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+        
+        .breadcrumb span {
+            margin: 0 8px;
         }
         
         .customer-header {
@@ -142,6 +171,7 @@
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .customer-avatar {
@@ -155,6 +185,11 @@
             color: white;
             font-size: 24px;
             font-weight: 600;
+        }
+        
+        .customer-info {
+            flex: 1;
+            min-width: 250px;
         }
         
         .customer-info h3 {
@@ -176,6 +211,7 @@
             display: flex;
             gap: 20px;
             margin-top: 5px;
+            flex-wrap: wrap;
         }
         
         .meta-item {
@@ -184,6 +220,46 @@
             gap: 5px;
             font-size: 13px;
             color: var(--gray);
+        }
+        
+        /* Customer Navigation */
+        .customer-navigation {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+        
+        #customerSelector {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 14px;
+            min-width: 200px;
+            background: white;
+            color: var(--dark);
+        }
+        
+        /* Quick Access */
+        .quick-access {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        /* Customer Context */
+        .customer-context {
+            background: var(--light-purple);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         /* Tabs Navigation */
@@ -384,6 +460,11 @@
         .tag-subscriber {
             background-color: #e9d8fd;
             color: var(--secondary);
+        }
+        
+        .tag-high-value {
+            background-color: #f8d7da;
+            color: #721c24;
         }
         
         /* Pet Information */
@@ -659,6 +740,15 @@
         
         .action-btn:hover {
             background: #e0d0fc;
+        }
+        
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .action-btn.primary:hover {
+            background: var(--secondary);
         }
         
         /* Purchase History */
@@ -974,6 +1064,17 @@
             .info-sections {
                 grid-template-columns: 1fr;
             }
+            
+            .customer-navigation {
+                margin-left: 0;
+                margin-top: 15px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            #customerSelector {
+                min-width: 150px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1066,7 +1167,11 @@
             .sidebar,
             .customer-search,
             .action-btn,
-            .footer {
+            .footer,
+            .breadcrumb,
+            .customer-navigation,
+            .quick-access,
+            .customer-context {
                 display: none;
             }
             
@@ -1101,8 +1206,14 @@
                         <span>E-commerce Analytics</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="dashboard03.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Customers Overview</span>
+                    </a>
+                </li>
                 <li class="nav-item active">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-user-circle"></i>
                     <span>Customer 360 Dashboard</span>
                 </li>
                 <li class="nav-item">
@@ -1131,6 +1242,23 @@
             <!-- Header -->
             <div class="header">
                 <h2><i class="fas fa-users"></i> Customer 360 Dashboard</h2>
+                <div style="font-size: 14px; color: var(--gray);">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb">
+                <a href="dashboard03.html">
+                    <i class="fas fa-users"></i> Customers Overview
+                </a>
+                <span>/</span>
+                <a href="dashboard03.html#customers-tab">
+                    <i class="fas fa-list"></i> Customer List
+                </a>
+                <span>/</span>
+                <span id="breadcrumbCustomerName">Jennifer Wilson</span>
             </div>
 
             <!-- Customer Header -->
@@ -1138,9 +1266,11 @@
                 <div class="customer-avatar" id="customerAvatar">JW</div>
                 <div class="customer-info">
                     <h3 id="customerName">Jennifer Wilson</h3>
-                    <p><i class="fas fa-id-card"></i> <span id="customerId">CUST-005</span> • 
-                       <i class="fas fa-calendar-alt"></i> Customer Since: <span id="customerSince">Mar 15, 2023</span> • 
-                       <i class="fas fa-map-marker-alt"></i> <span id="customerLocation">San Francisco, CA</span></p>
+                    <p>
+                        <i class="fas fa-id-card"></i> <span id="customerId">CUST-005</span> • 
+                        <i class="fas fa-calendar-alt"></i> Customer Since: <span id="customerSince">Mar 15, 2023</span> • 
+                        <i class="fas fa-map-marker-alt"></i> <span id="customerLocation">San Francisco, CA</span>
+                    </p>
                     <div class="customer-meta">
                         <div class="meta-item">
                             <i class="fas fa-paw"></i>
@@ -1156,6 +1286,53 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Customer Navigation -->
+                <div class="customer-navigation">
+                    <button class="action-btn" id="prevCustomer" title="Previous Customer">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <select id="customerSelector">
+                        <option value="CUST-001">Michael Chen (Platinum)</option>
+                        <option value="CUST-002">Sarah Johnson (Platinum)</option>
+                        <option value="CUST-003">Robert Williams (Gold)</option>
+                        <option value="CUST-004">Lisa Anderson (Gold)</option>
+                        <option value="CUST-005" selected>Jennifer Wilson (Silver)</option>
+                        <option value="CUST-006">David Brown (Silver)</option>
+                        <option value="CUST-007">Emma Wilson (Silver)</option>
+                        <option value="CUST-008">James Taylor (Bronze)</option>
+                        <option value="CUST-009">Olivia Martinez (Platinum)</option>
+                        <option value="CUST-010">William Davis (Gold)</option>
+                    </select>
+                    <button class="action-btn" id="nextCustomer" title="Next Customer">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Access -->
+            <div class="quick-access">
+                <button class="action-btn primary" onclick="window.location.href='dashboard03.html#customers-tab'">
+                    <i class="fas fa-list"></i> Back to Customer List
+                </button>
+                <button class="action-btn" onclick="viewSimilarCustomers()">
+                    <i class="fas fa-user-friends"></i> Similar Customers
+                </button>
+                <button class="action-btn" onclick="viewSegmentCustomers()">
+                    <i class="fas fa-chart-network"></i> View Silver Segment
+                </button>
+                <button class="action-btn" onclick="exportCustomerReport()">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+            </div>
+
+            <!-- Customer Context -->
+            <div class="customer-context">
+                <i class="fas fa-info-circle"></i>
+                <span>This customer belongs to: <strong>Silver Segment</strong> • <strong>RFM: Champions</strong> • <strong>CLV: High</strong></span>
+                <a href="dashboard03.html#segments-tab" style="color: var(--primary); text-decoration: none; margin-left: auto;">
+                    <i class="fas fa-external-link-alt"></i> View Segment Analytics
+                </a>
             </div>
 
             <!-- Tabs Navigation -->
@@ -1618,13 +1795,13 @@
 
             <!-- Footer -->
             <div class="footer">
-                <p>Customer 360 Dashboard • PetStore E-commerce • Data updated: <span id="currentDate"></span></p>
+                <p>Customer 360 Dashboard • PetStore E-commerce • Data updated: <span id="currentDateFooter"></span></p>
                 <p style="margin-top: 10px;">
                     <button class="action-btn" onclick="window.print()">
                         <i class="fas fa-print"></i>
                         Print Report
                     </button>
-                    <button class="action-btn" onclick="exportCustomerData()">
+                    <button class="action-btn" onclick="exportCustomerReport()">
                         <i class="fas fa-download"></i>
                         Export PDF
                     </button>
@@ -1638,56 +1815,86 @@
     </div>
 
     <script>
-        // Dữ liệu thống nhất cho Customer 360 Dashboard
-        const customerData = {
-            // Thông tin khách hàng Jennifer Wilson (CUST-005)
-            currentCustomer: {
-                id: "CUST-005",
-                name: "Jennifer Wilson",
+        // Dữ liệu danh sách khách hàng (đồng bộ với dashboard03.html)
+        const customers = [
+            { 
+                id: "CUST-001", 
+                name: "Michael Chen", 
+                segment: "platinum", 
+                email: "michael.chen@email.com",
+                phone: "(123) 555-0101",
+                location: "New York, NY",
+                joinDate: "Jan 10, 2023",
+                totalSpent: 8420,
+                totalOrders: 42,
+                avgOrderValue: 200,
+                clv: 2450,
+                pets: [{ name: "Rocky", type: "dog", breed: "German Shepherd" }]
+            },
+            { 
+                id: "CUST-002", 
+                name: "Sarah Johnson", 
+                segment: "platinum", 
+                email: "sarah.johnson@email.com",
+                phone: "(123) 555-0102",
+                location: "Los Angeles, CA",
+                joinDate: "Feb 5, 2023",
+                totalSpent: 7650,
+                totalOrders: 38,
+                avgOrderValue: 201,
+                clv: 2200,
+                pets: [{ name: "Milo", type: "dog", breed: "Labrador" }]
+            },
+            { 
+                id: "CUST-003", 
+                name: "Robert Williams", 
+                segment: "gold", 
+                email: "robert.williams@email.com",
+                phone: "(123) 555-0103",
+                location: "Chicago, IL",
+                joinDate: "Jan 22, 2023",
+                totalSpent: 4250,
+                totalOrders: 25,
+                avgOrderValue: 170,
+                clv: 1850,
+                pets: [{ name: "Charlie", type: "dog", breed: "Beagle" }]
+            },
+            { 
+                id: "CUST-004", 
+                name: "Lisa Anderson", 
+                segment: "gold", 
+                email: "lisa.anderson@email.com",
+                phone: "(123) 555-0104",
+                location: "Houston, TX",
+                joinDate: "Mar 1, 2023",
+                totalSpent: 3820,
+                totalOrders: 22,
+                avgOrderValue: 174,
+                clv: 1620,
+                pets: [{ name: "Bella", type: "cat", breed: "Persian" }]
+            },
+            { 
+                id: "CUST-005", 
+                name: "Jennifer Wilson", 
+                segment: "silver", 
                 email: "jennifer.wilson@email.com",
                 phone: "(123) 456-7890",
                 location: "San Francisco, CA",
-                joinDate: "March 15, 2023",
-                
-                // Chỉ số chính
+                joinDate: "Mar 15, 2023",
                 totalSpent: 2845,
                 totalOrders: 18,
                 avgOrderValue: 158.06,
-                daysSinceLastOrder: 45,
                 clv: 1240,
                 predictedCLV: 1240,
                 satisfaction: 4.8,
                 acquisitionCost: 42.50,
                 clvCacRatio: 67,
-                
-                // Phân loại và segments
-                segments: ["Premium Customer", "Loyal", "Dog Owner", "Auto-ship Subscriber", "High CLV"],
+                segments: ["Silver Customer", "Loyal", "Dog Owner", "Auto-ship Subscriber", "High CLV"],
                 rfmPosition: "Champions",
-                retentionLikelihood: "High",
-                
-                // Thú cưng
                 pets: [
-                    { 
-                        name: "Max", 
-                        type: "dog", 
-                        breed: "Golden Retriever", 
-                        gender: "Male", 
-                        age: 4, 
-                        weight: "30kg",
-                        lastPurchase: "Dog food, 2 weeks ago"
-                    },
-                    { 
-                        name: "Luna", 
-                        type: "cat", 
-                        breed: "Siamese Cat", 
-                        gender: "Female", 
-                        age: 2, 
-                        weight: "4kg",
-                        lastPurchase: "Cat litter, 1 month ago"
-                    }
+                    { name: "Max", type: "dog", breed: "Golden Retriever", gender: "Male", age: 4, weight: "30kg" },
+                    { name: "Luna", type: "cat", breed: "Siamese Cat", gender: "Female", age: 2, weight: "4kg" }
                 ],
-                
-                // Hoạt động gần đây
                 activities: [
                     { type: "purchase", title: "Order #ORD-8017 Placed", description: "Cat Litter Premium, Cat Toy Bundle - $156.40", time: "December 22, 2023" },
                     { type: "review", title: "Product Review Submitted", description: "5-star review for Premium Dog Food", time: "December 18, 2023" },
@@ -1695,8 +1902,6 @@
                     { type: "website", title: "Website Visit", description: "Viewed cat accessories and holiday deals", time: "December 10, 2023" },
                     { type: "purchase", title: "Order #ORD-7906 Placed", description: "Premium Dog Food (20kg), Dog Bed - $189.50", time: "November 18, 2023" }
                 ],
-                
-                // Dữ liệu hành trình khách hàng
                 journey: [
                     {
                         type: "acquisition",
@@ -1733,34 +1938,8 @@
                             { label: "Discount Used", value: "10% Welcome Discount" }
                         ],
                         description: "Customer returned via direct traffic and completed purchase. Used welcome discount code from abandoned cart email."
-                    },
-                    {
-                        type: "engagement",
-                        title: "Email Marketing Engagement",
-                        date: "March - April 2023",
-                        details: [
-                            { label: "Email Series", value: "New Customer Onboarding" },
-                            { label: "Open Rate", value: "85% (Average: 65%)" },
-                            { label: "Click Rate", value: "42% (Average: 28%)" },
-                            { label: "Most Clicked", value: "\"Dog Care Tips\" Newsletter" }
-                        ],
-                        description: "High engagement with onboarding emails. Clicked on \"Cat Products\" email which led to first cat product purchase."
-                    },
-                    {
-                        type: "subscription",
-                        title: "Auto-ship Subscription Started",
-                        date: "May 10, 2023",
-                        details: [
-                            { label: "Subscription ID", value: "SUB-023" },
-                            { label: "Product", value: "Premium Dog Food (20kg)" },
-                            { label: "Frequency", value: "Every 45 days" },
-                            { label: "Monthly Value", value: "$49.99" }
-                        ],
-                        description: "Subscribed after receiving \"Subscribe & Save\" email offer. Has received 8 shipments to date. High retention likelihood."
                     }
                 ],
-                
-                // Dữ liệu đơn hàng
                 orders: [
                     {
                         id: "ORD-7123",
@@ -1791,117 +1970,92 @@
                         status: "active",
                         channel: "Email",
                         type: "subscription"
-                    },
-                    {
-                        id: "ORD-7451",
-                        date: "April 28, 2023",
-                        products: ["Cat Litter", "Cat Toys"],
-                        category: "cat",
-                        amount: 124.80,
-                        status: "delivered",
-                        channel: "Website",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-7562",
-                        date: "June 15, 2023",
-                        products: ["Premium Dog Food (20kg)", "Dog Shampoo"],
-                        category: "dog",
-                        amount: 92.45,
-                        status: "delivered",
-                        channel: "Mobile App",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-7673",
-                        date: "July 22, 2023",
-                        products: ["Cat Food (10kg)", "Cat Litter"],
-                        category: "cat",
-                        amount: 78.90,
-                        status: "delivered",
-                        channel: "Website",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-7784",
-                        date: "August 30, 2023",
-                        products: ["Dog Food (20kg)", "Dog Toys"],
-                        category: "dog",
-                        amount: 124.30,
-                        status: "delivered",
-                        channel: "Website",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-7895",
-                        date: "October 5, 2023",
-                        products: ["Cat Food (5kg)", "Cat Treats"],
-                        category: "cat",
-                        amount: 56.80,
-                        status: "delivered",
-                        channel: "Mobile App",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-7906",
-                        date: "November 18, 2023",
-                        products: ["Premium Dog Food (20kg)", "Dog Bed"],
-                        category: "dog",
-                        amount: 189.50,
-                        status: "delivered",
-                        channel: "Website",
-                        type: "repeat"
-                    },
-                    {
-                        id: "ORD-8017",
-                        date: "December 22, 2023",
-                        products: ["Cat Litter Premium", "Cat Toy Bundle"],
-                        category: "cat",
-                        amount: 156.40,
-                        status: "delivered",
-                        channel: "Website",
-                        type: "repeat"
                     }
                 ],
-                
-                // Dữ liệu CLV
-                clvDetail: {
-                    historical: 2845,
-                    predicted: 1240,
-                    cac: 42.50,
-                    ratio: 67,
-                    growth: [0, 89.5, 214.3, 399.9, 624.5, 890.2, 1204.8, 1560.4, 1890.2, 2245.6, 2540.1, 2845.0]
-                },
-                
-                // Dữ liệu sở thích
-                preferences: {
-                    categories: {
-                        dog: { percentage: 62, value: 1764, orders: 11 },
-                        cat: { percentage: 28, value: 796, orders: 5 },
-                        accessories: { percentage: 6, value: 171, orders: 1 },
-                        grooming: { percentage: 2, value: 57, orders: 1 },
-                        other: { percentage: 2, value: 57, orders: 0 }
-                    },
-                    topProducts: [
-                        { name: "Premium Dog Food (20kg)", purchases: 8, value: 399.92, type: "dog", subscription: true },
-                        { name: "Cat Litter Premium", purchases: 4, value: 99.96, type: "cat", subscription: false },
-                        { name: "Dog Toy Bundle", purchases: 2, value: 71.98, type: "dog", subscription: false }
-                    ]
-                },
-                
-                // Dữ liệu mua hàng
                 purchaseHistory: {
                     labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                     data: [89.5, 193.55, 243.54, 335.99, 414.89, 539.19, 595.99, 785.49, 974.99, 1131.39]
                 },
-                
-                // Sở thích sản phẩm
                 productPreferences: {
                     labels: ["Dog Food", "Cat Food", "Toys", "Accessories", "Health", "Grooming"],
                     data: [45, 25, 15, 8, 5, 2]
                 }
+            },
+            { 
+                id: "CUST-006", 
+                name: "David Brown", 
+                segment: "silver", 
+                email: "david.brown@email.com",
+                phone: "(123) 555-0106",
+                location: "Miami, FL",
+                joinDate: "Apr 3, 2023",
+                totalSpent: 2845,
+                totalOrders: 18,
+                avgOrderValue: 158,
+                clv: 1240,
+                pets: [{ name: "Buddy", type: "dog", breed: "Poodle" }]
+            },
+            { 
+                id: "CUST-007", 
+                name: "Emma Wilson", 
+                segment: "silver", 
+                email: "emma.wilson@email.com",
+                phone: "(123) 555-0107",
+                location: "Seattle, WA",
+                joinDate: "Mar 28, 2023",
+                totalSpent: 2250,
+                totalOrders: 15,
+                avgOrderValue: 150,
+                clv: 980,
+                pets: [{ name: "Daisy", type: "cat", breed: "Maine Coon" }]
+            },
+            { 
+                id: "CUST-008", 
+                name: "James Taylor", 
+                segment: "bronze", 
+                email: "james.taylor@email.com",
+                phone: "(123) 555-0108",
+                location: "Boston, MA",
+                joinDate: "Feb 18, 2023",
+                totalSpent: 980,
+                totalOrders: 8,
+                avgOrderValue: 122,
+                clv: 650,
+                pets: [{ name: "Oliver", type: "dog", breed: "Bulldog" }]
+            },
+            { 
+                id: "CUST-009", 
+                name: "Olivia Martinez", 
+                segment: "platinum", 
+                email: "olivia.martinez@email.com",
+                phone: "(123) 555-0109",
+                location: "Denver, CO",
+                joinDate: "Jan 30, 2023",
+                totalSpent: 6950,
+                totalOrders: 35,
+                avgOrderValue: 199,
+                clv: 2100,
+                pets: [{ name: "Leo", type: "cat", breed: "Bengal" }]
+            },
+            { 
+                id: "CUST-010", 
+                name: "William Davis", 
+                segment: "gold", 
+                email: "william.davis@email.com",
+                phone: "(123) 555-0110",
+                location: "Phoenix, AZ",
+                joinDate: "Mar 10, 2023",
+                totalSpent: 3450,
+                totalOrders: 20,
+                avgOrderValue: 172,
+                clv: 1520,
+                pets: [{ name: "Lucy", type: "dog", breed: "Dachshund" }]
             }
-        };
+        ];
+
+        // Biến lưu trữ khách hàng hiện tại
+        let currentCustomerIndex = 4; // Jennifer Wilson là index 4
+        let currentCustomer = customers[currentCustomerIndex];
 
         // Biến lưu trữ các biểu đồ
         let purchaseHistoryChart, productPreferencesChart, clvChart, categoryChart;
@@ -1917,29 +2071,43 @@
                 day: 'numeric'
             });
             document.getElementById('currentDate').textContent = dateString;
+            document.getElementById('currentDateFooter').textContent = dateString;
             
-            // 2. Tải dữ liệu khách hàng hiện tại
+            // 2. Kiểm tra URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('customerId');
+            
+            if (customerId) {
+                // Tìm khách hàng theo ID
+                const customerIndex = customers.findIndex(c => c.id === customerId);
+                if (customerIndex !== -1) {
+                    currentCustomerIndex = customerIndex;
+                    currentCustomer = customers[currentCustomerIndex];
+                }
+            }
+            
+            // 3. Tải dữ liệu khách hàng hiện tại
             loadCurrentCustomerData();
             
-            // 3. Populate Customer Segments
+            // 4. Populate Customer Segments
             populateCustomerSegments();
             
-            // 4. Populate Pets List
+            // 5. Populate Pets List
             populatePetsList();
             
-            // 5. Populate Activity Timeline
+            // 6. Populate Activity Timeline
             populateActivityTimeline();
             
-            // 6. Populate Journey Timeline
+            // 7. Populate Journey Timeline
             populateJourneyTimeline();
             
-            // 7. Populate Orders Table
+            // 8. Populate Orders Table
             populateOrdersTable();
             
-            // 8. Khởi tạo các biểu đồ
+            // 9. Khởi tạo các biểu đồ
             initializeCharts();
             
-            // 9. Tab switching
+            // 10. Tab switching
             document.querySelectorAll('.tab-btn').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
@@ -1965,7 +2133,7 @@
                 });
             });
             
-            // 10. Filter orders
+            // 11. Filter orders
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const filter = this.getAttribute('data-filter');
@@ -1981,32 +2149,64 @@
                 });
             });
             
-            // 11. Initialize filter buttons
+            // 12. Khởi tạo navigation
+            initializeNavigation();
+            
+            // 13. Update filter buttons
             updateFilterButtons();
         });
 
         // Hàm tải dữ liệu khách hàng hiện tại
         function loadCurrentCustomerData() {
-            const customer = customerData.currentCustomer;
-            
             // Cập nhật avatar và tên
             document.getElementById('customerAvatar').textContent = 
-                customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
-            document.getElementById('customerName').textContent = customer.name;
+                currentCustomer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('customerName').textContent = currentCustomer.name;
+            document.getElementById('breadcrumbCustomerName').textContent = currentCustomer.name;
             
             // Cập nhật thông tin cơ bản
-            document.getElementById('customerId').textContent = customer.id;
-            document.getElementById('customerSince').textContent = customer.joinDate;
-            document.getElementById('customerLocation').textContent = customer.location;
-            document.getElementById('customerPets').textContent = `Pets: ${customer.pets[0].name} (${customer.pets[0].type}), ${customer.pets[1].name} (${customer.pets[1].type})`;
-            document.getElementById('customerEmail').textContent = customer.email;
-            document.getElementById('customerPhone').textContent = customer.phone;
+            document.getElementById('customerId').textContent = currentCustomer.id;
+            document.getElementById('customerSince').textContent = currentCustomer.joinDate;
+            document.getElementById('customerLocation').textContent = currentCustomer.location;
+            document.getElementById('customerEmail').textContent = currentCustomer.email;
+            document.getElementById('customerPhone').textContent = currentCustomer.phone;
+            
+            // Cập nhật thông tin thú cưng
+            if (currentCustomer.pets) {
+                const petsText = currentCustomer.pets.map(pet => `${pet.name} (${pet.type})`).join(', ');
+                document.getElementById('customerPets').textContent = `Pets: ${petsText}`;
+            }
             
             // Cập nhật các chỉ số
-            document.getElementById('totalSpent').textContent = `$${customer.totalSpent.toLocaleString()}`;
-            document.getElementById('totalOrders').textContent = customer.totalOrders;
-            document.getElementById('predictedCLV').textContent = `$${customer.predictedCLV.toLocaleString()}`;
-            document.getElementById('satisfaction').textContent = `${customer.satisfaction}/5`;
+            document.getElementById('totalSpent').textContent = `$${currentCustomer.totalSpent.toLocaleString()}`;
+            document.getElementById('totalOrders').textContent = currentCustomer.totalOrders;
+            document.getElementById('predictedCLV').textContent = `$${(currentCustomer.clv || currentCustomer.totalSpent * 0.5).toLocaleString()}`;
+            document.getElementById('satisfaction').textContent = `${currentCustomer.satisfaction || 4.5}/5`;
+            
+            // Cập nhật customer selector
+            const selector = document.getElementById('customerSelector');
+            if (selector) {
+                selector.value = currentCustomer.id;
+            }
+            
+            // Cập nhật context
+            const segmentMap = {
+                'platinum': 'Platinum',
+                'gold': 'Gold', 
+                'silver': 'Silver',
+                'bronze': 'Bronze'
+            };
+            
+            const contextElement = document.querySelector('.customer-context');
+            if (contextElement) {
+                contextElement.innerHTML = `
+                    <i class="fas fa-info-circle"></i>
+                    <span>This customer belongs to: <strong>${segmentMap[currentCustomer.segment]} Segment</strong> • <strong>RFM: ${currentCustomer.rfmPosition || 'Champions'}</strong> • <strong>CLV: ${currentCustomer.clv > 1500 ? 'High' : 'Medium'}</strong></span>
+                    <a href="dashboard03.html#segments-tab" style="color: var(--primary); text-decoration: none; margin-left: auto;">
+                        <i class="fas fa-external-link-alt"></i> View Segment Analytics
+                    </a>
+                `;
+            }
         }
 
         // Hàm populate customer segments
@@ -2014,18 +2214,39 @@
             const segmentsContainer = document.getElementById('customerSegments');
             segmentsContainer.innerHTML = '';
             
-            customerData.currentCustomer.segments.forEach(segment => {
-                let tagClass = 'tag-premium';
-                if (segment.includes('Loyal')) tagClass = 'tag-loyal';
-                if (segment.includes('Owner')) tagClass = 'tag-owner';
-                if (segment.includes('Subscriber')) tagClass = 'tag-subscriber';
-                if (segment.includes('Premium')) tagClass = 'tag-premium';
+            if (currentCustomer.segments && Array.isArray(currentCustomer.segments)) {
+                currentCustomer.segments.forEach(segment => {
+                    let tagClass = 'tag-premium';
+                    if (segment.includes('Loyal')) tagClass = 'tag-loyal';
+                    if (segment.includes('Owner')) tagClass = 'tag-owner';
+                    if (segment.includes('Subscriber')) tagClass = 'tag-subscriber';
+                    if (segment.includes('Premium') || segment.includes('Platinum')) tagClass = 'tag-premium';
+                    if (segment.includes('High CLV') || segment.includes('High Value')) tagClass = 'tag-high-value';
+                    
+                    const segmentTag = document.createElement('span');
+                    segmentTag.className = `customer-tag ${tagClass}`;
+                    segmentTag.textContent = segment;
+                    segmentsContainer.appendChild(segmentTag);
+                });
+            } else {
+                // Tạo segments dựa trên dữ liệu cơ bản
+                const baseSegments = [
+                    `${currentCustomer.segment.charAt(0).toUpperCase() + currentCustomer.segment.slice(1)} Customer`,
+                    currentCustomer.totalOrders > 20 ? 'Loyal' : 'Regular',
+                    currentCustomer.clv > 1500 ? 'High Value' : 'Medium Value'
+                ];
                 
-                const segmentTag = document.createElement('span');
-                segmentTag.className = `customer-tag ${tagClass}`;
-                segmentTag.textContent = segment;
-                segmentsContainer.appendChild(segmentTag);
-            });
+                baseSegments.forEach(segment => {
+                    let tagClass = 'tag-premium';
+                    if (segment.includes('Loyal')) tagClass = 'tag-loyal';
+                    if (segment.includes('Value')) tagClass = 'tag-high-value';
+                    
+                    const segmentTag = document.createElement('span');
+                    segmentTag.className = `customer-tag ${tagClass}`;
+                    segmentTag.textContent = segment;
+                    segmentsContainer.appendChild(segmentTag);
+                });
+            }
         }
 
         // Hàm populate pets list
@@ -2033,24 +2254,33 @@
             const petsList = document.getElementById('petsList');
             petsList.innerHTML = '';
             
-            customerData.currentCustomer.pets.forEach(pet => {
-                const petItem = document.createElement('div');
-                petItem.className = 'pet-item';
-                
-                const petIconClass = pet.type === 'dog' ? 'dog' : 'cat';
-                const petIcon = pet.type === 'dog' ? 'fa-dog' : 'fa-cat';
-                
-                petItem.innerHTML = `
-                    <div class="pet-icon ${petIconClass}">
-                        <i class="fas ${petIcon}"></i>
-                    </div>
-                    <div class="pet-info">
-                        <h4>${pet.name} (${pet.breed})</h4>
-                        <p>${pet.gender}, ${pet.age} years old, ${pet.weight} • Last purchase: ${pet.lastPurchase}</p>
+            if (currentCustomer.pets && currentCustomer.pets.length > 0) {
+                currentCustomer.pets.forEach(pet => {
+                    const petItem = document.createElement('div');
+                    petItem.className = 'pet-item';
+                    
+                    const petIconClass = pet.type === 'dog' ? 'dog' : 'cat';
+                    const petIcon = pet.type === 'dog' ? 'fa-dog' : 'fa-cat';
+                    
+                    petItem.innerHTML = `
+                        <div class="pet-icon ${petIconClass}">
+                            <i class="fas ${petIcon}"></i>
+                        </div>
+                        <div class="pet-info">
+                            <h4>${pet.name} (${pet.breed || pet.type})</h4>
+                            <p>${pet.gender || ''}${pet.age ? `, ${pet.age} years old` : ''}${pet.weight ? `, ${pet.weight}` : ''}</p>
+                        </div>
+                    `;
+                    petsList.appendChild(petItem);
+                });
+            } else {
+                petsList.innerHTML = `
+                    <div style="text-align: center; color: var(--gray); padding: 20px;">
+                        <i class="fas fa-paw" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                        No pet information available
                     </div>
                 `;
-                petsList.appendChild(petItem);
-            });
+            }
         }
 
         // Hàm populate activity timeline
@@ -2058,44 +2288,77 @@
             const activityTimeline = document.getElementById('activityTimeline');
             activityTimeline.innerHTML = '';
             
-            customerData.currentCustomer.activities.forEach(activity => {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
+            if (currentCustomer.activities && currentCustomer.activities.length > 0) {
+                currentCustomer.activities.forEach(activity => {
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'timeline-item';
+                    
+                    // Xác định icon dựa trên loại hoạt động
+                    let iconClass;
+                    switch(activity.type) {
+                        case 'purchase':
+                            iconClass = 'fas fa-shopping-cart';
+                            break;
+                        case 'email':
+                            iconClass = 'fas fa-envelope';
+                            break;
+                        case 'review':
+                            iconClass = 'fas fa-star';
+                            break;
+                        case 'website':
+                            iconClass = 'fas fa-mouse-pointer';
+                            break;
+                        case 'support':
+                            iconClass = 'fas fa-headset';
+                            break;
+                        default:
+                            iconClass = 'fas fa-circle';
+                    }
+                    
+                    timelineItem.innerHTML = `
+                        <div class="timeline-icon">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>${activity.title}</h4>
+                            <p>${activity.description}</p>
+                            <div class="timeline-time">${activity.time}</div>
+                        </div>
+                    `;
+                    activityTimeline.appendChild(timelineItem);
+                });
+            } else {
+                // Tạo activities mẫu nếu không có
+                const sampleActivities = [
+                    { type: "purchase", title: "Last Purchase", description: `Order #${currentCustomer.id.replace('CUST-', 'ORD-')} • $${currentCustomer.avgOrderValue}`, time: "Recently" },
+                    { type: "email", title: "Email Engagement", description: "Opened last marketing email", time: "Last week" },
+                    { type: "website", title: "Website Visit", description: "Viewed product pages", time: "2 weeks ago" }
+                ];
                 
-                // Xác định icon dựa trên loại hoạt động
-                let iconClass;
-                switch(activity.type) {
-                    case 'purchase':
-                        iconClass = 'fas fa-shopping-cart';
-                        break;
-                    case 'email':
-                        iconClass = 'fas fa-envelope';
-                        break;
-                    case 'review':
-                        iconClass = 'fas fa-star';
-                        break;
-                    case 'website':
-                        iconClass = 'fas fa-mouse-pointer';
-                        break;
-                    case 'support':
-                        iconClass = 'fas fa-headset';
-                        break;
-                    default:
-                        iconClass = 'fas fa-circle';
-                }
-                
-                timelineItem.innerHTML = `
-                    <div class="timeline-icon">
-                        <i class="${iconClass}"></i>
-                    </div>
-                    <div class="timeline-content">
-                        <h4>${activity.title}</h4>
-                        <p>${activity.description}</p>
-                        <div class="timeline-time">${activity.time}</div>
-                    </div>
-                `;
-                activityTimeline.appendChild(timelineItem);
-            });
+                sampleActivities.forEach(activity => {
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'timeline-item';
+                    
+                    let iconClass;
+                    switch(activity.type) {
+                        case 'purchase': iconClass = 'fas fa-shopping-cart'; break;
+                        case 'email': iconClass = 'fas fa-envelope'; break;
+                        default: iconClass = 'fas fa-mouse-pointer';
+                    }
+                    
+                    timelineItem.innerHTML = `
+                        <div class="timeline-icon">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>${activity.title}</h4>
+                            <p>${activity.description}</p>
+                            <div class="timeline-time">${activity.time}</div>
+                        </div>
+                    `;
+                    activityTimeline.appendChild(timelineItem);
+                });
+            }
         }
 
         // Hàm populate journey timeline
@@ -2103,65 +2366,76 @@
             const journeyTimeline = document.getElementById('journeyTimeline');
             journeyTimeline.innerHTML = '';
             
-            customerData.currentCustomer.journey.forEach((item, index) => {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'customer-timeline-item';
-                
-                // Xác định icon dựa trên loại
-                let iconClass;
-                switch(item.type) {
-                    case 'acquisition':
-                        iconClass = 'fas fa-ad';
-                        break;
-                    case 'website':
-                        iconClass = 'fas fa-mouse-pointer';
-                        break;
-                    case 'purchase':
-                        iconClass = 'fas fa-shopping-cart';
-                        break;
-                    case 'engagement':
-                        iconClass = 'fas fa-envelope-open-text';
-                        break;
-                    case 'subscription':
-                        iconClass = 'fas fa-sync-alt';
-                        break;
-                    default:
-                        iconClass = 'fas fa-circle';
-                }
-                
-                // Tạo chi tiết
-                let detailsHTML = '';
-                item.details.forEach(detail => {
-                    detailsHTML += `
-                        <div class="detail-item">
-                            <div class="detail-label">${detail.label}</div>
-                            <div class="detail-value">${detail.value}</div>
+            if (currentCustomer.journey && currentCustomer.journey.length > 0) {
+                currentCustomer.journey.forEach((item, index) => {
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'customer-timeline-item';
+                    
+                    // Xác định icon dựa trên loại
+                    let iconClass;
+                    switch(item.type) {
+                        case 'acquisition':
+                            iconClass = 'fas fa-ad';
+                            break;
+                        case 'website':
+                            iconClass = 'fas fa-mouse-pointer';
+                            break;
+                        case 'purchase':
+                            iconClass = 'fas fa-shopping-cart';
+                            break;
+                        case 'engagement':
+                            iconClass = 'fas fa-envelope-open-text';
+                            break;
+                        case 'subscription':
+                            iconClass = 'fas fa-sync-alt';
+                            break;
+                        default:
+                            iconClass = 'fas fa-circle';
+                    }
+                    
+                    // Tạo chi tiết
+                    let detailsHTML = '';
+                    if (item.details && item.details.length > 0) {
+                        item.details.forEach(detail => {
+                            detailsHTML += `
+                                <div class="detail-item">
+                                    <div class="detail-label">${detail.label}</div>
+                                    <div class="detail-value">${detail.value}</div>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    timelineItem.innerHTML = `
+                        <div class="customer-timeline-marker">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="customer-timeline-content">
+                            <div class="customer-timeline-header">
+                                <h3 class="customer-timeline-title">${item.title}</h3>
+                                <div class="customer-timeline-date">
+                                    <i class="fas fa-calendar"></i>
+                                    ${item.date}
+                                </div>
+                            </div>
+                            ${detailsHTML ? `<div class="customer-timeline-details">${detailsHTML}</div>` : ''}
+                            <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                                ${item.description || 'Customer activity recorded.'}
+                            </p>
                         </div>
                     `;
+                    journeyTimeline.appendChild(timelineItem);
                 });
-                
-                timelineItem.innerHTML = `
-                    <div class="customer-timeline-marker">
-                        <i class="${iconClass}"></i>
-                    </div>
-                    <div class="customer-timeline-content">
-                        <div class="customer-timeline-header">
-                            <h3 class="customer-timeline-title">${item.title}</h3>
-                            <div class="customer-timeline-date">
-                                <i class="fas fa-calendar"></i>
-                                ${item.date}
-                            </div>
-                        </div>
-                        <div class="customer-timeline-details">
-                            ${detailsHTML}
-                        </div>
-                        <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
-                            ${item.description}
-                        </p>
+            } else {
+                // Tạo journey mẫu nếu không có
+                journeyTimeline.innerHTML = `
+                    <div style="text-align: center; color: var(--gray); padding: 40px;">
+                        <i class="fas fa-route" style="font-size: 32px; margin-bottom: 15px; display: block;"></i>
+                        <h3>No journey data available</h3>
+                        <p>Customer journey tracking requires additional setup.</p>
                     </div>
                 `;
-                journeyTimeline.appendChild(timelineItem);
-            });
+            }
         }
 
         // Hàm populate orders table
@@ -2170,106 +2444,151 @@
             tableBody.innerHTML = '';
             
             // Lọc orders nếu cần
-            let filteredOrders = customerData.currentCustomer.orders;
+            let filteredOrders = currentCustomer.orders || [];
             if (filter !== 'all') {
                 if (filter === 'dog') {
-                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'dog');
+                    filteredOrders = (currentCustomer.orders || []).filter(o => o.category === 'dog');
                 } else if (filter === 'cat') {
-                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'cat');
+                    filteredOrders = (currentCustomer.orders || []).filter(o => o.category === 'cat');
                 } else if (filter === 'subscription') {
-                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'subscription');
+                    filteredOrders = (currentCustomer.orders || []).filter(o => o.category === 'subscription');
                 } else if (filter === 'last90') {
                     // Lọc 5 đơn hàng gần nhất (giả lập)
-                    filteredOrders = customerData.currentCustomer.orders.slice(-5);
+                    filteredOrders = (currentCustomer.orders || []).slice(-5);
                 }
             }
             
-            // Thêm các order vào bảng
-            filteredOrders.forEach(order => {
-                const row = document.createElement('tr');
-                
-                // Xác định icon và category
-                let iconClass, categoryBadge, categoryClass;
-                if (order.category === 'dog') {
-                    iconClass = 'fas fa-dog';
-                    categoryBadge = 'Dog';
-                    categoryClass = 'badge-dog';
-                } else if (order.category === 'cat') {
-                    iconClass = 'fas fa-cat';
-                    categoryBadge = 'Cat';
-                    categoryClass = 'badge-cat';
-                } else if (order.category === 'subscription') {
-                    iconClass = 'fas fa-sync-alt';
-                    categoryBadge = 'Subscription';
-                    categoryClass = 'badge-accessory';
-                } else {
-                    iconClass = 'fas fa-box';
-                    categoryBadge = 'Other';
-                    categoryClass = 'badge-accessory';
-                }
-                
-                // Xác định trạng thái
-                let statusColor;
-                if (order.status === 'delivered') {
-                    statusColor = '#28a745';
-                } else if (order.status === 'active') {
-                    statusColor = '#6f42c1';
-                } else if (order.status === 'pending') {
-                    statusColor = '#ffa500';
-                } else {
-                    statusColor = '#6c757d';
-                }
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="order-cell">
-                            <div class="order-icon">
-                                <i class="${iconClass}"></i>
+            // Nếu có orders
+            if (filteredOrders.length > 0) {
+                // Thêm các order vào bảng
+                filteredOrders.forEach(order => {
+                    const row = document.createElement('tr');
+                    
+                    // Xác định icon và category
+                    let iconClass, categoryBadge, categoryClass;
+                    if (order.category === 'dog') {
+                        iconClass = 'fas fa-dog';
+                        categoryBadge = 'Dog';
+                        categoryClass = 'badge-dog';
+                    } else if (order.category === 'cat') {
+                        iconClass = 'fas fa-cat';
+                        categoryBadge = 'Cat';
+                        categoryClass = 'badge-cat';
+                    } else if (order.category === 'subscription') {
+                        iconClass = 'fas fa-sync-alt';
+                        categoryBadge = 'Subscription';
+                        categoryClass = 'badge-accessory';
+                    } else {
+                        iconClass = 'fas fa-box';
+                        categoryBadge = 'Other';
+                        categoryClass = 'badge-accessory';
+                    }
+                    
+                    // Xác định trạng thái
+                    let statusColor;
+                    if (order.status === 'delivered') {
+                        statusColor = '#28a745';
+                    } else if (order.status === 'active') {
+                        statusColor = '#6f42c1';
+                    } else if (order.status === 'pending') {
+                        statusColor = '#ffa500';
+                    } else {
+                        statusColor = '#6c757d';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="order-cell">
+                                <div class="order-icon">
+                                    <i class="${iconClass}"></i>
+                                </div>
+                                <div class="order-info">
+                                    <h4>Order ${order.id}</h4>
+                                    <p>${order.products.join(', ')}</p>
+                                    <span class="product-badge ${categoryClass}">${categoryBadge}</span>
+                                </div>
                             </div>
-                            <div class="order-info">
-                                <h4>Order ${order.id}</h4>
-                                <p>${order.products.join(', ')}</p>
-                                <span class="product-badge ${categoryClass}">${categoryBadge}</span>
+                        </td>
+                        <td>${order.date}</td>
+                        <td>${order.products.length} product(s)</td>
+                        <td><strong>$${order.amount.toFixed(2)}</strong></td>
+                        <td><span style="color: ${statusColor};">${order.status}</span></td>
+                        <td>${order.channel}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                // Tạo orders mẫu nếu không có
+                const sampleOrders = [
+                    {
+                        id: `ORD-${currentCustomer.id.replace('CUST-', '')}001`,
+                        date: currentCustomer.joinDate,
+                        products: ["Sample Product"],
+                        category: "dog",
+                        amount: currentCustomer.avgOrderValue,
+                        status: "delivered",
+                        channel: "Website"
+                    }
+                ];
+                
+                sampleOrders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="order-cell">
+                                <div class="order-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="order-info">
+                                    <h4>Order ${order.id}</h4>
+                                    <p>${order.products.join(', ')}</p>
+                                    <span class="product-badge badge-accessory">Sample</span>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>${order.date}</td>
-                    <td>${order.products.length} product(s)</td>
-                    <td><strong>$${order.amount.toFixed(2)}</strong></td>
-                    <td><span style="color: ${statusColor};">${order.status}</span></td>
-                    <td>${order.channel}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-            
-            // Nếu không có orders
-            if (filteredOrders.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
-                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
-                        No orders found for the selected filter
-                    </td>
-                `;
-                tableBody.appendChild(row);
+                        </td>
+                        <td>${order.date}</td>
+                        <td>${order.products.length} product(s)</td>
+                        <td><strong>$${order.amount.toFixed(2)}</strong></td>
+                        <td><span style="color: #28a745;">${order.status}</span></td>
+                        <td>${order.channel}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
             }
         }
 
         // Hàm cập nhật filter buttons
         function updateFilterButtons() {
-            const orders = customerData.currentCustomer.orders;
+            const orders = currentCustomer.orders || [];
             const dogOrders = orders.filter(o => o.category === 'dog').length;
             const catOrders = orders.filter(o => o.category === 'cat').length;
             const subOrders = orders.filter(o => o.category === 'subscription').length;
             
-            document.querySelector('.filter-btn[data-filter="all"]').textContent = 
-                `All Orders (${orders.length})`;
-            document.querySelector('.filter-btn[data-filter="dog"]').textContent = 
-                `Dog Products (${dogOrders})`;
-            document.querySelector('.filter-btn[data-filter="cat"]').textContent = 
-                `Cat Products (${catOrders})`;
-            document.querySelector('.filter-btn[data-filter="subscription"]').textContent = 
-                `Subscriptions (${subOrders})`;
+            // Cập nhật text của filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                const filter = btn.getAttribute('data-filter');
+                let text = '';
+                
+                switch(filter) {
+                    case 'all':
+                        text = `All Orders (${orders.length})`;
+                        break;
+                    case 'dog':
+                        text = `Dog Products (${dogOrders})`;
+                        break;
+                    case 'cat':
+                        text = `Cat Products (${catOrders})`;
+                        break;
+                    case 'subscription':
+                        text = `Subscriptions (${subOrders})`;
+                        break;
+                    case 'last90':
+                        text = `Last 90 Days (${Math.min(5, orders.length)})`;
+                        break;
+                }
+                
+                if (text) btn.textContent = text;
+            });
         }
 
         // Hàm lọc orders
@@ -2280,190 +2599,179 @@
         // Hàm khởi tạo các biểu đồ
         function initializeCharts() {
             // 1. Purchase History Chart
-            const purchaseCtx = document.getElementById('purchaseHistoryChart').getContext('2d');
-            purchaseHistoryChart = new Chart(purchaseCtx, {
-                type: 'line',
-                data: {
-                    labels: customerData.currentCustomer.purchaseHistory.labels,
-                    datasets: [{
-                        label: 'Cumulative Spending ($)',
-                        data: customerData.currentCustomer.purchaseHistory.data,
-                        borderColor: '#6f42c1',
-                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#6f42c1',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
+            const purchaseCtx = document.getElementById('purchaseHistoryChart');
+            if (purchaseCtx) {
+                purchaseHistoryChart = new Chart(purchaseCtx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: currentCustomer.purchaseHistory ? currentCustomer.purchaseHistory.labels : ["Jan", "Feb", "Mar", "Apr", "May"],
+                        datasets: [{
+                            label: 'Cumulative Spending ($)',
+                            data: currentCustomer.purchaseHistory ? currentCustomer.purchaseHistory.data : [0, 100, 250, 450, 700],
+                            borderColor: '#6f42c1',
+                            backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#6f42c1',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Cumulative: $${context.parsed.y}`;
+                                    }
+                                }
+                            }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Cumulative: $${context.parsed.y}`;
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Cumulative Spending ($)'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
                                 }
                             }
                         }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Cumulative Spending ($)'
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        }
                     }
-                }
-            });
+                });
+            }
 
             // 2. Product Preferences Chart
-            const preferencesCtx = document.getElementById('productPreferencesChart').getContext('2d');
-            productPreferencesChart = new Chart(preferencesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: customerData.currentCustomer.productPreferences.labels,
-                    datasets: [{
-                        data: customerData.currentCustomer.productPreferences.data,
-                        backgroundColor: [
-                            'rgba(111, 66, 193, 0.8)',
-                            'rgba(255, 165, 0, 0.8)',
-                            'rgba(32, 201, 151, 0.8)',
-                            'rgba(23, 162, 184, 0.8)',
-                            'rgba(253, 126, 20, 0.8)',
-                            'rgba(108, 117, 125, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(111, 66, 193, 1)',
-                            'rgba(255, 165, 0, 1)',
-                            'rgba(32, 201, 151, 1)',
-                            'rgba(23, 162, 184, 1)',
-                            'rgba(253, 126, 20, 1)',
-                            'rgba(108, 117, 125, 1)'
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 15
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = Math.round((value / total) * 100);
-                                    return `${label}: ${percentage}% of purchases`;
+            const preferencesCtx = document.getElementById('productPreferencesChart');
+            if (preferencesCtx) {
+                productPreferencesChart = new Chart(preferencesCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: currentCustomer.productPreferences ? currentCustomer.productPreferences.labels : ["Dog", "Cat", "Other"],
+                        datasets: [{
+                            data: currentCustomer.productPreferences ? currentCustomer.productPreferences.data : [60, 30, 10],
+                            backgroundColor: [
+                                'rgba(111, 66, 193, 0.8)',
+                                'rgba(255, 165, 0, 0.8)',
+                                'rgba(32, 201, 151, 0.8)',
+                                'rgba(23, 162, 184, 0.8)',
+                                'rgba(253, 126, 20, 0.8)',
+                                'rgba(108, 117, 125, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(111, 66, 193, 1)',
+                                'rgba(255, 165, 0, 1)',
+                                'rgba(32, 201, 151, 1)',
+                                'rgba(23, 162, 184, 1)',
+                                'rgba(253, 126, 20, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 12,
+                                    padding: 15
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: ${percentage}% of purchases`;
+                                    }
                                 }
                             }
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
+                        },
+                        cutout: '60%'
+                    }
+                });
+            }
 
             // 3. Category Chart
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            const categories = customerData.currentCustomer.preferences.categories;
-            
-            categoryChart = new Chart(categoryCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Dog', 'Cat', 'Accessories', 'Grooming', 'Other'],
-                    datasets: [{
-                        label: 'Percentage (%)',
-                        data: [
-                            categories.dog.percentage,
-                            categories.cat.percentage,
-                            categories.accessories.percentage,
-                            categories.grooming.percentage,
-                            categories.other.percentage
-                        ],
-                        backgroundColor: [
-                            'rgba(111, 66, 193, 0.7)',
-                            'rgba(255, 165, 0, 0.7)',
-                            'rgba(32, 201, 151, 0.7)',
-                            'rgba(23, 162, 184, 0.7)',
-                            'rgba(108, 117, 125, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(111, 66, 193, 1)',
-                            'rgba(255, 165, 0, 1)',
-                            'rgba(32, 201, 151, 1)',
-                            'rgba(23, 162, 184, 1)',
-                            'rgba(108, 117, 125, 1)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label;
-                                    const value = context.parsed.y;
-                                    let additional = '';
-                                    
-                                    if (label === 'Dog') additional = ` (${categories.dog.orders} orders, $${categories.dog.value})`;
-                                    if (label === 'Cat') additional = ` (${categories.cat.orders} orders, $${categories.cat.value})`;
-                                    if (label === 'Accessories') additional = ` (${categories.accessories.orders} orders, $${categories.accessories.value})`;
-                                    if (label === 'Grooming') additional = ` (${categories.grooming.orders} orders, $${categories.grooming.value})`;
-                                    
-                                    return `${label}: ${value}%${additional}`;
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                categoryChart = new Chart(categoryCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Dog', 'Cat', 'Accessories', 'Grooming', 'Other'],
+                        datasets: [{
+                            label: 'Percentage (%)',
+                            data: [currentCustomer.segment === 'dog' ? 70 : 60, 30, 5, 3, 2],
+                            backgroundColor: [
+                                'rgba(111, 66, 193, 0.7)',
+                                'rgba(255, 165, 0, 0.7)',
+                                'rgba(32, 201, 151, 0.7)',
+                                'rgba(23, 162, 184, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(111, 66, 193, 1)',
+                                'rgba(255, 165, 0, 1)',
+                                'rgba(32, 201, 151, 1)',
+                                'rgba(23, 162, 184, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.parsed.y}%`;
+                                    }
                                 }
                             }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Percentage (%)'
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Percentage (%)'
+                                },
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             // 4. CLV Chart
             initializeCLVChart();
@@ -2471,20 +2779,29 @@
 
         // Hàm khởi tạo CLV chart
         function initializeCLVChart() {
-            const ctx = document.getElementById('clvChart').getContext('2d');
+            const ctx = document.getElementById('clvChart');
+            if (!ctx) return;
             
             // Nếu đã có chart, hủy nó trước
             if (clvChart) {
                 clvChart.destroy();
             }
             
-            clvChart = new Chart(ctx, {
+            // Tạo dữ liệu CLV dựa trên totalSpent
+            const monthlyGrowth = currentCustomer.totalSpent / 10;
+            const clvData = [];
+            for (let i = 0; i < 12; i++) {
+                clvData.push((monthlyGrowth * (i + 1)).toFixed(2));
+            }
+            
+            clvChart = new Chart(ctx.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
+                    labels: ["Month 1", "Month 2", "Month 3", "Month 4", "Month 5", "Month 6", 
+                             "Month 7", "Month 8", "Month 9", "Month 10", "Month 11", "Month 12"],
                     datasets: [{
                         label: 'Cumulative CLV ($)',
-                        data: customerData.currentCustomer.clvDetail.growth,
+                        data: clvData,
                         borderColor: '#6f42c1',
                         backgroundColor: 'rgba(111, 66, 193, 0.1)',
                         borderWidth: 3,
@@ -2532,9 +2849,116 @@
             });
         }
 
-        // Hàm export dữ liệu khách hàng
-        function exportCustomerData() {
-            showNotification('Exporting customer data to PDF...');
+        // Hàm khởi tạo navigation
+        function initializeNavigation() {
+            // Xử lý selector khách hàng
+            const customerSelector = document.getElementById('customerSelector');
+            if (customerSelector) {
+                customerSelector.addEventListener('change', function() {
+                    navigateToCustomer(this.value);
+                });
+            }
+            
+            // Xử lý nút previous/next
+            const prevBtn = document.getElementById('prevCustomer');
+            const nextBtn = document.getElementById('nextCustomer');
+            
+            if (prevBtn && nextBtn) {
+                // Previous button
+                prevBtn.addEventListener('click', function() {
+                    if (currentCustomerIndex > 0) {
+                        currentCustomerIndex--;
+                        currentCustomer = customers[currentCustomerIndex];
+                        updateCustomerView();
+                    }
+                });
+                
+                // Next button
+                nextBtn.addEventListener('click', function() {
+                    if (currentCustomerIndex < customers.length - 1) {
+                        currentCustomerIndex++;
+                        currentCustomer = customers[currentCustomerIndex];
+                        updateCustomerView();
+                    }
+                });
+            }
+            
+            // Cập nhật URL khi thay đổi khách hàng
+            function updateCustomerView() {
+                loadCurrentCustomerData();
+                populateCustomerSegments();
+                populatePetsList();
+                populateActivityTimeline();
+                populateJourneyTimeline();
+                populateOrdersTable();
+                updateFilterButtons();
+                
+                // Cập nhật URL
+                const newUrl = `dashboard06.html?customerId=${currentCustomer.id}`;
+                window.history.pushState({}, '', newUrl);
+                
+                // Cập nhật biểu đồ
+                setTimeout(() => {
+                    if (purchaseHistoryChart) purchaseHistoryChart.destroy();
+                    if (productPreferencesChart) productPreferencesChart.destroy();
+                    if (categoryChart) categoryChart.destroy();
+                    if (clvChart) clvChart.destroy();
+                    
+                    initializeCharts();
+                }, 100);
+                
+                showNotification(`Now viewing: ${currentCustomer.name}`);
+            }
+        }
+
+        // Hàm điều hướng đến khách hàng theo ID
+        function navigateToCustomer(customerId) {
+            const customerIndex = customers.findIndex(c => c.id === customerId);
+            if (customerIndex !== -1) {
+                currentCustomerIndex = customerIndex;
+                currentCustomer = customers[currentCustomerIndex];
+                
+                // Cập nhật view
+                loadCurrentCustomerData();
+                populateCustomerSegments();
+                populatePetsList();
+                populateActivityTimeline();
+                populateJourneyTimeline();
+                populateOrdersTable();
+                updateFilterButtons();
+                
+                // Cập nhật URL
+                const newUrl = `dashboard06.html?customerId=${customerId}`;
+                window.history.pushState({}, '', newUrl);
+                
+                // Cập nhật biểu đồ
+                setTimeout(() => {
+                    if (purchaseHistoryChart) purchaseHistoryChart.destroy();
+                    if (productPreferencesChart) productPreferencesChart.destroy();
+                    if (categoryChart) categoryChart.destroy();
+                    if (clvChart) clvChart.destroy();
+                    
+                    initializeCharts();
+                }, 100);
+                
+                showNotification(`Now viewing: ${currentCustomer.name}`);
+            }
+        }
+
+        // Hàm xem khách hàng tương tự
+        function viewSimilarCustomers() {
+            // Điều hướng đến dashboard03 với filter theo segment
+            window.location.href = `dashboard03.html?segment=${currentCustomer.segment}#customers-tab`;
+        }
+
+        // Hàm xem phân đoạn khách hàng
+        function viewSegmentCustomers() {
+            window.location.href = `dashboard03.html#segments-tab`;
+        }
+
+        // Hàm export báo cáo
+        function exportCustomerReport() {
+            showNotification('Exporting customer report to PDF...');
             
             // Mô phỏng xuất file
             setTimeout(() => {
