@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Insight 360 Dashboard - PetStore</title>
+    <title>Customer 360 Dashboard - PetStore Analytics</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -18,6 +18,7 @@
             --dark: #343a40;
             --gray: #6c757d;
             --light-purple: #e9d8fd;
+            --border: #e9ecef;
         }
         
         * {
@@ -159,6 +160,57 @@
             gap: 5px;
         }
         
+        /* Tabs Navigation */
+        .tabs-nav {
+            background: white;
+            border-radius: 10px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 20px 25px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         /* Customer Profile Card */
         .profile-container {
             display: grid;
@@ -270,6 +322,58 @@
         .stat-label {
             font-size: 13px;
             color: var(--gray);
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .stat-card .stat-detail {
+            font-size: 13px;
+            color: var(--gray);
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* CLV Badge */
+        .clv-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
         }
         
         /* Pet Information */
@@ -437,6 +541,409 @@
             color: var(--dark);
         }
         
+        /* Customer Journey */
+        .journey-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .journey-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--light-purple));
+            border-radius: 3px;
+        }
+        
+        .customer-timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .customer-timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .customer-timeline-marker {
+            position: absolute;
+            left: -40px;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            z-index: 1;
+        }
+        
+        .customer-timeline-content {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .customer-timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .customer-timeline-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .customer-timeline-date {
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .customer-timeline-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .detail-item {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .timeline-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 8px 15px;
+            background: var(--light-purple);
+            border: none;
+            border-radius: 5px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
+        }
+        
+        .action-btn:hover {
+            background: #e0d0fc;
+        }
+        
+        /* Purchase History */
+        .purchase-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .purchase-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--gray);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .purchase-table {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--light-purple);
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tr:hover {
+            background-color: #fafafa;
+        }
+        
+        .order-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .order-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--light-purple);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .order-info h4 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .order-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        .product-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-dog {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-cat {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-accessory {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* CLV Analysis */
+        .clv-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .clv-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .clv-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .clv-chart-container {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .clv-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .clv-metric {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .clv-metric:hover {
+            border-color: var(--primary);
+        }
+        
+        .metric-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .metric-description {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
+        /* Acquisition Sources */
+        .acquisition-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .source-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .source-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-top: 4px solid;
+        }
+        
+        .source-card.channel {
+            border-top-color: var(--primary);
+        }
+        
+        .source-card.campaign {
+            border-top-color: var(--success);
+        }
+        
+        .source-card.attribution {
+            border-top-color: var(--warning);
+        }
+        
+        .source-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .source-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+        
+        .source-icon.channel {
+            background-color: var(--primary);
+        }
+        
+        .source-icon.campaign {
+            background-color: var(--success);
+        }
+        
+        .source-icon.attribution {
+            background-color: var(--warning);
+        }
+        
+        .source-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .source-info p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .source-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .source-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .source-detail:last-child {
+            border-bottom: none;
+        }
+        
         /* RFM Matrix */
         .rfm-container {
             background: white;
@@ -533,32 +1040,6 @@
             gap: 10px;
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        thead {
-            background-color: var(--light-purple);
-        }
-        
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--secondary);
-            border-bottom: 2px solid #dee2e6;
-        }
-        
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-        
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-        
         .customer-avatar {
             width: 36px;
             height: 36px;
@@ -623,6 +1104,15 @@
             border-top: 1px solid #eee;
         }
         
+        /* Product Preferences */
+        .preferences-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
         /* Responsive */
         @media (max-width: 992px) {
             .container {
@@ -660,86 +1150,92 @@
             .rfm-matrix {
                 grid-template-columns: 1fr;
             }
+            
+            .tabs-nav {
+                flex-direction: column;
+                padding: 0;
+            }
+            
+            .tab-btn {
+                padding: 15px;
+                border-bottom: 1px solid var(--border);
+                border-radius: 0;
+            }
+            
+            .tab-btn.active {
+                border-bottom: 3px solid var(--primary);
+            }
+            
+            .profile-container {
+                flex-direction: column;
+            }
+            
+            .journey-container,
+            .purchase-container,
+            .clv-container,
+            .acquisition-container {
+                padding: 20px;
+            }
         }
         
-        /* Tabs */
-        .tabs {
+        /* Loading State */
+        .loading {
             display: flex;
-            border-bottom: 1px solid #dee2e6;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            font-size: 15px;
-            font-weight: 500;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            font-size: 18px;
             color: var(--gray);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-        
-        .tab:hover:not(.active) {
-            color: var(--dark);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
         }
         
         /* Tooltip */
         .tooltip {
             position: relative;
             display: inline-block;
-            border-bottom: 1px dotted #999;
+            border-bottom: 1px dotted var(--gray);
             cursor: help;
         }
         
-        .tooltip .tooltiptext {
+        .tooltip .tooltip-text {
             visibility: hidden;
-            width: 200px;
-            background-color: #333;
-            color: #fff;
+            width: 250px;
+            background-color: var(--dark);
+            color: white;
             text-align: center;
             border-radius: 6px;
             padding: 10px;
             position: absolute;
-            z-index: 1;
+            z-index: 1000;
             bottom: 125%;
             left: 50%;
-            margin-left: -100px;
+            margin-left: -125px;
             opacity: 0;
             transition: opacity 0.3s;
             font-size: 12px;
             font-weight: normal;
         }
         
-        .tooltip:hover .tooltiptext {
+        .tooltip:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
         }
         
-        /* CLV Badge */
-        .clv-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 15px;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-top: 10px;
+        /* Print Styles */
+        @media print {
+            .sidebar,
+            .customer-search,
+            .action-btn,
+            .footer {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .tab-content {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -766,24 +1262,18 @@
                 </li>
                 <li class="nav-item active">
                     <i class="fas fa-users"></i>
-                    <span>Customer Insight 360</span>
+                    <span>Customer 360 Dashboard</span>
                 </li>
                 <li class="nav-item" id="productPerformanceNav">
                     <a href="dashboard04.html" class="nav-link">
                         <i class="fas fa-cube"></i>
-                        <span>Product Performance</span>
+                        <span>Product & Inventory Performance</span>
                     </a>
                 </li>
                 <li class="nav-item" id="websiteBehaviorNav">
                     <a href="dashboard05.html" class="nav-link">
                         <i class="fas fa-globe"></i>
                         <span>Website & User Behavior</span>
-                    </a>
-                </li>
-                <li class="nav-item" id="customerDetailNav">
-                    <a href="dashboard06.html" class="nav-link">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Customer Detail View</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -799,9 +1289,9 @@
         <main class="main-content">
             <!-- Header -->
             <div class="header">
-                <h2><i class="fas fa-users"></i> Customer Insight 360 Dashboard</h2>
+                <h2><i class="fas fa-users"></i> Customer 360 Dashboard</h2>
                 <div class="customer-search">
-                    <input type="text" id="searchCustomer" placeholder="Search customer by name, email, or ID...">
+                    <input type="text" id="searchCustomer" placeholder="Search customer by name, email, or ID..." value="CUST-005">
                     <button id="searchBtn">
                         <i class="fas fa-search"></i>
                         Search
@@ -809,12 +1299,33 @@
                 </div>
             </div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab active" data-tab="overview">Customer Overview</button>
-                <button class="tab" data-tab="segments">Customer Segments</button>
-                <button class="tab" data-tab="analytics">Customer Analytics</button>
-            </div>
+            <!-- Tabs Navigation -->
+            <nav class="tabs-nav">
+                <button class="tab-btn active" data-tab="overview">
+                    <i class="fas fa-user-circle"></i>
+                    Customer Overview
+                </button>
+                <button class="tab-btn" data-tab="journey">
+                    <i class="fas fa-route"></i>
+                    Customer Journey
+                </button>
+                <button class="tab-btn" data-tab="purchases">
+                    <i class="fas fa-shopping-bag"></i>
+                    Purchase History
+                </button>
+                <button class="tab-btn" data-tab="clv">
+                    <i class="fas fa-chart-line"></i>
+                    CLV Analysis
+                </button>
+                <button class="tab-btn" data-tab="acquisition">
+                    <i class="fas fa-funnel-dollar"></i>
+                    Acquisition Sources
+                </button>
+                <button class="tab-btn" data-tab="segments">
+                    <i class="fas fa-chart-network"></i>
+                    Customer Segments
+                </button>
+            </nav>
 
             <!-- Tab 1: Customer Overview -->
             <div class="tab-content active" id="overview-tab">
@@ -823,13 +1334,13 @@
                     <!-- Left: Customer Profile Card -->
                     <div class="profile-card">
                         <div class="profile-header">
-                            <div class="profile-avatar">JW</div>
+                            <div class="profile-avatar" id="customerAvatar">JW</div>
                             <div class="profile-info">
-                                <h3>Jennifer Wilson</h3>
-                                <p><i class="fas fa-envelope"></i> jennifer.wilson@email.com</p>
-                                <p><i class="fas fa-phone"></i> (123) 456-7890</p>
-                                <p><i class="fas fa-map-marker-alt"></i> San Francisco, CA</p>
-                                <div class="customer-segments">
+                                <h3 id="customerName">Jennifer Wilson</h3>
+                                <p><i class="fas fa-envelope"></i> <span id="customerEmail">jennifer.wilson@email.com</span></p>
+                                <p><i class="fas fa-phone"></i> <span id="customerPhone">(123) 456-7890</span></p>
+                                <p><i class="fas fa-map-marker-alt"></i> <span id="customerLocation">San Francisco, CA</span></p>
+                                <div class="customer-segments" id="customerSegments">
                                     <span class="segment-tag segment-premium">Premium Customer</span>
                                     <span class="segment-tag segment-loyal">Loyal</span>
                                     <span class="segment-tag segment-new">Dog Owner</span>
@@ -840,31 +1351,31 @@
                         <!-- Customer Stats -->
                         <div class="stats-grid">
                             <div class="stat-item">
-                                <div class="stat-value">$2,845</div>
+                                <div class="stat-value" id="totalSpent">$2,845</div>
                                 <div class="stat-label">Total Spent</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">18</div>
+                                <div class="stat-value" id="totalOrders">18</div>
                                 <div class="stat-label">Total Orders</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">$158</div>
+                                <div class="stat-value" id="avgOrderValue">$158</div>
                                 <div class="stat-label">Avg. Order Value</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">45</div>
+                                <div class="stat-value" id="daysSinceLastOrder">45</div>
                                 <div class="stat-label">Days Since Last Order</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">$1,240</div>
+                                <div class="stat-value" id="customerCLV">$1,240</div>
                                 <div class="stat-label">CLV (Predicted)</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">4.8</div>
+                                <div class="stat-value" id="customerSatisfaction">4.8</div>
                                 <div class="stat-label">
                                     <span class="tooltip">
                                         Satisfaction
-                                        <span class="tooltiptext">Customer satisfaction score based on reviews and feedback</span>
+                                        <span class="tooltip-text">Customer satisfaction score based on reviews and feedback</span>
                                     </span>
                                 </div>
                             </div>
@@ -881,25 +1392,8 @@
                             <div class="section-title">
                                 <i class="fas fa-paw"></i> Pets Information
                             </div>
-                            <div class="pets-list">
-                                <div class="pet-item">
-                                    <div class="pet-icon dog">
-                                        <i class="fas fa-dog"></i>
-                                    </div>
-                                    <div class="pet-info">
-                                        <h4>Max (Golden Retriever)</h4>
-                                        <p>Male, 4 years old, 30kg • Last purchase: Dog food, 2 weeks ago</p>
-                                    </div>
-                                </div>
-                                <div class="pet-item">
-                                    <div class="pet-icon cat">
-                                        <i class="fas fa-cat"></i>
-                                    </div>
-                                    <div class="pet-info">
-                                        <h4>Luna (Siamese Cat)</h4>
-                                        <p>Female, 2 years old, 4kg • Last purchase: Cat litter, 1 month ago</p>
-                                    </div>
-                                </div>
+                            <div class="pets-list" id="petsList">
+                                <!-- Pets will be populated by JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -912,6 +1406,30 @@
                         <div class="activity-timeline" id="activityTimeline">
                             <!-- Activity items will be populated by JavaScript -->
                         </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="quickTotalSpent">$2,845</div>
+                        <div class="stat-label">Total Spent</div>
+                        <div class="stat-detail">18 orders • $158 avg. order</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="quickPredictedCLV">$1,240</div>
+                        <div class="stat-label">Predicted CLV</div>
+                        <div class="stat-detail">Next 12 months • Top 15%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="quickAcquisitionCost">$42.50</div>
+                        <div class="stat-label">Acquisition Cost</div>
+                        <div class="stat-detail">Facebook Ad • 320% ROI</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="quickLastPurchase">45 days</div>
+                        <div class="stat-label">Last Purchase</div>
+                        <div class="stat-detail">Cat Litter & Toys • $124.30</div>
                     </div>
                 </div>
 
@@ -980,7 +1498,305 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Customer Segments -->
+            <!-- Tab 2: Customer Journey -->
+            <div class="tab-content" id="journey-tab">
+                <div class="journey-container">
+                    <h2 class="section-title">
+                        <i class="fas fa-route"></i>
+                        Customer Journey Timeline
+                    </h2>
+                    <div class="journey-timeline" id="journeyTimeline">
+                        <!-- Journey items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Purchase History -->
+            <div class="tab-content" id="purchases-tab">
+                <div class="purchase-container">
+                    <div class="section-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Complete Purchase History
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="purchase-filters">
+                        <button class="filter-btn active" data-filter="all">All Orders (18)</button>
+                        <button class="filter-btn" data-filter="dog">Dog Products (11)</button>
+                        <button class="filter-btn" data-filter="cat">Cat Products (5)</button>
+                        <button class="filter-btn" data-filter="subscription">Subscriptions (1)</button>
+                        <button class="filter-btn" data-filter="last30">Last 30 Days (2)</button>
+                    </div>
+                    
+                    <!-- Orders Table -->
+                    <div class="purchase-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order Details</th>
+                                    <th>Date</th>
+                                    <th>Products</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Channel</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTable">
+                                <!-- Orders will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Summary -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Total Spent (18 orders)</div>
+                            <div style="font-size: 24px; font-weight: 600; color: var(--primary);">$2,845.00</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Average Order Value</div>
+                            <div style="font-size: 24px; font-weight: 600; color: var(--success);">$158.06</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--gray); margin-bottom: 5px;">Days Between Orders</div>
+                            <div style="font-size: 24px; font-weight: 600; color: var(--info);">24 days</div>
+                        </div>
+                        <button class="action-btn" style="padding: 10px 20px;">
+                            <i class="fas fa-download"></i>
+                            Export All Orders
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: CLV Analysis -->
+            <div class="tab-content" id="clv-tab">
+                <div class="clv-container">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Customer Lifetime Value Analysis
+                    </h2>
+                    
+                    <div class="clv-grid">
+                        <!-- CLV Chart -->
+                        <div class="clv-chart-container">
+                            <canvas id="clvChart"></canvas>
+                        </div>
+                        
+                        <!-- CLV Metrics -->
+                        <div class="clv-metrics">
+                            <div class="clv-metric">
+                                <div class="metric-value" style="color: var(--primary);">$2,845</div>
+                                <div class="metric-label">Historical CLV</div>
+                                <div class="metric-description">Actual revenue to date from 18 orders</div>
+                            </div>
+                            <div class="clv-metric">
+                                <div class="metric-value" style="color: var(--success);">$1,240</div>
+                                <div class="metric-label">Predicted CLV (12m)</div>
+                                <div class="metric-description">Expected next 12 months revenue</div>
+                            </div>
+                            <div class="clv-metric">
+                                <div class="metric-value" style="color: var(--warning);">$42.50</div>
+                                <div class="metric-label">Acquisition Cost</div>
+                                <div class="metric-description">Initial marketing spend to acquire</div>
+                            </div>
+                            <div class="clv-metric">
+                                <div class="metric-value" style="color: var(--info);">67:1</div>
+                                <div class="metric-label">CLV:CAC Ratio</div>
+                                <div class="metric-description">Excellent (Industry target: 3:1)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CLV Insights -->
+                    <div style="background: var(--light-purple); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">
+                            <i class="fas fa-lightbulb"></i> CLV Insights & Recommendations
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--dark); font-size: 16px;">High-Value Indicators</h4>
+                                <ul style="color: var(--gray); padding-left: 20px; font-size: 14px;">
+                                    <li>Auto-ship subscription with high retention rate</li>
+                                    <li>Purchases across multiple pet categories</li>
+                                    <li>High email engagement (85% open rate)</li>
+                                    <li>Leaves product reviews (8 reviews total)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--dark); font-size: 16px;">Growth Opportunities</h4>
+                                <ul style="color: var(--gray); padding-left: 20px; font-size: 14px;">
+                                    <li>Introduce cat food auto-ship subscription</li>
+                                    <li>Upsell premium pet accessories</li>
+                                    <li>Referral program participation</li>
+                                    <li>Cross-sell pet insurance products</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Acquisition Sources -->
+            <div class="tab-content" id="acquisition-tab">
+                <div class="acquisition-container">
+                    <h2 class="section-title">
+                        <i class="fas fa-funnel-dollar"></i>
+                        Acquisition Sources & Marketing Attribution
+                    </h2>
+                    
+                    <div class="source-cards">
+                        <!-- Channel Card -->
+                        <div class="source-card channel">
+                            <div class="source-header">
+                                <div class="source-icon channel">
+                                    <i class="fab fa-facebook-f"></i>
+                                </div>
+                                <div class="source-info">
+                                    <h4>Primary Acquisition Channel</h4>
+                                    <p>Paid Social - Facebook Ads</p>
+                                </div>
+                            </div>
+                            <div class="source-details">
+                                <div class="source-detail">
+                                    <span>Platform</span>
+                                    <span>Facebook/Instagram</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Campaign Objective</span>
+                                    <span>Conversions (Purchase)</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Target Audience</span>
+                                    <span>Dog Owners in San Francisco</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>ROAS (Return on Ad Spend)</span>
+                                    <span style="color: var(--success); font-weight: 600;">320%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campaign Card -->
+                        <div class="source-card campaign">
+                            <div class="source-header">
+                                <div class="source-icon campaign">
+                                    <i class="fas fa-bullhorn"></i>
+                                </div>
+                                <div class="source-info">
+                                    <h4>Acquisition Campaign</h4>
+                                    <p>Summer Pet Bundle 2023</p>
+                                </div>
+                            </div>
+                            <div class="source-details">
+                                <div class="source-detail">
+                                    <span>Campaign ID</span>
+                                    <span>FB_CAMP_23841</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Ad Set</span>
+                                    <span>Dog Owners 25-45, SF Bay Area</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Creative Type</span>
+                                    <span>15-second Video Ad</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Cost Per Acquisition (CPA)</span>
+                                    <span>$24.50</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Attribution Card -->
+                        <div class="source-card attribution">
+                            <div class="source-header">
+                                <div class="source-icon attribution">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <div class="source-info">
+                                    <h4>Multi-Touch Attribution</h4>
+                                    <p>Linear Attribution Model</p>
+                                </div>
+                            </div>
+                            <div class="source-details">
+                                <div class="source-detail">
+                                    <span>First Touch (Facebook Ad)</span>
+                                    <span>40%</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Email Nurture</span>
+                                    <span>25%</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Direct Return</span>
+                                    <span>20%</span>
+                                </div>
+                                <div class="source-detail">
+                                    <span>Retargeting Ads</span>
+                                    <span>15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- UTM Parameters -->
+                    <div style="background: var(--light); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: var(--dark);">
+                            <i class="fas fa-link"></i> UTM Parameters & Tracking
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                            <div class="detail-item">
+                                <div class="detail-label">UTM Source</div>
+                                <div class="detail-value">facebook</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">UTM Medium</div>
+                                <div class="detail-value">cpc</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">UTM Campaign</div>
+                                <div class="detail-value">summer_pet_bundle_2023</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">UTM Content</div>
+                                <div class="detail-value">video_ad_golden_retriever</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Landing Page</div>
+                                <div class="detail-value">/campaigns/summer-pet-bundle</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Referrer</div>
+                                <div class="detail-value">facebook.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acquisition Insights -->
+                    <div style="background: #e7f3ff; padding: 25px; border-radius: 10px; margin-top: 30px; border-left: 4px solid var(--primary);">
+                        <div style="display: flex; align-items: flex-start; gap: 15px;">
+                            <div style="color: var(--primary); font-size: 24px;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: var(--primary);">High-Value Acquisition Profile</h4>
+                                <p style="color: var(--gray); margin-bottom: 10px; font-size: 14px;">
+                                    This customer was acquired via <strong>video ad targeting dog owners</strong> with a $24.50 CPA.
+                                    They converted on their <strong>second website visit</strong> after receiving a welcome email.
+                                    The initial campaign has generated a <strong>320% ROI</strong> from this customer alone.
+                                </p>
+                                <p style="color: var(--gray); font-size: 14px;">
+                                    <strong>Recommendation:</strong> Scale similar ad creatives to lookalike audiences and create a retargeting
+                                    campaign for customers who add to cart but don't purchase.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Customer Segments -->
             <div class="tab-content" id="segments-tab">
                 <!-- Segmentation Overview -->
                 <div class="charts-container">
@@ -1028,190 +1844,254 @@
                 </div>
             </div>
 
-            <!-- Tab 3: Customer Analytics -->
-            <div class="tab-content" id="analytics-tab">
-                <!-- Cohort Analysis -->
-                <div class="chart-card" style="margin-bottom: 25px;">
-                    <div class="chart-header">
-                        <div class="chart-title">Customer Cohort Analysis (Retention)</div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="cohortChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- CLV Prediction -->
-                <div class="charts-container">
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">CLV Prediction by Segment</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="clvPredictionChart"></canvas>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">Churn Risk Analysis</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="churnRiskChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Customer Journey -->
-                <div class="table-container">
-                    <div class="table-title">
-                        <i class="fas fa-route"></i> Customer Journey Analysis
-                    </div>
-                    <div style="padding: 20px;">
-                        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-                            <div style="position: relative; width: 100%; max-width: 800px; height: 200px; background: #f8f9fa; border-radius: 10px; padding: 20px;">
-                                <!-- Customer Journey Visualization -->
-                                <div style="display: flex; justify-content: space-between; align-items: center; height: 100%; position: relative;">
-                                    <!-- Journey Steps -->
-                                    <div class="journey-step" style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
-                                            <i class="fas fa-ad"></i>
-                                        </div>
-                                        <div style="font-weight: 600;">Facebook Ad</div>
-                                        <div style="font-size: 12px; color: #6c757d;">45% of customers</div>
-                                    </div>
-                                    
-                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
-                                    
-                                    <div class="journey-step" style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
-                                            <i class="fas fa-mouse-pointer"></i>
-                                        </div>
-                                        <div style="font-weight: 600;">Website Visit</div>
-                                        <div style="font-size: 12px; color: #6c757d;">38% conversion</div>
-                                    </div>
-                                    
-                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
-                                    
-                                    <div class="journey-step" style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </div>
-                                        <div style="font-weight: 600;">First Purchase</div>
-                                        <div style="font-size: 12px; color: #6c757d;">Average: $42.50</div>
-                                    </div>
-                                    
-                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
-                                    
-                                    <div class="journey-step" style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: #6f42c1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
-                                            <i class="fas fa-redo"></i>
-                                        </div>
-                                        <div style="font-weight: 600;">Repeat Purchase</div>
-                                        <div style="font-size: 12px; color: #6c757d;">22% within 30 days</div>
-                                    </div>
-                                    
-                                    <div style="flex: 1; height: 3px; background: #6f42c1;"></div>
-                                    
-                                    <div class="journey-step" style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: #28a745; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;">
-                                            <i class="fas fa-crown"></i>
-                                        </div>
-                                        <div style="font-weight: 600;">Loyal Customer</div>
-                                        <div style="font-size: 12px; color: #6c757d;">15% of customers</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                                <div style="font-weight: 600; margin-bottom: 10px;">Most Common First Purchase</div>
-                                <div style="display: flex; align-items: center;">
-                                    <div style="width: 40px; height: 40px; background: #ffa500; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                                        <i class="fas fa-dog"></i>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 500;">Dog Food (Premium)</div>
-                                        <div style="font-size: 12px; color: #6c757d;">42% of new customers</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                                <div style="font-weight: 600; margin-bottom: 10px;">Average Time to Second Purchase</div>
-                                <div style="font-size: 28px; font-weight: 700; color: #6f42c1;">24 days</div>
-                                <div style="font-size: 12px; color: #6c757d;">For premium pet food customers</div>
-                            </div>
-                            
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                                <div style="font-weight: 600; margin-bottom: 10px;">Top Churn Reason</div>
-                                <div style="display: flex; align-items: center;">
-                                    <div style="width: 40px; height: 40px; background: #dc3545; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
-                                        <i class="fas fa-times"></i>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 500;">High Shipping Cost</div>
-                                        <div style="font-size: 12px; color: #6c757d;">38% of lost customers</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Footer -->
             <div class="footer">
-                <p>Customer Insight 360 Dashboard • PetStore E-commerce • Data updated: Today, 2:30 PM</p>
-                <p>Next customer review meeting: Monday, 11:00 AM | CLV report generation: End of month</p>
+                <p>Customer 360 Dashboard • PetStore E-commerce • Data updated: <span id="currentDate"></span></p>
+                <p style="margin-top: 10px;">
+                    <button class="action-btn" onclick="window.print()">
+                        <i class="fas fa-print"></i>
+                        Print Report
+                    </button>
+                    <button class="action-btn" onclick="exportCustomerData()">
+                        <i class="fas fa-download"></i>
+                        Export PDF
+                    </button>
+                </p>
             </div>
         </main>
     </div>
 
     <script>
-        // Dữ liệu mẫu cho Customer Dashboard
+        // Dữ liệu thống nhất cho Customer 360 Dashboard
         const customerData = {
-            // Dữ liệu khách hàng mẫu
-            sampleCustomer: {
+            // Thông tin khách hàng Jennifer Wilson (CUST-005)
+            currentCustomer: {
+                id: "CUST-005",
                 name: "Jennifer Wilson",
                 email: "jennifer.wilson@email.com",
                 phone: "(123) 456-7890",
                 location: "San Francisco, CA",
+                joinDate: "March 15, 2023",
+                
+                // Chỉ số chính
                 totalSpent: 2845,
                 totalOrders: 18,
                 avgOrderValue: 158,
                 daysSinceLastOrder: 45,
                 clv: 1240,
+                predictedCLV: 1240,
                 satisfaction: 4.8,
-                segments: ["Premium Customer", "Loyal", "Dog Owner"],
+                acquisitionCost: 42.50,
+                
+                // Phân loại
+                segments: ["Premium Customer", "Loyal", "Dog Owner", "Auto-ship Subscriber", "High CLV"],
+                
+                // Thú cưng
                 pets: [
-                    { name: "Max", type: "dog", breed: "Golden Retriever", gender: "Male", age: 4, weight: 30, lastPurchase: "Dog food, 2 weeks ago" },
-                    { name: "Luna", type: "cat", breed: "Siamese Cat", gender: "Female", age: 2, weight: 4, lastPurchase: "Cat litter, 1 month ago" }
-                ]
+                    { 
+                        name: "Max", 
+                        type: "dog", 
+                        breed: "Golden Retriever", 
+                        gender: "Male", 
+                        age: 4, 
+                        weight: "30kg",
+                        lastPurchase: "Dog food, 2 weeks ago"
+                    },
+                    { 
+                        name: "Luna", 
+                        type: "cat", 
+                        breed: "Siamese Cat", 
+                        gender: "Female", 
+                        age: 2, 
+                        weight: "4kg",
+                        lastPurchase: "Cat litter, 1 month ago"
+                    }
+                ],
+                
+                // Hoạt động gần đây
+                activities: [
+                    { type: "purchase", title: "Order #ORD-7842 Placed", description: "Premium Dog Food (20kg), Dog Toys, Shampoo", time: "2 hours ago" },
+                    { type: "email", title: "Email Campaign Opened", description: "Summer Pet Care Tips newsletter", time: "1 day ago" },
+                    { type: "review", title: "Product Review Submitted", description: "5-star review for Premium Dog Food", time: "3 days ago" },
+                    { type: "website", title: "Website Visit", description: "Viewed dog accessories category", time: "5 days ago" },
+                    { type: "support", title: "Customer Support Ticket", description: "Question about dog food subscription", time: "1 week ago", resolved: true }
+                ],
+                
+                // Dữ liệu hành trình khách hàng
+                journey: [
+                    {
+                        type: "acquisition",
+                        title: "First Touch: Facebook Ad",
+                        date: "March 15, 2023 • 2:30 PM",
+                        details: [
+                            { label: "Campaign", value: "Summer Pet Bundle 2023" },
+                            { label: "Ad Set", value: "Dog Owners in San Francisco" },
+                            { label: "Creative Type", value: "Video (15 seconds)" },
+                            { label: "CPA", value: "$24.50" }
+                        ],
+                        description: "Video ad featuring Golden Retrievers with 75% completion rate. Customer clicked through to landing page."
+                    },
+                    {
+                        type: "website",
+                        title: "Website Visit & Engagement",
+                        date: "March 15, 2023 • 2:32 PM",
+                        details: [
+                            { label: "Landing Page", value: "/campaigns/summer-pet-bundle" },
+                            { label: "Session Duration", value: "4 minutes 22 seconds" },
+                            { label: "Pages Viewed", value: "5 pages" },
+                            { label: "Device", value: "Desktop Chrome" }
+                        ],
+                        description: "Viewed: Homepage → Dog Food Category → Premium Dog Food Product → Blog → Cart. Added Premium Dog Food to cart but didn't complete purchase."
+                    },
+                    {
+                        type: "purchase",
+                        title: "First Purchase Completed",
+                        date: "March 16, 2023 • 10:15 AM",
+                        details: [
+                            { label: "Order ID", value: "ORD-7123" },
+                            { label: "Total Amount", value: "$89.50" },
+                            { label: "Products", value: "Premium Dog Food + Dog Toy" },
+                            { label: "Discount Used", value: "10% Welcome Discount" }
+                        ],
+                        description: "Customer returned via direct traffic and completed purchase. Used welcome discount code from abandoned cart email."
+                    }
+                ],
+                
+                // Dữ liệu đơn hàng
+                orders: [
+                    {
+                        id: "ORD-7123",
+                        date: "March 16, 2023",
+                        products: ["Premium Dog Food (20kg)", "Dog Toy Bundle"],
+                        category: "dog",
+                        amount: 89.50,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "first"
+                    },
+                    {
+                        id: "ORD-7234",
+                        date: "April 10, 2023",
+                        products: ["Dog Food (10kg)", "Dog Treats"],
+                        category: "dog",
+                        amount: 68.75,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    },
+                    {
+                        id: "SUB-023",
+                        date: "May 10, 2023",
+                        products: ["Premium Dog Food Auto-ship"],
+                        category: "subscription",
+                        amount: 49.99,
+                        status: "active",
+                        channel: "Email",
+                        type: "subscription"
+                    },
+                    {
+                        id: "ORD-7451",
+                        date: "April 28, 2023",
+                        products: ["Cat Litter", "Cat Toys"],
+                        category: "cat",
+                        amount: 124.80,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-7562",
+                        date: "June 15, 2023",
+                        products: ["Premium Dog Food (20kg)", "Dog Shampoo"],
+                        category: "dog",
+                        amount: 92.45,
+                        status: "delivered",
+                        channel: "Mobile App",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-7673",
+                        date: "July 22, 2023",
+                        products: ["Cat Food (10kg)", "Cat Litter"],
+                        category: "cat",
+                        amount: 78.90,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-7784",
+                        date: "August 30, 2023",
+                        products: ["Dog Food (20kg)", "Dog Toys"],
+                        category: "dog",
+                        amount: 124.30,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-7895",
+                        date: "October 5, 2023",
+                        products: ["Cat Food (5kg)", "Cat Treats"],
+                        category: "cat",
+                        amount: 56.80,
+                        status: "delivered",
+                        channel: "Mobile App",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-7906",
+                        date: "November 18, 2023",
+                        products: ["Premium Dog Food (20kg)", "Dog Bed"],
+                        category: "dog",
+                        amount: 189.50,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    },
+                    {
+                        id: "ORD-8017",
+                        date: "December 22, 2023",
+                        products: ["Cat Litter Premium", "Cat Toy Bundle"],
+                        category: "cat",
+                        amount: 156.40,
+                        status: "delivered",
+                        channel: "Website",
+                        type: "repeat"
+                    }
+                ],
+                
+                // Dữ liệu CLV
+                clvDetail: {
+                    historical: 2845,
+                    predicted: 1240,
+                    cac: 42.50,
+                    ratio: 67,
+                    growth: [0, 89.5, 214.3, 399.9, 624.5, 890.2, 1204.8, 1560.4, 1890.2, 2245.6, 2540.1, 2845.0]
+                },
+                
+                // Dữ liệu sở thích
+                preferences: {
+                    dog: { percentage: 62, value: 1764, orders: 11 },
+                    cat: { percentage: 28, value: 796, orders: 5 },
+                    accessories: { percentage: 8, value: 228, orders: 1 },
+                    grooming: { percentage: 2, value: 57, orders: 1 }
+                },
+                
+                // Dữ liệu mua hàng
+                purchaseHistory: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+                    data: [320, 280, 410, 380, 520, 485]
+                },
+                
+                // Sở thích sản phẩm
+                productPreferences: {
+                    labels: ["Dog Food", "Cat Food", "Toys", "Accessories", "Health", "Grooming"],
+                    data: [45, 25, 15, 8, 5, 2]
+                }
             },
             
-            // Hoạt động gần đây
-            activities: [
-                { type: "purchase", title: "Order #ORD-7842 Placed", description: "Premium Dog Food (20kg), Dog Toys, Shampoo", time: "2 hours ago" },
-                { type: "email", title: "Email Campaign Opened", description: "Summer Pet Care Tips newsletter", time: "1 day ago" },
-                { type: "review", title: "Product Review Submitted", description: "5-star review for Premium Dog Food", time: "3 days ago" },
-                { type: "website", title: "Website Visit", description: "Viewed dog accessories category", time: "5 days ago" },
-                { type: "support", title: "Customer Support Ticket", description: "Question about dog food subscription", time: "1 week ago", resolved: true }
-            ],
-            
-            // Lịch sử mua hàng
-            purchaseHistory: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-                data: [320, 280, 410, 380, 520, 485]
-            },
-            
-            // Sở thích sản phẩm
-            productPreferences: {
-                labels: ["Dog Food", "Cat Food", "Toys", "Accessories", "Health", "Grooming"],
-                data: [45, 25, 15, 8, 5, 2]
-            },
-            
-            // Phân đoạn khách hàng
+            // Dữ liệu phân đoạn khách hàng
             segments: {
                 labels: ["Premium", "Loyal", "At Risk", "New", "Inactive"],
                 counts: [452, 1245, 623, 892, 2034],
@@ -1223,32 +2103,6 @@
                 labels: ["Premium", "Loyal", "At Risk", "New", "Inactive"],
                 clv: [1240, 580, 220, 320, 80],
                 revenue: [125000, 184000, 42000, 68000, 12000]
-            },
-            
-            // Phân tích Cohort
-            cohortData: {
-                labels: ["Jan Cohort", "Feb Cohort", "Mar Cohort", "Apr Cohort", "May Cohort"],
-                datasets: [
-                    { month: "Month 1", data: [100, 100, 100, 100, 100] },
-                    { month: "Month 2", data: [85, 82, 88, 79, 90] },
-                    { month: "Month 3", data: [72, 70, 76, 68, 82] },
-                    { month: "Month 4", data: [65, 62, 68, 60, 75] },
-                    { month: "Month 5", data: [58, 55, 62, 54, 70] }
-                ]
-            },
-            
-            // Dự đoán CLV
-            clvPrediction: {
-                labels: ["Premium", "Loyal", "Regular", "New", "At Risk"],
-                current: [1240, 580, 320, 220, 180],
-                predicted: [1420, 620, 350, 280, 150]
-            },
-            
-            // Phân tích rủi ro rời bỏ
-            churnRisk: {
-                labels: ["Low Risk", "Medium Risk", "High Risk"],
-                counts: [3250, 1850, 1058],
-                percentages: [53, 30, 17]
             },
             
             // Top khách hàng
@@ -1265,18 +2119,171 @@
 
         // Biến lưu trữ các biểu đồ
         let purchaseHistoryChart, productPreferencesChart, segmentationChart, segmentPerformanceChart;
-        let cohortChart, clvPredictionChart, churnRiskChart;
+        let clvChart;
 
         // Khởi tạo dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Populate Activity Timeline
+            // 1. Cập nhật ngày hiện tại
+            const now = new Date();
+            const dateString = now.toLocaleDateString('vi-VN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = dateString;
+            
+            // 2. Tải dữ liệu khách hàng hiện tại
+            loadCurrentCustomerData();
+            
+            // 3. Populate Activity Timeline
+            populateActivityTimeline();
+            
+            // 4. Populate Pets List
+            populatePetsList();
+            
+            // 5. Populate Journey Timeline
+            populateJourneyTimeline();
+            
+            // 6. Populate Orders Table
+            populateOrdersTable();
+            
+            // 7. Populate Top Customers Table
+            populateTopCustomersTable();
+            
+            // 8. Khởi tạo các biểu đồ
+            initializeCharts();
+            
+            // 9. Tab switching
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Cập nhật tab active
+                    document.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Hiển thị nội dung tab
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                    
+                    // Nếu là tab CLV, khởi tạo biểu đồ
+                    if (tabId === 'clv') {
+                        setTimeout(() => {
+                            initializeCLVChart();
+                        }, 100);
+                    }
+                });
+            });
+            
+            // 10. Filter orders
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Cập nhật button active
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Lọc orders
+                    filterOrders(filter);
+                });
+            });
+            
+            // 11. Search functionality
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchCustomer').value.trim();
+                if (searchTerm) {
+                    searchCustomer(searchTerm);
+                }
+            });
+            
+            document.getElementById('searchCustomer').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        searchCustomer(searchTerm);
+                    }
+                }
+            });
+            
+            // 12. View customer buttons in table
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('view-customer-btn')) {
+                    const customerId = e.target.getAttribute('data-id');
+                    viewCustomerDetails(customerId);
+                }
+            });
+            
+            // 13. RFM cells click event
+            document.querySelectorAll('.rfm-cell').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const segment = this.querySelector('.rfm-cell-label').textContent;
+                    showSegmentDetails(segment);
+                });
+            });
+        });
+
+        // Hàm tải dữ liệu khách hàng hiện tại
+        function loadCurrentCustomerData() {
+            const customer = customerData.currentCustomer;
+            
+            // Cập nhật avatar
+            document.getElementById('customerAvatar').textContent = 
+                customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Cập nhật thông tin cơ bản
+            document.getElementById('customerName').textContent = customer.name;
+            document.getElementById('customerEmail').textContent = customer.email;
+            document.getElementById('customerPhone').textContent = customer.phone;
+            document.getElementById('customerLocation').textContent = customer.location;
+            
+            // Cập nhật các chỉ số
+            document.getElementById('totalSpent').textContent = `$${customer.totalSpent.toLocaleString()}`;
+            document.getElementById('totalOrders').textContent = customer.totalOrders;
+            document.getElementById('avgOrderValue').textContent = `$${customer.avgOrderValue}`;
+            document.getElementById('daysSinceLastOrder').textContent = customer.daysSinceLastOrder;
+            document.getElementById('customerCLV').textContent = `$${customer.clv.toLocaleString()}`;
+            document.getElementById('customerSatisfaction').textContent = customer.satisfaction;
+            
+            // Cập nhật quick stats
+            document.getElementById('quickTotalSpent').textContent = `$${customer.totalSpent.toLocaleString()}`;
+            document.getElementById('quickPredictedCLV').textContent = `$${customer.predictedCLV.toLocaleString()}`;
+            document.getElementById('quickAcquisitionCost').textContent = `$${customer.acquisitionCost}`;
+            document.getElementById('quickLastPurchase').textContent = `${customer.daysSinceLastOrder} days`;
+            
+            // Cập nhật phân đoạn khách hàng
+            const segmentsContainer = document.getElementById('customerSegments');
+            segmentsContainer.innerHTML = '';
+            customer.segments.forEach(segment => {
+                let segmentClass = 'segment-premium';
+                if (segment.includes('Loyal')) segmentClass = 'segment-loyal';
+                if (segment.includes('Dog')) segmentClass = 'segment-new';
+                
+                const segmentTag = document.createElement('span');
+                segmentTag.className = `segment-tag ${segmentClass}`;
+                segmentTag.textContent = segment;
+                segmentsContainer.appendChild(segmentTag);
+            });
+        }
+
+        // Hàm populate activity timeline
+        function populateActivityTimeline() {
             const activityTimeline = document.getElementById('activityTimeline');
-            customerData.activities.forEach(activity => {
+            activityTimeline.innerHTML = '';
+            
+            customerData.currentCustomer.activities.forEach(activity => {
                 const timelineItem = document.createElement('div');
                 timelineItem.className = 'timeline-item';
                 
                 // Xác định icon dựa trên loại hoạt động
-                let iconClass, iconText;
+                let iconClass;
                 switch(activity.type) {
                     case 'purchase':
                         iconClass = 'fas fa-shopping-cart';
@@ -1309,16 +2316,284 @@
                 `;
                 activityTimeline.appendChild(timelineItem);
             });
+        }
 
-            // 2. Purchase History Chart
+        // Hàm populate pets list
+        function populatePetsList() {
+            const petsList = document.getElementById('petsList');
+            petsList.innerHTML = '';
+            
+            customerData.currentCustomer.pets.forEach(pet => {
+                const petItem = document.createElement('div');
+                petItem.className = 'pet-item';
+                
+                const petIconClass = pet.type === 'dog' ? 'dog' : 'cat';
+                const petIcon = pet.type === 'dog' ? 'fa-dog' : 'fa-cat';
+                
+                petItem.innerHTML = `
+                    <div class="pet-icon ${petIconClass}">
+                        <i class="fas ${petIcon}"></i>
+                    </div>
+                    <div class="pet-info">
+                        <h4>${pet.name} (${pet.breed})</h4>
+                        <p>${pet.gender}, ${pet.age} years old, ${pet.weight} • Last purchase: ${pet.lastPurchase}</p>
+                    </div>
+                `;
+                petsList.appendChild(petItem);
+            });
+        }
+
+        // Hàm populate journey timeline
+        function populateJourneyTimeline() {
+            const journeyTimeline = document.getElementById('journeyTimeline');
+            journeyTimeline.innerHTML = '';
+            
+            customerData.currentCustomer.journey.forEach((item, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'customer-timeline-item';
+                
+                // Xác định icon dựa trên loại
+                let iconClass;
+                switch(item.type) {
+                    case 'acquisition':
+                        iconClass = 'fas fa-ad';
+                        break;
+                    case 'website':
+                        iconClass = 'fas fa-mouse-pointer';
+                        break;
+                    case 'purchase':
+                        iconClass = 'fas fa-shopping-cart';
+                        break;
+                    default:
+                        iconClass = 'fas fa-circle';
+                }
+                
+                // Tạo chi tiết
+                let detailsHTML = '';
+                item.details.forEach(detail => {
+                    detailsHTML += `
+                        <div class="detail-item">
+                            <div class="detail-label">${detail.label}</div>
+                            <div class="detail-value">${detail.value}</div>
+                        </div>
+                    `;
+                });
+                
+                timelineItem.innerHTML = `
+                    <div class="customer-timeline-marker">
+                        <i class="${iconClass}"></i>
+                    </div>
+                    <div class="customer-timeline-content">
+                        <div class="customer-timeline-header">
+                            <h3 class="customer-timeline-title">${item.title}</h3>
+                            <div class="customer-timeline-date">
+                                <i class="fas fa-calendar"></i>
+                                ${item.date}
+                            </div>
+                        </div>
+                        <div class="customer-timeline-details">
+                            ${detailsHTML}
+                        </div>
+                        <p style="margin-bottom: 15px; color: var(--gray); font-size: 14px;">
+                            ${item.description}
+                        </p>
+                        <div class="timeline-actions">
+                            <button class="action-btn">
+                                <i class="fas fa-external-link-alt"></i>
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                journeyTimeline.appendChild(timelineItem);
+            });
+        }
+
+        // Hàm populate orders table
+        function populateOrdersTable(filter = 'all') {
+            const tableBody = document.getElementById('ordersTable');
+            tableBody.innerHTML = '';
+            
+            // Lọc orders nếu cần
+            let filteredOrders = customerData.currentCustomer.orders;
+            if (filter !== 'all') {
+                if (filter === 'dog') {
+                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'dog');
+                } else if (filter === 'cat') {
+                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'cat');
+                } else if (filter === 'subscription') {
+                    filteredOrders = customerData.currentCustomer.orders.filter(o => o.category === 'subscription');
+                } else if (filter === 'last30') {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    filteredOrders = customerData.currentCustomer.orders.filter(o => {
+                        // Giả sử date là string, trong thực tế cần chuyển đổi sang Date object
+                        return true; // Tạm thời trả về tất cả
+                    });
+                }
+            }
+            
+            // Thêm các order vào bảng
+            filteredOrders.forEach(order => {
+                const row = document.createElement('tr');
+                
+                // Xác định icon và category
+                let iconClass, categoryBadge, categoryClass;
+                if (order.category === 'dog') {
+                    iconClass = 'fas fa-dog';
+                    categoryBadge = 'Dog';
+                    categoryClass = 'badge-dog';
+                } else if (order.category === 'cat') {
+                    iconClass = 'fas fa-cat';
+                    categoryBadge = 'Cat';
+                    categoryClass = 'badge-cat';
+                } else if (order.category === 'subscription') {
+                    iconClass = 'fas fa-sync-alt';
+                    categoryBadge = 'Subscription';
+                    categoryClass = 'badge-accessory';
+                } else {
+                    iconClass = 'fas fa-box';
+                    categoryBadge = 'Other';
+                    categoryClass = 'badge-accessory';
+                }
+                
+                // Xác định trạng thái
+                let statusColor;
+                if (order.status === 'delivered') {
+                    statusColor = '#28a745';
+                } else if (order.status === 'active') {
+                    statusColor = '#6f42c1';
+                } else if (order.status === 'pending') {
+                    statusColor = '#ffa500';
+                } else {
+                    statusColor = '#6c757d';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="order-cell">
+                            <div class="order-icon">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="order-info">
+                                <h4>Order ${order.id}</h4>
+                                <p>${order.products.join(', ')}</p>
+                                <span class="product-badge ${categoryClass}">${categoryBadge}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${order.date}</td>
+                    <td>${order.products.length} product(s)</td>
+                    <td><strong>$${order.amount.toFixed(2)}</strong></td>
+                    <td><span style="color: ${statusColor};">${order.status}</span></td>
+                    <td>${order.channel}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Nếu không có orders
+            if (filteredOrders.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
+                        No orders found for the selected filter
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+            
+            // Cập nhật số lượng orders trong filter buttons
+            updateFilterButtons();
+        }
+
+        // Hàm cập nhật filter buttons
+        function updateFilterButtons() {
+            const orders = customerData.currentCustomer.orders;
+            const dogOrders = orders.filter(o => o.category === 'dog').length;
+            const catOrders = orders.filter(o => o.category === 'cat').length;
+            const subOrders = orders.filter(o => o.category === 'subscription').length;
+            
+            document.querySelector('.filter-btn[data-filter="all"]').textContent = 
+                `All Orders (${orders.length})`;
+            document.querySelector('.filter-btn[data-filter="dog"]').textContent = 
+                `Dog Products (${dogOrders})`;
+            document.querySelector('.filter-btn[data-filter="cat"]').textContent = 
+                `Cat Products (${catOrders})`;
+            document.querySelector('.filter-btn[data-filter="subscription"]').textContent = 
+                `Subscriptions (${subOrders})`;
+        }
+
+        // Hàm lọc orders
+        function filterOrders(filter) {
+            populateOrdersTable(filter);
+        }
+
+        // Hàm populate top customers table
+        function populateTopCustomersTable() {
+            const topCustomersBody = document.getElementById('topCustomersBody');
+            topCustomersBody.innerHTML = '';
+            
+            customerData.topCustomers.forEach(customer => {
+                const row = document.createElement('tr');
+                
+                // Xác định segment badge
+                let segmentBadgeClass, segmentBadgeText;
+                switch(customer.segment) {
+                    case 'platinum':
+                        segmentBadgeClass = 'segment-platinum';
+                        segmentBadgeText = 'Platinum';
+                        break;
+                    case 'gold':
+                        segmentBadgeClass = 'segment-gold';
+                        segmentBadgeText = 'Gold';
+                        break;
+                    case 'silver':
+                        segmentBadgeClass = 'segment-silver';
+                        segmentBadgeText = 'Silver';
+                        break;
+                    case 'bronze':
+                        segmentBadgeClass = 'segment-bronze';
+                        segmentBadgeText = 'Bronze';
+                        break;
+                }
+                
+                // Tạo avatar từ tên
+                const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="customer-cell">
+                            <div class="customer-avatar">${initials}</div>
+                            <div>
+                                <div class="customer-name">${customer.name}</div>
+                                <div class="customer-email">${customer.id}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="segment-badge ${segmentBadgeClass}">${segmentBadgeText}</span></td>
+                    <td>${customer.orders}</td>
+                    <td>$${customer.spent.toLocaleString()}</td>
+                    <td>$${customer.avgOrder}</td>
+                    <td>${customer.lastPurchase}</td>
+                    <td>$${customer.clv.toLocaleString()}</td>
+                    <td><button class="view-customer-btn" data-id="${customer.id}" style="padding: 5px 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">View</button></td>
+                `;
+                topCustomersBody.appendChild(row);
+            });
+        }
+
+        // Hàm khởi tạo các biểu đồ
+        function initializeCharts() {
+            // 1. Purchase History Chart
             const purchaseCtx = document.getElementById('purchaseHistoryChart').getContext('2d');
             purchaseHistoryChart = new Chart(purchaseCtx, {
                 type: 'bar',
                 data: {
-                    labels: customerData.purchaseHistory.labels,
+                    labels: customerData.currentCustomer.purchaseHistory.labels,
                     datasets: [{
                         label: 'Spending ($)',
-                        data: customerData.purchaseHistory.data,
+                        data: customerData.currentCustomer.purchaseHistory.data,
                         backgroundColor: 'rgba(111, 66, 193, 0.7)',
                         borderColor: 'rgba(111, 66, 193, 1)',
                         borderWidth: 2,
@@ -1360,14 +2635,14 @@
                 }
             });
 
-            // 3. Product Preferences Chart
+            // 2. Product Preferences Chart
             const preferencesCtx = document.getElementById('productPreferencesChart').getContext('2d');
             productPreferencesChart = new Chart(preferencesCtx, {
                 type: 'polarArea',
                 data: {
-                    labels: customerData.productPreferences.labels,
+                    labels: customerData.currentCustomer.productPreferences.labels,
                     datasets: [{
-                        data: customerData.productPreferences.data,
+                        data: customerData.currentCustomer.productPreferences.data,
                         backgroundColor: [
                             'rgba(111, 66, 193, 0.7)',
                             'rgba(255, 165, 0, 0.7)',
@@ -1415,7 +2690,7 @@
                 }
             });
 
-            // 4. Segmentation Chart (Tab 2)
+            // 3. Segmentation Chart
             const segmentationCtx = document.getElementById('segmentationChart').getContext('2d');
             segmentationChart = new Chart(segmentationCtx, {
                 type: 'doughnut',
@@ -1454,7 +2729,7 @@
                 }
             });
 
-            // 5. Segment Performance Chart (Tab 2)
+            // 4. Segment Performance Chart
             const segmentPerfCtx = document.getElementById('segmentPerformanceChart').getContext('2d');
             segmentPerformanceChart = new Chart(segmentPerfCtx, {
                 type: 'bar',
@@ -1530,296 +2805,72 @@
                 }
             });
 
-            // 6. Populate Top Customers Table (Tab 2)
-            const topCustomersBody = document.getElementById('topCustomersBody');
-            customerData.topCustomers.forEach(customer => {
-                const row = document.createElement('tr');
-                
-                // Xác định segment badge
-                let segmentBadgeClass, segmentBadgeText;
-                switch(customer.segment) {
-                    case 'platinum':
-                        segmentBadgeClass = 'segment-platinum';
-                        segmentBadgeText = 'Platinum';
-                        break;
-                    case 'gold':
-                        segmentBadgeClass = 'segment-gold';
-                        segmentBadgeText = 'Gold';
-                        break;
-                    case 'silver':
-                        segmentBadgeClass = 'segment-silver';
-                        segmentBadgeText = 'Silver';
-                        break;
-                    case 'bronze':
-                        segmentBadgeClass = 'segment-bronze';
-                        segmentBadgeText = 'Bronze';
-                        break;
-                }
-                
-                // Tạo avatar từ tên
-                const initials = customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="customer-cell">
-                            <div class="customer-avatar">${initials}</div>
-                            <div>
-                                <div class="customer-name">${customer.name}</div>
-                                <div class="customer-email">${customer.id}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="segment-badge ${segmentBadgeClass}">${segmentBadgeText}</span></td>
-                    <td>${customer.orders}</td>
-                    <td>$${customer.spent.toLocaleString()}</td>
-                    <td>$${customer.avgOrder}</td>
-                    <td>${customer.lastPurchase}</td>
-                    <td>$${customer.clv.toLocaleString()}</td>
-                    <td><button class="view-customer-btn" data-id="${customer.id}" style="padding: 5px 10px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">View</button></td>
-                `;
-                topCustomersBody.appendChild(row);
-            });
+            // 5. CLV Chart
+            initializeCLVChart();
+        }
 
-            // 7. Cohort Analysis Chart (Tab 3)
-            const cohortCtx = document.getElementById('cohortChart').getContext('2d');
-            cohortChart = new Chart(cohortCtx, {
+        // Hàm khởi tạo CLV chart
+        function initializeCLVChart() {
+            const ctx = document.getElementById('clvChart').getContext('2d');
+            
+            // Nếu đã có chart, hủy nó trước
+            if (clvChart) {
+                clvChart.destroy();
+            }
+            
+            clvChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: customerData.cohortData.labels,
-                    datasets: customerData.cohortData.datasets.map((dataset, index) => {
-                        const colors = [
-                            'rgba(111, 66, 193, 1)',
-                            'rgba(255, 165, 0, 1)',
-                            'rgba(32, 201, 151, 1)',
-                            'rgba(23, 162, 184, 1)',
-                            'rgba(253, 126, 20, 1)'
-                        ];
-                        
-                        return {
-                            label: dataset.month,
-                            data: dataset.data,
-                            borderColor: colors[index],
-                            backgroundColor: colors[index].replace('1)', '0.1)'),
-                            borderWidth: 3,
-                            fill: true,
-                            tension: 0.3,
-                            pointBackgroundColor: colors[index],
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        };
-                    })
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y}% retention`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: {
-                                display: true,
-                                text: 'Retention Rate (%)'
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // 8. CLV Prediction Chart (Tab 3)
-            const clvPredictionCtx = document.getElementById('clvPredictionChart').getContext('2d');
-            clvPredictionChart = new Chart(clvPredictionCtx, {
-                type: 'bar',
-                data: {
-                    labels: customerData.clvPrediction.labels,
-                    datasets: [
-                        {
-                            label: 'Current CLV ($)',
-                            data: customerData.clvPrediction.current,
-                            backgroundColor: 'rgba(111, 66, 193, 0.7)',
-                            borderRadius: 5,
-                            borderWidth: 0
-                        },
-                        {
-                            label: 'Predicted CLV ($)',
-                            data: customerData.clvPrediction.predicted,
-                            backgroundColor: 'rgba(32, 201, 151, 0.7)',
-                            borderRadius: 5,
-                            borderWidth: 0
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: $${context.parsed.y}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Customer Lifetime Value ($)'
-                            },
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-
-            // 9. Churn Risk Chart (Tab 3)
-            const churnRiskCtx = document.getElementById('churnRiskChart').getContext('2d');
-            churnRiskChart = new Chart(churnRiskCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: customerData.churnRisk.labels,
+                    labels: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
                     datasets: [{
-                        data: customerData.churnRisk.percentages,
-                        backgroundColor: [
-                            'rgba(40, 167, 69, 0.7)',
-                            'rgba(255, 193, 7, 0.7)',
-                            'rgba(220, 53, 69, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(40, 167, 69, 1)',
-                            'rgba(255, 193, 7, 1)',
-                            'rgba(220, 53, 69, 1)'
-                        ],
-                        borderWidth: 2
+                        label: 'Cumulative CLV ($)',
+                        data: customerData.currentCustomer.clvDetail.growth,
+                        borderColor: '#6f42c1',
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#6f42c1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
                     }]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
-                            position: 'right',
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const index = context.dataIndex;
-                                    const count = customerData.churnRisk.counts[index];
-                                    return `${label}: ${value}% (${count.toLocaleString()} customers)`;
+                                    return `CLV: $${context.parsed.y}`;
                                 }
                             }
                         }
                     },
-                    cutout: '65%'
-                }
-            });
-
-            // 10. Tab functionality
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Cập nhật trạng thái active của tab
-                    document.querySelectorAll('.tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Hiển thị nội dung tab tương ứng
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
-                });
-            });
-
-            // 11. Search functionality
-            document.getElementById('searchBtn').addEventListener('click', function() {
-                const searchTerm = document.getElementById('searchCustomer').value.trim();
-                if (searchTerm) {
-                    searchCustomer(searchTerm);
-                }
-            });
-            
-            document.getElementById('searchCustomer').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.trim();
-                    if (searchTerm) {
-                        searchCustomer(searchTerm);
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cumulative CLV ($)'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
                     }
                 }
             });
-
-            // 12. View customer buttons in table
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('view-customer-btn')) {
-                    const customerId = e.target.getAttribute('data-id');
-                    viewCustomerDetails(customerId);
-                }
-            });
-
-            // 13. RFM cells click event
-            document.querySelectorAll('.rfm-cell').forEach(cell => {
-                cell.addEventListener('click', function() {
-                    const segment = this.querySelector('.rfm-cell-label').textContent;
-                    showSegmentDetails(segment);
-                });
-            });
-            
-            // 14. Xử lý click vào navigation items để đổi tên
-            const productPerformanceNav = document.getElementById('productPerformanceNav');
-            
-            // Lưu tên gốc
-            const originalProductText = productPerformanceNav.querySelector('span').textContent;
-            
-            // Khi click vào Product Performance
-            productPerformanceNav.querySelector('.nav-link').addEventListener('click', function(e) {
-                // Đổi tên trước khi chuyển trang
-                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
-                // Lưu vào localStorage để trang dashboard04.html có thể sử dụng
-                localStorage.setItem('navProductRenamed', 'true');
-            });
-            
-            // Kiểm tra nếu đã đổi tên từ trước (khi quay lại trang này)
-            if (localStorage.getItem('navProductRenamed') === 'true') {
-                productPerformanceNav.querySelector('span').textContent = 'Product & Inventory Performance';
-            }
-        });
+        }
 
         // Hàm tìm kiếm khách hàng
         function searchCustomer(searchTerm) {
@@ -1829,14 +2880,14 @@
             
             // Giả lập tìm kiếm
             setTimeout(() => {
-                if (searchTerm.toLowerCase().includes('jen') || searchTerm.toLowerCase().includes('wilson')) {
+                if (searchTerm.toLowerCase().includes('jen') || searchTerm.toLowerCase().includes('wilson') || searchTerm === 'CUST-005') {
                     showNotification(`Customer found: Jennifer Wilson. Showing profile.`);
                     // Hiển thị tab overview
-                    document.querySelector('.tab[data-tab="overview"]').click();
+                    document.querySelector('.tab-btn[data-tab="overview"]').click();
                 } else {
                     showNotification(`No exact match found. Showing similar customers.`);
-                    // Hiển thị tab segments với bộ lọc
-                    document.querySelector('.tab[data-tab="segments"]').click();
+                    // Hiển thị tab segments
+                    document.querySelector('.tab-btn[data-tab="segments"]').click();
                 }
             }, 500);
         }
@@ -1844,25 +2895,29 @@
         // Hàm xem chi tiết khách hàng
         function viewCustomerDetails(customerId) {
             // Trong thực tế, đây sẽ là lời gọi API để lấy chi tiết khách hàng
-            // Ở đây chúng ta chỉ hiển thị thông báo và chuyển đến tab overview
+            // Ở đây chúng ta chỉ hiển thị thông báo
             showNotification(`Loading details for customer: ${customerId}`);
             
-            // Chuyển đến tab overview và cập nhật thông tin
-            document.querySelector('.tab[data-tab="overview"]').click();
+            // Chuyển đến tab overview
+            document.querySelector('.tab-btn[data-tab="overview"]').click();
             
             // Cập nhật thông tin khách hàng trong profile card
             const customer = customerData.topCustomers.find(c => c.id === customerId);
             if (customer) {
-                document.querySelector('.profile-avatar').textContent = 
+                // Cập nhật tên và avatar
+                document.getElementById('customerAvatar').textContent = 
                     customer.name.split(' ').map(n => n[0]).join('').toUpperCase();
-                document.querySelector('.profile-info h3').textContent = customer.name;
+                document.getElementById('customerName').textContent = customer.name;
                 
                 // Cập nhật các chỉ số
-                document.querySelectorAll('.stat-value')[0].textContent = `$${customer.spent.toLocaleString()}`;
-                document.querySelectorAll('.stat-value')[1].textContent = customer.orders;
-                document.querySelectorAll('.stat-value')[2].textContent = `$${customer.avgOrder}`;
-                document.querySelectorAll('.stat-value')[3].textContent = customer.lastPurchase.replace(/\D/g, '') || '30';
-                document.querySelectorAll('.stat-value')[4].textContent = `$${customer.clv.toLocaleString()}`;
+                document.getElementById('totalSpent').textContent = `$${customer.spent.toLocaleString()}`;
+                document.getElementById('totalOrders').textContent = customer.orders;
+                document.getElementById('avgOrderValue').textContent = `$${customer.avgOrder}`;
+                document.getElementById('customerCLV').textContent = `$${customer.clv.toLocaleString()}`;
+                
+                // Cập nhật quick stats
+                document.getElementById('quickTotalSpent').textContent = `$${customer.spent.toLocaleString()}`;
+                document.getElementById('quickPredictedCLV').textContent = `$${customer.clv.toLocaleString()}`;
                 
                 showNotification(`Now viewing: ${customer.name}`);
             }
@@ -1873,10 +2928,17 @@
             showNotification(`Showing details for segment: ${segment}`);
             
             // Chuyển đến tab segments
-            document.querySelector('.tab[data-tab="segments"]').click();
+            document.querySelector('.tab-btn[data-tab="segments"]').click();
+        }
+
+        // Hàm export dữ liệu khách hàng
+        function exportCustomerData() {
+            showNotification('Exporting customer data to PDF...');
             
-            // Trong thực tế, đây sẽ là lọc bảng khách hàng theo phân đoạn
-            // Ở đây chúng ta chỉ hiển thị thông báo
+            // Mô phỏng xuất file
+            setTimeout(() => {
+                showNotification('Customer report exported successfully!');
+            }, 1500);
         }
 
         // Hàm hiển thị thông báo
@@ -1908,20 +2970,6 @@
                 }, 300);
             }, 3000);
         }
-
-        // Thêm hiệu ứng cho các ô RFM
-        document.addEventListener('DOMContentLoaded', function() {
-            const rfmCells = document.querySelectorAll('.rfm-cell');
-            
-            rfmCells.forEach(cell => {
-                cell.addEventListener('mouseenter', function() {
-                    const count = this.querySelector('.rfm-cell-count').textContent;
-                    const label = this.querySelector('.rfm-cell-label').textContent;
-                    
-                    // Có thể thêm tooltip nâng cao ở đây
-                });
-            });
-        });
     </script>
 </body>
 </html>
