@@ -1,5 +1,3 @@
-[file name]: index.html
-[file content begin]
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -36,6 +34,101 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 12px 18px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            background-color: #f0f5ff;
+            color: var(--primary);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .nav-link i {
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+        
+        .nav-indicator {
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease, bottom 0.3s ease;
+        }
+        
+        .nav-link:hover .nav-indicator,
+        .nav-link.active .nav-indicator {
+            opacity: 1;
+            bottom: -8px;
+        }
+        
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
         }
         
         .header {
@@ -242,6 +335,39 @@
             color: rgba(255,255,255,0.8);
         }
         
+        @media (max-width: 992px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+                padding: 20px 0;
+                border-radius: 0 0 15px 15px;
+                z-index: 999;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-item {
+                margin: 15px 0;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-link .nav-indicator {
+                display: none;
+            }
+        }
+        
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2.2rem;
@@ -309,6 +435,7 @@
         
         .dashboard-category {
             margin-bottom: 40px;
+            scroll-margin-top: 100px;
         }
         
         .category-title {
@@ -348,11 +475,88 @@
             vertical-align: middle;
             font-weight: 600;
         }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 0%;
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+        
+        /* Section highlighting for navigation */
+        .section-highlight {
+            background-color: rgba(74, 111, 165, 0.05);
+            border-radius: 10px;
+            padding: 5px 15px;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-wrapper">
+                <a href="#" class="nav-logo">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>PetStore Analytics</span>
+                </a>
+                
+                <button class="mobile-toggle" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link active" data-section="home">
+                            <i class="fas fa-home"></i>
+                            Trang chủ
+                            <span class="nav-indicator"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#core-dashboards" class="nav-link" data-section="core">
+                            <i class="fas fa-star"></i>
+                            Dashboard Cốt Lõi
+                            <span class="nav-indicator"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#specialized-dashboards" class="nav-link" data-section="specialized">
+                            <i class="fas fa-rocket"></i>
+                            Dashboard Chuyên Sâu
+                            <span class="nav-indicator"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#comparison" class="nav-link" data-section="comparison">
+                            <i class="fas fa-balance-scale"></i>
+                            So Sánh Dashboard
+                            <span class="nav-indicator"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link" data-section="overview">
+                            <i class="fas fa-info-circle"></i>
+                            Tổng Quan
+                            <span class="nav-indicator"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <!-- Header -->
-    <header class="header">
+    <header class="header" id="home">
         <h1>
             <i class="fas fa-paw"></i>
             PetStore Analytics Dashboard Hub
@@ -361,7 +565,7 @@
         
         <div class="stats">
             <div class="stat-item">
-                <div class="stat-value">5</div>
+                <div class="stat-value">6</div>
                 <div class="stat-label">Dashboards</div>
             </div>
             <div class="stat-item">
@@ -381,33 +585,8 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-            <h2>Trung tâm phân tích toàn diện cho PetStore</h2>
-            <p>Khám phá sức mạnh của dữ liệu với bộ dashboard được thiết kế chuyên biệt cho doanh nghiệp thú cưng của bạn. Mỗi dashboard cung cấp góc nhìn độc đáo về hiệu suất kinh doanh.</p>
-            
-            <div class="quick-stats">
-                <div class="quick-stat">
-                    <h4><i class="fas fa-sync-alt"></i> Cập nhật thời gian thực</h4>
-                    <p>Dữ liệu được cập nhật tự động mỗi giờ</p>
-                </div>
-                <div class="quick-stat">
-                    <h4><i class="fas fa-mobile-alt"></i> Thiết kế responsive</h4>
-                    <p>Truy cập trên mọi thiết bị di động và máy tính</p>
-                </div>
-                <div class="quick-stat">
-                    <h4><i class="fas fa-chart-pie"></i> Phân tích đa chiều</h4>
-                    <p>Biểu đồ tương tác và báo cáo chi tiết</p>
-                </div>
-                <div class="quick-stat">
-                    <h4><i class="fas fa-plus-circle"></i> Mở rộng liên tục</h4>
-                    <p>Bổ sung dashboard mới mỗi tháng</p>
-                </div>
-            </div>
-        </section>
-
         <!-- Category: Core Dashboards -->
-        <div class="dashboard-category">
+        <div class="dashboard-category" id="core-dashboards">
             <h3 class="category-title">Dashboard Cốt Lõi</h3>
             <p class="category-description">Các dashboard chính cung cấp góc nhìn toàn diện về hoạt động kinh doanh của PetStore.</p>
             
@@ -499,7 +678,7 @@
         </div>
 
         <!-- Category: New & Specialized Dashboards -->
-        <div class="dashboard-category">
+        <div class="dashboard-category" id="specialized-dashboards">
             <h3 class="category-title">Dashboard Chuyên Sâu <span class="new-badge">MỚI</span></h3>
             <p class="category-description">Các dashboard chuyên sâu tập trung vào phân tích sâu từng khía cạnh kinh doanh.</p>
             
@@ -590,8 +769,33 @@
             </div>
         </div>
 
+        <!-- Welcome Section - Đã chuyển xuống dưới Dashboard Chuyên Sâu -->
+        <section class="welcome-section" id="overview">
+            <h2>Trung tâm phân tích toàn diện cho PetStore</h2>
+            <p>Khám phá sức mạnh của dữ liệu với bộ dashboard được thiết kế chuyên biệt cho doanh nghiệp thú cưng của bạn. Mỗi dashboard cung cấp góc nhìn độc đáo về hiệu suất kinh doanh.</p>
+            
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <h4><i class="fas fa-sync-alt"></i> Cập nhật thời gian thực</h4>
+                    <p>Dữ liệu được cập nhật tự động mỗi giờ</p>
+                </div>
+                <div class="quick-stat">
+                    <h4><i class="fas fa-mobile-alt"></i> Thiết kế responsive</h4>
+                    <p>Truy cập trên mọi thiết bị di động và máy tính</p>
+                </div>
+                <div class="quick-stat">
+                    <h4><i class="fas fa-chart-pie"></i> Phân tích đa chiều</h4>
+                    <p>Biểu đồ tương tác và báo cáo chi tiết</p>
+                </div>
+                <div class="quick-stat">
+                    <h4><i class="fas fa-plus-circle"></i> Mở rộng liên tục</h4>
+                    <p>Bổ sung dashboard mới mỗi tháng</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Dashboard Comparison -->
-        <section class="welcome-section" style="margin-top: 50px;">
+        <section class="welcome-section" id="comparison" style="margin-top: 50px;">
             <h2>So Sánh Các Dashboard</h2>
             <p>Hiểu rõ sự khác biệt và chức năng của từng dashboard để lựa chọn phù hợp với nhu cầu phân tích của bạn.</p>
             
@@ -715,6 +919,12 @@
                     showNotification('Chào mừng đến với PetStore Analytics Hub! Đã có 2 dashboard mới.');
                 }
             }, 1000);
+            
+            // Khởi tạo navigation
+            initNavigation();
+            
+            // Khởi tạo scroll indicator
+            initScrollIndicator();
         });
 
         // Hàm hiển thị thông báo
@@ -769,7 +979,76 @@
                 // analytics.track('Dashboard Opened', { name: dashboardName });
             });
         });
+        
+        // Khởi tạo navigation
+        function initNavigation() {
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navMenu = document.getElementById('navMenu');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            // Toggle mobile menu
+            mobileToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+            
+            // Đóng menu mobile khi click vào link
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                    mobileToggle.querySelector('i').classList.remove('fa-times');
+                    mobileToggle.querySelector('i').classList.add('fa-bars');
+                    
+                    // Cập nhật trạng thái active
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Xử lý scroll để cập nhật active nav link
+            window.addEventListener('scroll', function() {
+                const sections = document.querySelectorAll('section, .dashboard-category');
+                const scrollPos = window.scrollY + 100;
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight && sectionId) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+                
+                // Xử lý scroll indicator
+                updateScrollIndicator();
+            });
+        }
+        
+        // Khởi tạo scroll indicator
+        function initScrollIndicator() {
+            window.addEventListener('scroll', updateScrollIndicator);
+        }
+        
+        function updateScrollIndicator() {
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            scrollIndicator.style.width = scrolled + "%";
+        }
     </script>
 </body>
 </html>
-[file content end]
