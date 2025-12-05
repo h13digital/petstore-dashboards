@@ -36,7 +36,7 @@
             flex-direction: column;
         }
         
-        /* Navigation Bar - Updated UI */
+        /* Navigation Bar - Simplified & Optimized */
         .navbar {
             background: white;
             box-shadow: 0 2px 15px rgba(0,0,0,0.08);
@@ -56,7 +56,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 15px 0;
         }
         
         .nav-logo {
@@ -68,14 +68,13 @@
             font-size: 1.4rem;
             text-decoration: none;
             white-space: nowrap;
-            padding: 8px 15px;
+            padding: 10px 15px;
             border-radius: 10px;
             transition: all 0.3s ease;
-            background: linear-gradient(90deg, rgba(74, 111, 165, 0.1) 0%, rgba(22, 96, 136, 0.05) 100%);
         }
         
         .nav-logo:hover {
-            background: linear-gradient(90deg, rgba(74, 111, 165, 0.15) 0%, rgba(22, 96, 136, 0.1) 100%);
+            background: linear-gradient(90deg, rgba(74, 111, 165, 0.08) 0%, rgba(22, 96, 136, 0.04) 100%);
             transform: translateY(-2px);
         }
         
@@ -87,7 +86,7 @@
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 3px;
+            gap: 5px;
             flex-wrap: nowrap;
             overflow-x: auto;
             padding: 5px;
@@ -96,17 +95,17 @@
         }
         
         .nav-menu::-webkit-scrollbar {
-            height: 6px;
+            height: 4px;
         }
         
         .nav-menu::-webkit-scrollbar-track {
             background: #f1f1f1;
-            border-radius: 3px;
+            border-radius: 2px;
         }
         
         .nav-menu::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 3px;
+            border-radius: 2px;
         }
         
         .nav-item {
@@ -116,75 +115,42 @@
         
         .nav-link {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 12px 18px;
+            padding: 12px 20px;
             color: var(--dark);
             text-decoration: none;
             font-weight: 600;
-            border-radius: 12px;
+            border-radius: 8px;
             transition: all 0.3s ease;
             position: relative;
             white-space: nowrap;
             font-size: 0.95rem;
-            min-width: 90px;
-            border: 2px solid transparent;
+            min-width: 120px;
+            border: 1px solid transparent;
             background: #f8f9fa;
+            text-align: center;
         }
         
         .nav-link:hover {
             background: linear-gradient(135deg, #f0f5ff 0%, #e6f0ff 100%);
             color: var(--primary);
-            border-color: rgba(74, 111, 165, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-color: rgba(74, 111, 165, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         
         .nav-link.active {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            box-shadow: 0 5px 15px rgba(74, 111, 165, 0.3);
-        }
-        
-        .nav-link i {
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link.active i {
-            transform: scale(1.1);
-        }
-        
-        .nav-link:hover i {
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 111, 165, 0.2);
+            border-color: transparent;
         }
         
         .nav-text {
-            font-size: 0.9rem;
-            text-align: center;
+            font-size: 0.95rem;
             line-height: 1.2;
-        }
-        
-        .nav-indicator {
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 2px;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover .nav-indicator,
-        .nav-link.active .nav-indicator {
-            opacity: 1;
-            bottom: -5px;
-            width: 40px;
+            font-weight: 600;
         }
         
         .mobile-toggle {
@@ -203,28 +169,6 @@
         .mobile-toggle:hover {
             background: rgba(74, 111, 165, 0.2);
             transform: translateY(-2px);
-        }
-        
-        .nav-dashboard-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: var(--danger);
-            color: white;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: 700;
-            z-index: 1;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .nav-dashboard-badge.new {
-            background: linear-gradient(90deg, var(--danger) 0%, #c82333 100%);
-        }
-        
-        .nav-dashboard-badge.detail {
-            background: linear-gradient(90deg, var(--success) 0%, #1e7e34 100%);
         }
         
         .header {
@@ -469,37 +413,22 @@
             }
             
             .nav-link {
-                flex-direction: row;
-                justify-content: flex-start;
                 padding: 15px 20px;
                 border-radius: 10px;
                 min-width: auto;
-                gap: 15px;
+                justify-content: center;
             }
             
             .nav-text {
                 font-size: 1rem;
             }
             
-            .nav-link i {
-                font-size: 1.3rem;
-            }
-            
             .mobile-toggle {
                 display: block;
             }
             
-            .nav-link .nav-indicator {
-                display: none;
-            }
-            
             .header h1 {
                 font-size: 2.2rem;
-            }
-            
-            .nav-dashboard-badge {
-                top: 10px;
-                right: 15px;
             }
         }
         
@@ -648,13 +577,53 @@
             flex: 1;
             margin: 0 20px;
         }
+        
+        /* Enhanced navigation UX */
+        .nav-item:hover .nav-link {
+            background: linear-gradient(135deg, #f0f5ff 0%, #e6f0ff 100%);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 70%;
+            transform: translateX(-50%) scaleX(1);
+        }
+        
+        .nav-link.active:hover::after {
+            background: white;
+        }
+        
+        /* Simplified mobile menu */
+        @media (max-width: 992px) {
+            .nav-link::after {
+                display: none;
+            }
+            
+            .nav-link:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Scroll Indicator -->
     <div class="scroll-indicator" id="scrollIndicator"></div>
     
-    <!-- Navigation Bar - Updated with simplified names -->
+    <!-- Navigation Bar - Simplified & Clean -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-wrapper">
@@ -670,47 +639,32 @@
                 <ul class="nav-menu" id="navMenu">
                     <li class="nav-item">
                         <a href="dashboard01.html" class="nav-link" data-dashboard="marketing">
-                            <i class="fas fa-chart-line"></i>
                             <span class="nav-text">Marketing</span>
-                            <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard02.html" class="nav-link" data-dashboard="sales">
-                            <i class="fas fa-shopping-cart"></i>
                             <span class="nav-text">Sales</span>
-                            <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard03.html" class="nav-link" data-dashboard="customers-overview">
-                            <i class="fas fa-users"></i>
                             <span class="nav-text">Customers View</span>
-                            <span class="nav-indicator"></span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard06.html" class="nav-link" data-dashboard="customer-detail">
-                            <i class="fas fa-user-circle"></i>
                             <span class="nav-text">Customer Detail</span>
-                            <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge detail">DETAIL</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard04.html" class="nav-link" data-dashboard="product">
-                            <i class="fas fa-cube"></i>
                             <span class="nav-text">Product & Inventory</span>
-                            <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge new">NEW</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="dashboard05.html" class="nav-link" data-dashboard="platform">
-                            <i class="fas fa-desktop"></i>
                             <span class="nav-text">Platform Analytics</span>
-                            <span class="nav-indicator"></span>
-                            <span class="nav-dashboard-badge new">NEW</span>
                         </a>
                     </li>
                 </ul>
@@ -932,7 +886,7 @@
             </div>
         </div>
 
-        <!-- Welcome Section - Đã chuyển xuống dưới Dashboard Chuyên Sâu -->
+        <!-- Welcome Section -->
         <section class="welcome-section" id="overview">
             <h2>Trung tâm phân tích toàn diện cho PetStore</h2>
             <p>Khám phá sức mạnh của dữ liệu với bộ dashboard được thiết kế chuyên biệt cho doanh nghiệp thú cưng của bạn. Mỗi dashboard cung cấp góc nhìn độc đáo về hiệu suất kinh doanh.</p>
@@ -1059,7 +1013,7 @@
             });
 
             // Hiệu ứng cho các badge mới
-            const newBadges = document.querySelectorAll('.new-badge, .nav-dashboard-badge');
+            const newBadges = document.querySelectorAll('.new-badge, .updated-badge');
             newBadges.forEach(badge => {
                 badge.style.animation = 'pulse 2s infinite';
             });
@@ -1105,7 +1059,6 @@
 
         // Hàm hiển thị thông báo
         function showNotification(message) {
-            // Tạo thông báo tạm thời
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -1158,9 +1111,6 @@
                 
                 // Lưu dashboard đã truy cập gần nhất
                 localStorage.setItem('lastVisitedDashboard', dashboardName);
-                
-                // Trong thực tế, bạn có thể gửi sự kiện này đến analytics
-                // analytics.track('Dashboard Opened', { name: dashboardName });
             });
         });
         
@@ -1186,7 +1136,6 @@
             // Đóng menu mobile khi click vào link
             navLinks.forEach(link => {
                 link.addEventListener('click', function() {
-                    // Đối với mobile, đóng menu sau khi click
                     if (window.innerWidth <= 992) {
                         navMenu.classList.remove('active');
                         mobileToggle.querySelector('i').classList.remove('fa-times');
@@ -1227,19 +1176,14 @@
             const navLinks = document.querySelectorAll('.nav-link');
             
             navLinks.forEach(link => {
-                // Hiệu ứng khi di chuột vào
+                // Hiệu ứng hover
                 link.addEventListener('mouseenter', function() {
-                    const icon = this.querySelector('i');
-                    if (icon) {
-                        icon.style.transform = 'translateY(-3px)';
-                    }
+                    this.style.transform = 'translateY(-2px)';
                 });
                 
-                // Hiệu ứng khi di chuột ra
                 link.addEventListener('mouseleave', function() {
-                    const icon = this.querySelector('i');
-                    if (icon && !this.classList.contains('active')) {
-                        icon.style.transform = 'translateY(0)';
+                    if (!this.classList.contains('active')) {
+                        this.style.transform = 'translateY(0)';
                     }
                 });
             });
